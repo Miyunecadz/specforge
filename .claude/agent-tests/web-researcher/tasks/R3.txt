@@ -1,0 +1,8 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Gap ID: GAP-002
+Research questions: Where should focus move when a modal confirmation dialog opens and closes?
+Related: REQ-001, SCR-007
+Budget: searches 4, fetches 6, findings 8
+Fetch command: /mnt/e/projects/247tech/247-research/.venv/bin/python /mnt/e/projects/247tech/247-research/.claude/skills/feature-research/scripts/fetch_source.py --run 20261011-120000-abcdef --gap GAP-002 '<url>'
+Write: runs/20261011-120000-abcdef/findings/GAP-002.json

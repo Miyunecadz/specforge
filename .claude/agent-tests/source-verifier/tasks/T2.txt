@@ -1,0 +1,5 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Read: runs/20261011-120000-abcdef/citation_check.json, the findings in runs/20261011-120000-abcdef/findings/, the sources in runs/20261011-120000-abcdef/sources/, runs/20261011-120000-abcdef/gaps.json and runs/20261011-120000-abcdef/status_labels.json.
+Write: runs/20261011-120000-abcdef/verified_findings.json (schema: verified_findings).
+Warnings, if any: runs/20261011-120000-abcdef/warnings/source-verifier.json.

@@ -66,7 +66,32 @@
           "max_uses": 2,
           "reply": "For anything still open at checkpoint 1: read-only for everyone with all fields locked; only Procurement team members award; awards cannot be undone; the supplier is chosen from the attached quotes. Leave the remaining non-blocking questions open."
         }
-      ]
+      ],
+      "status": "superseded by eval 8 from Phase 3: with research built, its 'approve all gaps' reply would research every gap; eval 8 covers checkpoints 1-2 plus stages 8-10"
+    },
+    {
+      "id": 8,
+      "name": "research-and-verification",
+      "fixture": "evals/fixtures/case-01-award-packages",
+      "prompt": "/feature-research index.html 'Package managers must be able to award a supplier package to one supplier. Awarded packages should be read-only. Suppliers must be notified when they win.'",
+      "followup_rules": [
+        {
+          "match": "checkpoint 2",
+          "max_uses": 1,
+          "reply": "Approve the two highest-priority gaps that are routed to research or both, with their proposed research questions. Reject every other gap."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 1,
+          "reply": "Package managers means only people in the Procurement team. The supplier is chosen from the quotes attached to the package. A package is awarded to exactly one supplier and the award is final; it cannot be undone by anyone. Awarded packages are read-only for everyone and all fields are locked. Suppliers are notified by email when the award is made. Everything else is approved as written."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 2,
+          "reply": "For anything still open at checkpoint 1: read-only for everyone with all fields locked; only Procurement team members award; awards cannot be undone; the supplier is chosen from the attached quotes. Leave the remaining non-blocking questions open."
+        }
+      ],
+      "expected_output": "Stages 1-10 complete in fixture mode: research on approved gaps only, recorded searches via H4 counted by H3, sources fetched through the fixture map, citation check, semantic verification; run aborted at Stage 11 (not built)."
     }
   ]
 }

@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "gap_id": "GAP-002",
+  "findings": [
+    {
+      "id": "F-GAP-002-01",
+      "gap_id": "GAP-002",
+      "claim": "When a modal dialog opens, focus moves to an element inside the dialog.",
+      "source_id": "SRC-aaaa0001",
+      "snippet": "When a dialog opens, focus moves to an element inside the dialog.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "standard",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "F-GAP-002-02",
+      "gap_id": "GAP-002",
+      "claim": "Every dialog must have a visible close button.",
+      "source_id": "SRC-aaaa0001",
+      "snippet": "Authors should consider providing a visible close button in every dialog.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "standard",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "F-GAP-002-03",
+      "gap_id": "GAP-002",
+      "claim": "Dialog colour palettes should follow the brand tokens.",
+      "source_id": "SRC-bbbb0002",
+      "snippet": "Colour palettes for dialogs should follow the brand tokens defined in the theme.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "design_system",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "F-GAP-002-04",
+      "gap_id": "GAP-002",
+      "claim": "When a dialog closes, focus returns to the element that invoked it.",
+      "source_id": "SRC-aaaa0001",
+      "snippet": "When a dialog closes, focus returns to the element that invoked the dialog",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": {
+        "text": "Return focus to the Award Package button within 200 ms and announce 'Award saved' via a live region.",
+        "rationale": "Applies the focus return rule."
+      },
+      "source_type": "standard",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "recommendation"
+    },
+    {
+      "id": "F-GAP-002-05",
+      "gap_id": "GAP-002",
+      "claim": "Dialogs must trap focus.",
+      "source_id": "SRC-aaaa0001",
+      "snippet": "Dialogs must trap focus forever.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "standard",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    }
+  ],
+  "unanswered_questions": [],
+  "disagreements": [],
+  "proposed_status_changes": []
+}

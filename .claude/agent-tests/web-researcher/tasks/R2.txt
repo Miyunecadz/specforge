@@ -1,0 +1,3 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory)
+Research GAP-002 for this run.

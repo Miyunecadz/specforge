@@ -151,6 +151,34 @@ orchestrator e2e 74/74 incl. both checkpoints; re-audit APPROVED; measured cost 
    file, so continuing a conversation keeps ownership of its run.
 10. **install_agents.py** now rejects agent frontmatter that is not valid YAML (a `:` in a
     description made Claude Code skip an agent silently; caught by the agent-creator lint).
+
+## Phase 3 implementation notes (2026-10-11)
+
+**Phase 3 gate: approved by the user on 2026-10-11** (619 passed; web-researcher 6/6 + e2e core path, fallback 4/4,
+source-verifier 8/8; research e2e 16/16 at US$4.52 per case; re-audit APPROVED).
+
+1. **Platform fact (probed)**: PreToolUse hooks can rewrite tool input (`updatedInput`); WebSearch
+   input is `{query, allowed_domains, blocked_domains, mode}`. H3 uses this to apply the domain
+   lists and pin `mode: standard`.
+2. **Sequential research**: search calls cannot be attributed to a researcher invocation, so gaps
+   are researched one at a time with `run_state.py set-gap` (writes `budget/active_gap.json`,
+   including the limits H3 reads, because hooks cannot parse YAML).
+3. **fetch_source.py**: every attempt that passes the URL, domain and gap checks counts against the
+   per-gap budget (including robots.txt refusals); identical URLs already saved are reused without
+   a fetch or budget; unavailable sources get metadata with `available: false` and are never
+   citable; a robots.txt that is unreachable or returns 401/403/5xx refuses the fetch.
+4. **Fixture source map location**: `evals/cases/<fixture-dir-name>/sources.json` (the case name is
+   the fixture directory's name), matching §16.
+5. **H4** answers in the hook's block message (exit 2) and records a `search_stub` hook event (new
+   enum value); H3 runs first, so an over-budget search gets no recorded results.
+6. **Stage skips**: `run_state.py stage N --skip --reason` is allowed only for 8 (no gap approved for
+   research), 9 (no findings) and 10 (no pending findings).
+7. **Researcher testing limit**: the identified researcher's search→fetch path is tested in the e2e
+   harness (fixture mode, real hooks), because `fetch_source.py` needs an active run and absolute
+   paths the agent-creator sandbox cannot provide; sandbox tests cover the other paths. The
+   fallback variant is fully sandbox-tested and not installed in identified mode.
+8. **Schemas**: budget, fetch_log_entry, fetch_request, source_metadata, findings,
+   citation_check, verified_findings, fixture_sources.
 ---
 
 ## 1. Current-state findings

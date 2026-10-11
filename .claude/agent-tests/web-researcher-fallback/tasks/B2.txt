@@ -1,0 +1,12 @@
+Pass: 2
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Gap ID: GAP-002
+Research questions: Where should focus move when a modal confirmation dialog opens and closes?
+Related: REQ-001, SCR-007
+Budget: searches 2, fetches 3, findings 8
+Fetch results:
+- https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ -> fetched, source_id SRC-aaaa0001, source_type standard, publication_date null
+- https://blog.example.com/award-confirmations -> fetched, source_id SRC-cccc0003, source_type other, publication_date null
+- https://example.com/paywalled -> unavailable (HTTP 402)
+Write: runs/20261011-120000-abcdef/findings/GAP-002.json

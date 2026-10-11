@@ -1,0 +1,4 @@
+Dialog (Modal) Pattern
+When a dialog opens, focus moves to an element inside the dialog. Generally, focus is initially set on the first focusable element.
+When a dialog closes, focus returns to the element that invoked the dialog unless the invoking element no longer exists.
+Authors should consider providing a visible close button in every dialog.

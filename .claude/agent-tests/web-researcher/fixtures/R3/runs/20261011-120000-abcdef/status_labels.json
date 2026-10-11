@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "items": {},
+  "gap_routing": {
+    "GAP-002": {
+      "approval": "rejected",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "Where should focus move when a modal confirmation dialog opens and closes?"
+      ],
+      "research_allowed": false
+    }
+  }
+}

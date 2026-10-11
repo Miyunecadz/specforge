@@ -102,9 +102,9 @@ Stages run in this order. Each has the reference file named in the table (for ex
 | 5 | Checkpoint 1: confirm requirements | you + `status_rules.py decide` | `stage-05.md` | available |
 | 6 | Analyse gaps | `gap-analyst` | `stage-06.md` | available |
 | 7 | Checkpoint 2: approve gaps and routing | you + `status_rules.py decide` | `stage-07.md` | available |
-| 8 | Research | researcher + `fetch_source.py` | `stage-08.md` | Phase 3 |
-| 9 | Mechanical citation check | `verify_citations.py` | `stage-09.md` | Phase 3 |
-| 10 | Semantic verification | `source-verifier` | `stage-10.md` | Phase 3 |
+| 8 | Research | researcher + `fetch_source.py` | `stage-08.md` | available |
+| 9 | Mechanical citation check | `verify_citations.py` | `stage-09.md` | available |
+| 10 | Semantic verification | `source-verifier` | `stage-10.md` | available |
 | 11 | Feasibility | `feasibility-analyst` | `stage-11.md` | Phase 4 |
 | 12 | Customer questions | `question-generator` | `stage-12.md` | Phase 4 |
 | 13 | Checkpoint 3: product decisions | you + `status_rules.py decide` | `stage-13.md` | Phase 4 |
@@ -135,7 +135,7 @@ itself, so skip steps 1 and 2 there):
 Never continue downstream on invalid, incomplete or tampered artifacts.
 
 **When you reach a stage this build does not implement yet**, do not improvise it. Run
-`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 2)'`
+`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 3)'`
 so the session is released, then give the stage report described below and stop.
 
 ## Subagents

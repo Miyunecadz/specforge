@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/findings.schema.json",
+  "title": "findings/<gap>.json, written only by the installed web-researcher variant (§9.6).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "gap_id",
+    "findings",
+    "unanswered_questions",
+    "disagreements",
+    "proposed_status_changes"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "gap_id": {
+      "$ref": "common.schema.json#/$defs/gap_id"
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "gap_id",
+          "claim",
+          "source_id",
+          "snippet",
+          "how_source_supports",
+          "recommendation",
+          "source_type",
+          "publication_date",
+          "confidence",
+          "limitations",
+          "needs_confirmation",
+          "provenance",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/finding_id"
+          },
+          "gap_id": {
+            "$ref": "common.schema.json#/$defs/gap_id"
+          },
+          "claim": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "source_id": {
+            "$ref": "common.schema.json#/$defs/src_id"
+          },
+          "snippet": {
+            "$ref": "common.schema.json#/$defs/nonempty_string",
+            "maxLength": 1500,
+            "description": "Copied exactly from sources/<source_id>.txt."
+          },
+          "how_source_supports": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "text",
+                  "rationale"
+                ],
+                "properties": {
+                  "text": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  },
+                  "rationale": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  }
+                }
+              }
+            ]
+          },
+          "source_type": {
+            "enum": [
+              "official_documentation",
+              "standard",
+              "regulation",
+              "design_system",
+              "engineering_publication",
+              "other"
+            ]
+          },
+          "publication_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "$ref": "common.schema.json#/$defs/confidence"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "needs_confirmation": {
+            "type": "boolean"
+          },
+          "provenance": {
+            "const": "research_evidence"
+          },
+          "kind": {
+            "enum": [
+              "finding",
+              "recommendation"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "common.schema.json#/$defs/no_status_fields"
+          },
+          {
+            "if": {
+              "properties": {
+                "recommendation": {
+                  "type": "null"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "finding"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "kind": {
+                  "const": "recommendation"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "unanswered_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "why_unanswered"
+        ],
+        "properties": {
+          "question": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "why_unanswered": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        }
+      }
+    },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_ids",
+          "description",
+          "practical_impact"
+        ],
+        "properties": {
+          "finding_ids": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "$ref": "common.schema.json#/$defs/finding_id"
+            }
+          },
+          "description": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "practical_impact": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        }
+      }
+    },
+    "proposed_status_changes": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/proposed_status_change"
+      }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "gap_id",
+        "claim",
+        "source_id",
+        "snippet",
+        "how_source_supports",
+        "recommendation",
+        "source_type",
+        "publication_date",
+        "confidence",
+        "limitations",
+        "needs_confirmation",
+        "provenance",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/finding_id"
+        },
+        "gap_id": {
+          "$ref": "common.schema.json#/$defs/gap_id"
+        },
+        "claim": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "source_id": {
+          "$ref": "common.schema.json#/$defs/src_id"
+        },
+        "snippet": {
+          "$ref": "common.schema.json#/$defs/nonempty_string",
+          "maxLength": 1500,
+          "description": "Copied exactly from sources/<source_id>.txt."
+        },
+        "how_source_supports": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "recommendation": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text",
+                "rationale"
+              ],
+              "properties": {
+                "text": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "rationale": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                }
+              }
+            }
+          ]
+        },
+        "source_type": {
+          "enum": [
+            "official_documentation",
+            "standard",
+            "regulation",
+            "design_system",
+            "engineering_publication",
+            "other"
+          ]
+        },
+        "publication_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        },
+        "needs_confirmation": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "const": "research_evidence"
+        },
+        "kind": {
+          "enum": [
+            "finding",
+            "recommendation"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/no_status_fields"
+        },
+        {
+          "if": {
+            "properties": {
+              "recommendation": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "finding"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "kind": {
+                "const": "recommendation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

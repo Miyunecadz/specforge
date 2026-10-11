@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "gaps": [
+    {
+      "id": "GAP-002",
+      "title": "Focus handling in the award confirmation dialog",
+      "description": "Where focus goes when the award confirmation opens and closes is undefined.",
+      "category": "accessibility",
+      "reason": "checklist",
+      "related_req_ids": [
+        "REQ-001"
+      ],
+      "related_scr_ids": [
+        "SCR-007"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "basis": "inference",
+      "why_it_matters": "Keyboard and screen reader users",
+      "consequences_if_unresolved": "Users lose their place",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "Where should focus move when a modal confirmation dialog opens and closes?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    }
+  ],
+  "assumptions": [],
+  "proposed_status_changes": []
+}

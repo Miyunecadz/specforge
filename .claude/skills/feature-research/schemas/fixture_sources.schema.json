@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/fixture_sources.schema.json",
+  "title": "evals/cases/<case>/sources.json: fixture URL map and recorded search results (§16).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sources",
+    "searches"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "sources": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^https?://"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^evals/fixtures/[^.][^ ]*$"
+          },
+          {
+            "const": "unavailable"
+          }
+        ]
+      }
+    },
+    "searches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "topic_keywords",
+          "results"
+        ],
+        "properties": {
+          "topic_keywords": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "title",
+                "url",
+                "snippet"
+              ],
+              "properties": {
+                "title": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://"
+                },
+                "snippet": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

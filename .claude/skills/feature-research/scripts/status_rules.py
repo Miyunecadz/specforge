@@ -11,7 +11,12 @@ memory and writes only if every change is valid.
                                      record the user's answers as DECs (H1 checks provenance first)
   decide --run R --prior             record input/prior_decisions.json at intake
   labels --run R                     derive labels, placement and gap routing -> status_labels.json
-  apply / verification               Phase 6 / Phase 3
+  register findings/<gap>.json --run R
+                                     add a gap's findings (verification pending)
+  verification --run R --from citations|semantic
+                                     set citation_failed from citation_check.json, or kept/dropped
+                                     from verified_findings.json (no agent or decision sets these)
+  apply                              Phase 6
 
 Exit codes: 0 ok, 1 invalid input or rejected change, 3 refused.
 """
@@ -20,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import re
 import binascii
 import copy
 import json
@@ -85,6 +91,8 @@ def items_of(rel: str, doc: dict) -> list[dict]:
     if rel == "requirements.json":
         out += [status.new_item(r["id"], "requirement", "customer_requirement", rel) for r in doc["requirements"]]
         out += [status.new_item(a["id"], "assumption", "assumption", rel) for a in doc["assumptions"]]
+    elif rel.startswith("findings/"):
+        out += [status.new_item(f["id"], f["kind"], "research_evidence", rel) for f in doc["findings"]]
     elif rel == "gaps.json":
         out += [status.new_item(g["id"], "gap", g["provenance"], rel) for g in doc["gaps"]]
         out += [status.new_item(a["id"], "assumption", "assumption", rel) for a in doc["assumptions"]]
@@ -95,14 +103,26 @@ def cmd_register(args, ctx: runctx.RunContext) -> int:
     rel = Path(args.artifact).as_posix()
     if rel.startswith(str(ctx.run_dir)):
         rel = Path(rel).relative_to(ctx.run_dir).as_posix()
-    if rel not in ARTIFACTS:
-        raise RunError(f"register supports {', '.join(ARTIFACTS)} in this build; got {rel!r}")
+    is_findings = re.fullmatch(r"findings/GAP-[0-9]{3,}\.json", rel) is not None
+    if rel not in ARTIFACTS and not is_findings:
+        raise RunError(f"register supports {', '.join(ARTIFACTS)} and findings/GAP-nnn.json; got {rel!r}")
     doc = _load_doc(ctx.run_dir, rel)
     if doc is None:
         raise RunError(f"{rel} does not exist in the run")
-    schema.check(ARTIFACTS[rel], doc, what=rel)
+    schema.check("findings" if is_findings else ARTIFACTS[rel], doc, what=rel)
     if doc.get("run_id") != ctx.run_id:
         raise status.StatusError(f"{rel} run_id does not match the run")
+    if is_findings:
+        gap = Path(rel).stem
+        labels = _load_doc(ctx.run_dir, "status_labels.json") or {"gap_routing": {}}
+        if not labels["gap_routing"].get(gap, {}).get("research_allowed"):
+            raise status.StatusError(f"{gap} is not approved for research; its findings cannot be registered")
+        limit = runctx.load_config(ctx.repo)["research"]["findings_per_gap"]
+        if len(doc["findings"]) > limit:
+            raise status.StatusError(f"{rel} has {len(doc['findings'])} findings; the limit is {limit} per gap")
+        bad = [f["id"] for f in doc["findings"] if f["gap_id"] != gap or not f["id"].startswith(f"F-{gap}-")]
+        if bad:
+            raise status.StatusError(f"findings not scoped to {gap}: {', '.join(bad)}")
     st = load_state(ctx.run_dir, ctx.run_id)
     new = items_of(rel, doc)
     ids = [i["id"] for i in new]
@@ -231,6 +251,66 @@ def cmd_labels(args, ctx: runctx.RunContext) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- verification
+
+
+def cmd_verification(args, ctx: runctx.RunContext) -> int:
+    st = load_state(ctx.run_dir, ctx.run_id)
+    findings = {iid: it for iid, it in st.registry["items"].items() if "verification" in it}
+    if args.source == "citations":
+        doc = _load_doc(ctx.run_dir, "citation_check.json")
+        if doc is None:
+            raise RunError("citation_check.json does not exist; run verify_citations.py first")
+        schema.check("citation_check", doc, what="citation_check.json")
+        checked = {r["finding_id"]: r for r in doc["results"]}
+        missing = sorted(set(findings) - set(checked))
+        if missing:
+            raise status.StatusError(f"registered findings missing from citation_check.json: {', '.join(missing)}")
+        for fid, r in checked.items():
+            if fid not in findings:
+                raise status.StatusError(f"{fid} is in citation_check.json but not registered")
+            if not r["passed"]:
+                status.set_verification(st, fid, "citation_failed", "citation check: " + ", ".join(r["reasons"]))
+    else:
+        doc = _load_doc(ctx.run_dir, "verified_findings.json")
+        if doc is None:
+            raise RunError("verified_findings.json does not exist")
+        schema.check("verified_findings", doc, what="verified_findings.json")
+        if doc["run_id"] != ctx.run_id:
+            raise status.StatusError("verified_findings.json run_id does not match the run")
+        kept = [k["finding_id"] for k in doc["kept"]]
+        dropped = [d["finding_id"] for d in doc["dropped"]]
+        both = kept + dropped
+        dupes = sorted({f for f in both if both.count(f) > 1})
+        if dupes:
+            raise status.StatusError(f"findings listed more than once: {', '.join(dupes)}")
+        pending = sorted(f for f, it in findings.items() if it["verification"] == "pending")
+        unknown = sorted(set(both) - set(pending))
+        if unknown:
+            raise status.StatusError(f"only findings that passed the citation check can be kept or dropped: {', '.join(unknown)}")
+        unreviewed = sorted(set(pending) - set(both))
+        if unreviewed:
+            raise status.StatusError(f"findings not reviewed by the source-verifier: {', '.join(unreviewed)}")
+        for fid in kept:
+            status.set_verification(st, fid, "kept", "semantic verification: kept")
+        for d in doc["dropped"]:
+            status.set_verification(st, d["finding_id"], "dropped",
+                                    "semantic verification: " + ", ".join(r["code"] for r in d["reasons"]))
+        for change in doc.get("proposed_status_changes", []):
+            status.apply_proposed(st, change)
+        for c in doc.get("contradictions", []):
+            for fid in c["finding_ids"]:
+                if fid in kept:
+                    status.add_issue(st, fid, "conflicting", c["description"])
+    save_state(ctx.run_dir, st, decisions_changed=False)
+    counts = {}
+    for it in st.registry["items"].values():
+        if "verification" in it:
+            counts[it["verification"]] = counts.get(it["verification"], 0) + 1
+    _out({"ok": True, "from": args.source, "verification": counts, "changes": len(st.changes)})
+    return 0
+
+
 def cmd_later(phase):
     def run(args, ctx):
         raise RunError(f"'{args.command}' is implemented in {phase}")
@@ -253,7 +333,11 @@ def main(argv: Sequence[str] | None = None, repo: Path | None = None, env: Mappi
     p = sub.add_parser("labels")
     p.add_argument("--run", required=True)
     p.set_defaults(func=cmd_labels)
-    for name, phase in (("apply", "Phase 6"), ("verification", "Phase 3")):
+    p = sub.add_parser("verification")
+    p.add_argument("--run", required=True)
+    p.add_argument("--from", dest="source", choices=("citations", "semantic"), required=True)
+    p.set_defaults(func=cmd_verification)
+    for name, phase in (("apply", "Phase 6"),):
         p = sub.add_parser(name)
         p.add_argument("rest", nargs="*")
         p.add_argument("--run", required=True)

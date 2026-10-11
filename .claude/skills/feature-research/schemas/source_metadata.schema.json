@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/source_metadata.schema.json",
+  "title": "sources/SRC-<hash>.metadata.json, written only by fetch_source.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_id",
+    "run_id",
+    "original_url",
+    "final_url",
+    "title",
+    "fetched_at",
+    "publication_date",
+    "http_status",
+    "content_type",
+    "source_type",
+    "content_sha256",
+    "available",
+    "extraction",
+    "mode",
+    "fixture_dir",
+    "gap_ids",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "source_id": {
+      "$ref": "common.schema.json#/$defs/src_id"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "original_url": {
+      "type": "string"
+    },
+    "final_url": {
+      "type": "string"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fetched_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "publication_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "http_status": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "content_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_type": {
+      "enum": [
+        "official_documentation",
+        "standard",
+        "regulation",
+        "design_system",
+        "engineering_publication",
+        "other"
+      ]
+    },
+    "content_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      ]
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "extraction": {
+      "enum": [
+        "trafilatura",
+        "plain_text",
+        "playwright_trafilatura",
+        "none"
+      ]
+    },
+    "mode": {
+      "$ref": "common.schema.json#/$defs/run_mode"
+    },
+    "fixture_dir": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "gap_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/gap_id"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

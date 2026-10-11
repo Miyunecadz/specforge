@@ -1,0 +1,1 @@
+Use a subagent to research where focus should go when a modal dialog opens, for gap GAP-002 of run 20261011-120000-abcdef.

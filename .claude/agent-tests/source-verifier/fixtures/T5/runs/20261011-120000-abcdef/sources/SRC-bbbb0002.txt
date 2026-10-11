@@ -1,0 +1,3 @@
+Dialog accessibility guidance (design system)
+When a confirmation dialog opens, move focus to the dialog's heading so screen reader users hear its purpose first.
+Colour palettes for dialogs should follow the brand tokens defined in the theme.

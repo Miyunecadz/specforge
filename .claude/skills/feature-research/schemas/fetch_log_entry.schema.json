@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/fetch_log_entry.schema.json",
+  "title": "One line of fetch_log.jsonl (§10 fetch_source.py). Hash-chained, written only by fetch_source.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "ts",
+    "run_id",
+    "gap_id",
+    "source_id",
+    "original_url",
+    "final_url",
+    "outcome",
+    "reason",
+    "content_sha256",
+    "bytes",
+    "mode",
+    "fixture_dir",
+    "prev_hash",
+    "line_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "ts": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "gap_id": {
+      "$ref": "common.schema.json#/$defs/gap_id"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/src_id"
+        }
+      ]
+    },
+    "original_url": {
+      "type": "string"
+    },
+    "final_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "fetched",
+        "reused",
+        "unavailable",
+        "refused"
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      ]
+    },
+    "bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mode": {
+      "$ref": "common.schema.json#/$defs/run_mode"
+    },
+    "fixture_dir": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prev_hash": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "line_hash": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    }
+  }
+}

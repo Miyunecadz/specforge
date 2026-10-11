@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "source_id": "SRC-aaaa0001",
+  "run_id": "20261011-120000-abcdef",
+  "original_url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+  "final_url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+  "title": "Dialog (Modal) Pattern",
+  "fetched_at": "2026-10-11T10:00:00.000Z",
+  "publication_date": null,
+  "http_status": 200,
+  "content_type": "text/html",
+  "source_type": "standard",
+  "content_sha256": "33c4dd7f9a42bfe17ccce28c055894822049cb7384c96fea65dce3dcc4572251",
+  "available": true,
+  "extraction": "trafilatura",
+  "mode": "normal",
+  "fixture_dir": null,
+  "gap_ids": [
+    "GAP-002"
+  ],
+  "warnings": []
+}

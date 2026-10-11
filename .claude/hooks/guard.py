@@ -3,7 +3,6 @@
 
 Runs the guards in a fixed order, because separately registered hooks run in parallel:
 H5 (tools) -> H1 (Bash) -> H2 (Write/Edit) -> H3 (search budget) -> H4 (eval search stub).
-H3 and H4 are added in Phase 3.
 
 Exit 0 allows the call; exit 2 blocks it with the reason on stderr. Any internal error
 blocks the call whenever any run is active, because Claude Code treats other non-zero exits
@@ -27,8 +26,16 @@ BLOCK = 2
 
 
 def decide(payload: dict, env: dict, repo: Path | None = None) -> tuple[int, str]:
+    code, msg, _ = decide_full(payload, env, repo)
+    return code, msg
+
+
+def decide_full(payload: dict, env: dict, repo: Path | None = None) -> tuple[int, str, dict | None]:
+    """Return (exit code, stderr message, updatedInput or None)."""
     import h1_bash
     import h2_write
+    import h3_search
+    import h4_stub
     import h5_tools
 
     ctx = _common.build_context(payload, env, repo or _common.REPO_ROOT)
@@ -48,26 +55,33 @@ def decide(payload: dict, env: dict, repo: Path | None = None) -> tuple[int, str
     if ctx.active is None:
         if att is not None:
             _common.touch_heartbeat(ctx.runs_root, ctx.session_id, tool, attest=att)
-        return 0, ""
+        return 0, "", None
 
     _common.touch_heartbeat(ctx.runs_root, ctx.session_id, tool, attest=att)
+    updated = None
     try:
         h5_tools.check(ctx)
         if tool == "Bash":
             h1_bash.check(ctx)
         if tool in h2_write.WRITE_TOOLS:
             h2_write.check(ctx)
+        if tool == "WebSearch":
+            updated = h3_search.check(ctx)
     except Deny as d:
         _common.record_event(ctx, d.event, d.hook, d.reason, d.detail)
-        return BLOCK, f"[feature-research {d.hook}] {d.reason}"
-    return 0, ""
+        return BLOCK, f"[feature-research {d.hook}] {d.reason}", None
+    if tool == "WebSearch" and h4_stub.active(ctx):
+        msg = h4_stub.results_message(ctx, updated or {})
+        _common.record_event(ctx, "search_stub", "H4", None, {"query": (updated or {}).get("query")})
+        return BLOCK, msg, None
+    return 0, "", updated
 
 
 def main() -> int:
     env = dict(os.environ)
     try:
         payload = json.load(sys.stdin)
-        code, msg = decide(payload, env)
+        code, msg, updated = decide_full(payload, env)
     except Exception as exc:  # fail closed while any run is active
         try:
             active = _common.any_active_run(_common.REPO_ROOT)
@@ -79,6 +93,9 @@ def main() -> int:
         return BLOCK
     if msg:
         print(msg, file=sys.stderr)
+    if code == 0 and updated is not None:
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow",
+                                                 "updatedInput": updated}}))
     return code
 
 

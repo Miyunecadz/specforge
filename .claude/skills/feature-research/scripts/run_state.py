@@ -4,8 +4,8 @@
 Owns <runs-root>/.active_run, run_manifest.json, log.jsonl, input/**, budget/active_gap.json,
 warnings.json, run_summary.json and integrity/run_state.json. Reads, never writes, .heartbeat.
 
-Subcommands: start, verify, stage, log, await-user, continue, resume, end, abort.
-Later phases add: set-gap (Phase 3), report (Phase 5).
+Subcommands: start, verify, stage, log, await-user, continue, resume, set-gap, end, abort.
+Later phases add: report (Phase 5).
 Exit codes: 0 ok, 1 usage/validation error, 3 refused, 4 tamper detected.
 """
 
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _lib import attest, fsutil, hashing, modes, ownership, paths, runctx, schema, stages  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
-WORKFLOW_VERSION = "0.2.0-phase2"
+WORKFLOW_VERSION = "0.3.0-phase3"
 MAX_REQUIREMENTS_BYTES = 1_000_000
 EXIT_OK, EXIT_ERROR, EXIT_REFUSED, EXIT_TAMPER = 0, 1, 3, 4
 
@@ -433,6 +433,16 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
     if not st or st["status"] != "running":
         raise RunError(f"stage {key} is not running")
 
+    if args.action == "skip":
+        why_not = stages.skip_allowed(ctx.run_dir, key)
+        if why_not:
+            raise RunError(f"stage {key} cannot be skipped: {why_not}")
+        st.update(status="skipped", completed_at=now, note=args.reason)
+        _log(ctx, ctx.run_id, "stage_completed", key, skipped=True, reason=args.reason)
+        _write_manifest(ctx.run_dir, m)
+        _out({"ok": True, "stage": key, "status": "skipped"})
+        return EXIT_OK
+
     if args.action == "fail":
         st.update(status="failed", completed_at=now, note=args.reason)
         _log(ctx, ctx.run_id, "stage_failed", key, reason=args.reason)
@@ -455,7 +465,7 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
         errors += [f"{rel}{e}" for e in schema.errors(schema_name, doc)]
     if not errors:
         errors += stages.semantic_checks(ctx.run_dir, stage, m)
-    if stage.kind in ("agent", "mixed") and stage.agent and not errors:
+    if stage.kind in ("agent", "mixed") and stage.agent and not errors and (found or key != "8"):
         if not _subagent_seen(ctx, stage.agent, st["started_at"]):
             errors.append(
                 f"no {stage.agent} subagent invocation was recorded in .hook_events.jsonl after stage "
@@ -604,6 +614,33 @@ def cmd_resume(args, repo: Path, env: Mapping[str, str], argv) -> int:
     return EXIT_OK
 
 
+def cmd_set_gap(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    """Record the gap being researched, with budget limits for hook H3 (§11.4). Research runs one gap at a time."""
+    ctx = runctx.require_active_run(repo, args.run, env)
+    st = ctx.manifest["stages"].get("8")
+    if not st or st["status"] != "running":
+        raise RunError("set-gap is used only while stage 8 (research) is running")
+    gap = None
+    if not args.clear:
+        gap = args.gap
+        labels_p = ctx.run_dir / "status_labels.json"
+        routing = json.loads(labels_p.read_text(encoding="utf-8"))["gap_routing"] if labels_p.exists() else {}
+        if not routing.get(gap, {}).get("research_allowed"):
+            raise RunError(f"{gap} is not approved for research (status_rules.py labels shows research_allowed=false)")
+    cfg = runctx.load_config(repo)
+    res = cfg["research"]
+    doc = {"schema_version": 1, "kind": "active_gap", "run_id": ctx.run_id, "gap_id": gap, "set_at": now_iso(),
+           "limits": {"searches_per_gap": res["searches_per_gap"], "fetches_per_gap": res["fetches_per_gap"],
+                      "findings_per_gap": res["findings_per_gap"], "total_searches_per_run": res["total_searches_per_run"],
+                      "allow_domains": cfg["sources"]["allow_domains"], "deny_domains": cfg["sources"]["deny_domains"]}}
+    schema.check("budget", doc, what="budget/active_gap.json")
+    fsutil.locked_atomic_write_json(ctx.run_dir / "budget/active_gap.json", doc)
+    runctx.record_integrity(ctx.run_dir, "run_state.py", "budget/active_gap.json")
+    _log(ctx, ctx.run_id, "note", "8", message=f"active gap set to {gap}")
+    _out({"ok": True, "gap_id": gap, "limits": doc["limits"]})
+    return EXIT_OK
+
+
 def cmd_log(args, repo: Path, env, argv) -> int:
     ctx = runctx.require_active_run(repo, args.run, env)
     _log(ctx, ctx.run_id, "note", args.stage, message=args.message)
@@ -696,6 +733,7 @@ def build_parser() -> argparse.ArgumentParser:
     act.add_argument("--start", dest="action", action="store_const", const="start")
     act.add_argument("--complete", dest="action", action="store_const", const="complete")
     act.add_argument("--fail", dest="action", action="store_const", const="fail")
+    act.add_argument("--skip", dest="action", action="store_const", const="skip")
     p.add_argument("--reason")
     p.set_defaults(func=cmd_stage)
 
@@ -714,7 +752,13 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("--run", required=True)
         p.set_defaults(func=func)
 
-    for name, phase in (("set-gap", "Phase 3"), ("report", "Phase 5")):
+    p = sub.add_parser("set-gap")
+    p.add_argument("gap", nargs="?")
+    p.add_argument("--run", required=True)
+    p.add_argument("--clear", action="store_true")
+    p.set_defaults(func=cmd_set_gap)
+
+    for name, phase in (("report", "Phase 5"),):
         p = sub.add_parser(name)
         p.add_argument("rest", nargs="*")
         p.add_argument("--run")
@@ -728,8 +772,8 @@ def main(argv: Sequence[str] | None = None, repo: Path | None = None,
     repo = repo or paths.REPO_ROOT
     env = os.environ if env is None else env
     args = build_parser().parse_args(full_argv[1:])
-    if args.command == "stage" and args.action == "fail" and not args.reason:
-        print("stage --fail requires --reason", file=sys.stderr)
+    if args.command == "stage" and args.action in ("fail", "skip") and not args.reason:
+        print(f"stage --{args.action} requires --reason", file=sys.stderr)
         return EXIT_ERROR
     try:
         return args.func(args, repo, env, full_argv)

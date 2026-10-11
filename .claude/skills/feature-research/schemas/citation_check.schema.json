@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/citation_check.schema.json",
+  "title": "citation_check.json, written only by verify_citations.py (§9.7).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "checked_at",
+    "normalisation",
+    "results",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "checked_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "normalisation": {
+      "$ref": "common.schema.json#/$defs/nonempty_string"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "gap_id",
+          "source_id",
+          "passed",
+          "reasons",
+          "detail"
+        ],
+        "properties": {
+          "finding_id": {
+            "$ref": "common.schema.json#/$defs/finding_id"
+          },
+          "gap_id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "source_not_fetched",
+                "source_not_in_fetch_log",
+                "source_hash_mismatch",
+                "source_mode_mismatch",
+                "source_metadata_missing",
+                "snippet_not_found",
+                "invalid_source_reference",
+                "invalid_artifact_relationship"
+              ]
+            }
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checked",
+        "passed",
+        "failed"
+      ],
+      "properties": {
+        "checked": {
+          "type": "integer"
+        },
+        "passed": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

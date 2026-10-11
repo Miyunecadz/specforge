@@ -1,0 +1,1 @@
+Verify the research findings for feature-research run 20261011-120000-abcdef against their saved sources and write verified_findings.json.

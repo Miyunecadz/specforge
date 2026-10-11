@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/budget.schema.json",
+  "title": "budget/fetches-<gap>.json (fetch_source.py), each line of budget/searches.jsonl (hook H3), budget/active_gap.json (run_state.py set-gap).",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "run_id",
+        "gap_id",
+        "limit",
+        "count",
+        "attempts"
+      ],
+      "properties": {
+        "schema_version": {
+          "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "kind": {
+          "const": "fetches"
+        },
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/run_id"
+        },
+        "gap_id": {
+          "$ref": "common.schema.json#/$defs/gap_id"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ts",
+              "url",
+              "outcome",
+              "source_id"
+            ],
+            "properties": {
+              "ts": {
+                "$ref": "common.schema.json#/$defs/timestamp"
+              },
+              "url": {
+                "type": "string"
+              },
+              "outcome": {
+                "enum": [
+                  "fetched",
+                  "unavailable",
+                  "refused"
+                ]
+              },
+              "source_id": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "common.schema.json#/$defs/src_id"
+                  }
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "ts",
+        "run_id",
+        "gap_id",
+        "query",
+        "allowed_domains",
+        "blocked_domains",
+        "agent_id",
+        "prev_hash",
+        "line_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "kind": {
+          "const": "search"
+        },
+        "ts": {
+          "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/run_id"
+        },
+        "gap_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "common.schema.json#/$defs/gap_id"
+            }
+          ]
+        },
+        "query": {
+          "type": "string"
+        },
+        "allowed_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "agent_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prev_hash": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "line_hash": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "run_id",
+        "gap_id",
+        "set_at",
+        "limits"
+      ],
+      "properties": {
+        "schema_version": {
+          "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "kind": {
+          "const": "active_gap"
+        },
+        "run_id": {
+          "$ref": "common.schema.json#/$defs/run_id"
+        },
+        "gap_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "common.schema.json#/$defs/gap_id"
+            }
+          ]
+        },
+        "set_at": {
+          "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "searches_per_gap",
+            "fetches_per_gap",
+            "findings_per_gap",
+            "total_searches_per_run",
+            "allow_domains",
+            "deny_domains"
+          ],
+          "properties": {
+            "searches_per_gap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fetches_per_gap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "findings_per_gap": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "total_searches_per_run": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "allow_domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "deny_domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

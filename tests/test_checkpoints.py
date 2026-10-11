@@ -229,7 +229,7 @@ def test_full_checkpoint_1_and_2_with_special_characters(repo):
     assert labels["items"]["REQ-002"]["label"] == "Explicit"
     assert sorted(g for g, r in labels["gap_routing"].items() if r["research_allowed"]) == ["GAP-002", "GAP-003"]
     assert rs(repo, "verify", "--run", run_id)[0] == 0
-    assert rs(repo, "stage", "8", "--run", run_id, "--start")[0] == 3  # Phase 3
+    assert rs(repo, "stage", "8", "--run", run_id, "--start")[0] == 0  # research is available from Phase 3
 
 
 def test_blocking_question_cannot_be_bypassed(repo):

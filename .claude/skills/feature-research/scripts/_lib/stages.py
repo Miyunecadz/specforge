@@ -43,9 +43,15 @@ STAGES: dict[str, Stage] = {
                {"gaps.json": "gaps", "warnings/gap-analyst.json": "warnings"}, agent="gap-analyst", available=True),
     "7": Stage("7", "Checkpoint 2: approve gaps and routing", "checkpoint", ("checkpoints/checkpoint-2-answers.json",),
                {"checkpoints/checkpoint-2-answers.json": "checkpoint_file"}, available=True),
-    "8": Stage("8", "Research", "agent", ("findings/**",), agent="web-researcher"),
-    "9": Stage("9", "Mechanical citation check", "script", ("citation_check.json",)),
-    "10": Stage("10", "Semantic verification", "agent", ("verified_findings.json",), agent="source-verifier"),
+    "8": Stage("8", "Research", "agent", ("findings/**?", "sources/**?", "fetch_requests/**?", "warnings/web-researcher.json?",
+                                          "warnings/web-researcher-fallback.json?"),
+               {"warnings/web-researcher.json": "warnings", "warnings/web-researcher-fallback.json": "warnings"},
+               agent="web-researcher", available=True),
+    "9": Stage("9", "Mechanical citation check", "script", ("citation_check.json",),
+               {"citation_check.json": "citation_check"}, available=True),
+    "10": Stage("10", "Semantic verification", "agent", ("verified_findings.json", "warnings/source-verifier.json?"),
+                {"verified_findings.json": "verified_findings", "warnings/source-verifier.json": "warnings"},
+                agent="source-verifier", available=True),
     "11": Stage("11", "Feasibility and cross-cutting analysis", "agent", ("feasibility.json",), agent="feasibility-analyst"),
     "12": Stage("12", "Generate customer questions", "agent", ("questions.json",), agent="question-generator"),
     "13": Stage("13", "Checkpoint 3: product decisions", "checkpoint", ()),
@@ -89,6 +95,35 @@ def _transient(p: Path) -> bool:
     return p.name.endswith(".lock") or (p.name.startswith(".") and p.name.endswith(".tmp"))
 
 
+def _registry(run_dir: Path) -> dict:
+    p = run_dir / "status_registry.json"
+    return json.loads(p.read_text(encoding="utf-8"))["items"] if p.exists() else {}
+
+
+def _schema_errors(name: str, path: Path) -> list[str]:
+    from . import schema
+    return schema.errors(name, json.loads(path.read_text(encoding="utf-8")))
+
+
+def research_gaps(run_dir: Path) -> set:
+    p = run_dir / "status_labels.json"
+    if not p.exists():
+        return set()
+    return {g for g, r in json.loads(p.read_text(encoding="utf-8"))["gap_routing"].items() if r["research_allowed"]}
+
+
+def skip_allowed(run_dir: Path, key: str) -> str | None:
+    """Return None if the stage may be skipped, otherwise the reason it may not."""
+    if key == "8":
+        return None if not research_gaps(run_dir) else "gaps are approved for research"
+    if key == "10":
+        pending = [i for i, it in _registry(run_dir).items() if it.get("verification") == "pending"]
+        return None if not pending else "findings are pending semantic verification"
+    if key == "9":
+        return None if not research_gaps(run_dir) and not (run_dir / "findings").exists() else "there are findings to check"
+    return "this stage cannot be skipped"
+
+
 def _registered(run_dir: Path, rel: str) -> bool:
     from . import hashing
     reg = run_dir / "status_registry.json"
@@ -121,6 +156,31 @@ def semantic_checks(run_dir: Path, stage: Stage, manifest: dict) -> list[str]:
             for r in doc["requirements"]:
                 if " ".join(r["source_quote"].split()) not in norm:
                     problems.append(f"{r['id']} source_quote is not an exact quote from input/requirements.md")
+    if stage.key == "8":
+        allowed = research_gaps(run_dir)
+        files = {p.stem for p in (run_dir / "findings").glob("*.json")} if (run_dir / "findings").is_dir() else set()
+        for g in sorted(files - allowed):
+            problems.append(f"findings/{g}.json exists but {g} is not approved for research")
+        for g in sorted(allowed - files):
+            problems.append(f"{g} is approved for research but has no findings/{g}.json (write one, even with no findings)")
+        for g in sorted(files & allowed):
+            schema_errs = _schema_errors("findings", run_dir / f"findings/{g}.json")
+            if schema_errs:
+                problems.append(f"findings/{g}.json: {schema_errs[0]}")
+            elif not _registered(run_dir, f"findings/{g}.json"):
+                problems.append(f"findings/{g}.json (this version) is not registered: run 'status_rules.py register findings/{g}.json'")
+    if stage.key == "9":
+        cc = json.loads((run_dir / "citation_check.json").read_text(encoding="utf-8"))
+        reg = _registry(run_dir)
+        for r in cc["results"]:
+            want = "citation_failed" if not r["passed"] else "pending"
+            got = reg.get(r["finding_id"], {}).get("verification")
+            if not r["passed"] and got != "citation_failed":
+                problems.append(f"{r['finding_id']} failed the citation check but is {got}: run 'status_rules.py verification --from citations'")
+    if stage.key == "10":
+        pending = sorted(i for i, it in _registry(run_dir).items() if it.get("verification") == "pending")
+        if pending:
+            problems.append(f"findings still pending verification: {', '.join(pending)}; run 'status_rules.py verification --from semantic'")
     if stage.key in ("5", "7"):
         if manifest.get("open_checkpoint") != CHECKPOINT_OF_STAGE[stage.key]:
             problems.append("the checkpoint was never opened with run_state.py await-user")

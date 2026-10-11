@@ -17,7 +17,8 @@ for d in sorted(it.glob("eval-*")):
     def a(text, ok, evidence): A.append({"text": text, "passed": bool(ok), "evidence": str(evidence)[:400]})
     tools = sorted({c["tool"] for c in calls if not c["subagent"]})
     a("Orchestrator used only Read, Bash and Agent", set(tools) <= {"Read", "Bash", "Agent"}, tools)
-    a("No hook blocks (no disallowed call attempted)", not blocks, [b["reason"] for b in blocks])
+    if "eval-8" not in d.name:  # eval 8 may hit the search budget (H3 blocks are expected there)
+        a("No hook blocks (no disallowed call attempted)", not blocks, [b["reason"] for b in blocks])
     name = d.name
     single_turn_checkpoint = any(f"eval-{n}-" in name for n in (1, 2, 5, 6))  # Phase 2: these stop at Checkpoint 1
     if single_turn_checkpoint:
@@ -78,6 +79,22 @@ for d in sorted(it.glob("eval-*")):
         lab = rs[0] / "status_labels.json"
         a("Labels derived with research routing", lab.exists() and json.loads(lab.read_text())["gap_routing"], "")
         a("Abort reason says stage 8 not built", "8" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
+    if "eval-8" in name:
+        a("Stages 1-10 completed (or 8-10 legitimately skipped)", all(st.get(k, {}).get("status") in ("completed", "skipped") for k in [str(i) for i in range(1, 11)]), {k: v["status"] for k, v in st.items()})
+        reg = json.loads((rs[0] / "status_registry.json").read_text())["items"] if (rs[0] / "status_registry.json").exists() else {}
+        fnd = {k: v for k, v in reg.items() if k.startswith("F-")}
+        a("Findings registered and none left pending", fnd and all(v["verification"] != "pending" for v in fnd.values()), {k: v["verification"] for k, v in fnd.items()})
+        a("At least one finding kept", any(v["verification"] == "kept" for v in fnd.values()), "")
+        labels = json.loads((rs[0] / "status_labels.json").read_text())["gap_routing"]
+        researched = {p.stem for p in (rs[0] / "findings").glob("*.json")} if (rs[0] / "findings").exists() else set()
+        a("Research only on gaps approved for research", researched and researched <= {g for g, r in labels.items() if r["research_allowed"]}, (researched, labels))
+        log = [json.loads(l) for l in (rs[0] / "fetch_log.jsonl").read_text().splitlines()] if (rs[0] / "fetch_log.jsonl").exists() else []
+        a("Sources fetched via fetch_source.py in fixture mode", log and all(e["mode"] == "fixture" for e in log), len(log))
+        a("Searches answered by H4 and counted by H3", any(e["event"] == "search_stub" for e in ev) and (rs[0] / "budget/searches.jsonl").exists(), "")
+        a("researcher and source-verifier invoked", {"web-researcher", "source-verifier"} <= set(subs), subs)
+        a("No provenance rejections", not [e for e in ev if e["event"] == "provenance_rejection"], "")
+        a("Only budget blocks, if any", all(e["hook"] == "H3" for e in ev if e["event"] == "block"), [(e["hook"], e["reason"][:80]) for e in ev if e["event"] == "block"])
+        a("Abort reason says stage 11 not built", "11" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
     if "eval-3" in name:
         a("No capture attempted", not (rs[0] / "capture").exists(), "")
         a("Report names blocked_address", "blocked_address" in final, final[:200])

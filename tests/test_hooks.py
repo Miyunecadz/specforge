@@ -237,7 +237,8 @@ def test_h5_websearch_only_for_installed_researcher(active):
     assert decide(repo, payload("WebSearch", {"query": "wcag"}))[0] == 2
     assert decide(repo, payload("WebSearch", {"query": "wcag"}, agent="gap-analyst"))[0] == 2
     assert decide(repo, payload("WebSearch", {"query": "wcag"}, agent="web-researcher-fallback"))[0] == 2
-    assert decide(repo, payload("WebSearch", {"query": "wcag"}, agent="web-researcher"))[0] == 0
+    code, msg = decide(repo, payload("WebSearch", {"query": "wcag"}, agent="web-researcher"))
+    assert code == 2 and "H3" in msg and "set-gap" in msg  # H5 lets the researcher through; H3 needs an active gap
 
 
 WORKFLOW = ["mockup-extractor", "requirements-parser", "gap-analyst", "web-researcher", "source-verifier",

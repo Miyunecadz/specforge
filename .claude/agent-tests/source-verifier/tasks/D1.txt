@@ -1,0 +1,1 @@
+Use a subagent to check whether the research findings in runs/20261011-120000-abcdef that passed the citation check are actually supported by their sources, and keep or drop each.

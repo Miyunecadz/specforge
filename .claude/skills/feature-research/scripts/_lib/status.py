@@ -269,6 +269,23 @@ def _set_stale(st: State, item: dict, value: bool, reason: str | None, dec: str 
                              reason if value else old[1]))
 
 
+VERIFICATION_TRANSITIONS = {("pending", "citation_failed"), ("pending", "kept"), ("pending", "dropped")}
+
+
+def set_verification(st: State, item_id: str, value: str, reason: str) -> None:
+    """Only status_rules.py verification calls this, from citation_check.json or verified_findings.json."""
+    item = st.item(item_id)
+    if "verification" not in item:
+        raise StatusError(f"{item_id} is not a finding")
+    old = item["verification"]
+    if old == value:
+        return
+    if (old, value) not in VERIFICATION_TRANSITIONS:
+        raise StatusError(f"{item_id}: verification {old} -> {value} is not allowed")
+    item["verification"] = value
+    st.changes.append(Change(item_id, "verification", old, value, reason))
+
+
 def apply_stale(st: State, item_id: str, stale_reason: str) -> None:
     """Change-impact analysis (§15): approved items stay approved and become stale; others are superseded."""
     item = st.item(item_id)

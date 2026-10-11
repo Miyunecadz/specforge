@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "gap_id": "GAP-002",
+  "findings": [
+    {
+      "id": "F-GAP-002-01",
+      "gap_id": "GAP-002",
+      "claim": "When a modal dialog opens, focus is generally set on the first focusable element inside it.",
+      "source_id": "SRC-aaaa0001",
+      "snippet": "Generally, focus is initially set on the first focusable element.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "standard",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "F-GAP-002-02",
+      "gap_id": "GAP-002",
+      "claim": "When a confirmation dialog opens, focus should move to the dialog's heading.",
+      "source_id": "SRC-bbbb0002",
+      "snippet": "When a confirmation dialog opens, move focus to the dialog's heading so screen reader users hear its purpose first.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "design_system",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    }
+  ],
+  "unanswered_questions": [],
+  "disagreements": [],
+  "proposed_status_changes": []
+}

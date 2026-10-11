@@ -7,11 +7,11 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 2.** Stages 1–7 work: intake (with prior decisions), mockup capture
-> (HTML, images, Figma), inventory extraction, requirements parsing, Checkpoint 1, gap
-> analysis and Checkpoint 2, with the status registry, decision provenance, `--resume` and
-> `--abort`. When a run reaches Stage 8 the orchestrator aborts it with the reason "stages
-> 8–16 are not built yet", so the session is released. Research and
+> **Build status: Phase 3.** Stages 1–10 work: intake, capture (HTML, images, Figma),
+> inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within budget, the
+> mechanical citation check and semantic verification, with the status registry, decision
+> provenance, `--resume` and `--abort`. When a run reaches Stage 11 the orchestrator aborts it
+> with the reason "stages 11–16 are not built yet", so the session is released. and
 > citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
 > (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
 > exists now.
@@ -32,7 +32,10 @@ silently making product decisions.
   ├─ Stage 4  requirements-parser subagent        → requirements.json (registered)
   ├─ Stage 5  Checkpoint 1 (you answer)           → decisions.json via status_rules.py decide
   ├─ Stage 6  gap-analyst subagent                → gaps.json (registered)
-  └─ Stage 7  Checkpoint 2 (you answer)           → decisions.json, status_labels.json
+  ├─ Stage 7  Checkpoint 2 (you answer)           → decisions.json, status_labels.json
+  ├─ Stage 8  web-researcher, one gap at a time   → findings/<gap>.json, sources/ (fetch_source.py)
+  ├─ Stage 9  verify_citations.py                 → citation_check.json
+  └─ Stage 10 source-verifier                     → verified_findings.json (kept / dropped)
 ```
 
 - **Scripts** do everything deterministic: run state, URL validation, capture, schema
@@ -156,6 +159,35 @@ label (Explicit, Decided: DEC-…, Approved: DEC-…, Inferred, Assumption, Stal
 Rejected, Deferred, …), its placement, and which approved gaps may be researched, into
 `status_labels.json`.
 
+## Research, citations and verification
+
+- **Only approved gaps are researched**: a gap must be approved at Checkpoint 2 and routed to
+  `research` or `both` (`status_rules.py labels` → `research_allowed`). Gaps are researched one
+  at a time; `run_state.py set-gap` records the active gap and its budget.
+- **Searches** (WebSearch, researcher only) are counted by hook H3 in `budget/searches.jsonl`:
+  at most `searches_per_gap` per gap and `total_searches_per_run` per run. H3 also applies the
+  config domain lists to each search (it rewrites `allowed_domains`/`blocked_domains`), blocks
+  queries that target a denied domain, and pins the search mode to `standard` to bound cost.
+- **Sources** enter a run only through `fetch_source.py --run <id> --gap <gap> '<url>'`
+  (H1 lets the researcher run exactly that, nothing else). It refuses unapproved gaps and URLs
+  failing the SSRF checks or the domain lists (also checked on every redirect), respects
+  robots.txt, enforces `fetches_per_gap` in `budget/fetches-<gap>.json`, extracts text with
+  trafilatura (Playwright only for pages with no static text, every request re-validated),
+  and records every attempt in the hash-chained `fetch_log.jsonl`. Saved text and metadata go
+  to `sources/SRC-<8 hex>.txt` / `.metadata.json`; unavailable sources are recorded and never
+  cited.
+- **Mechanical citation check** (`verify_citations.py`, code only): each finding's source must be
+  in `fetch_log.jsonl` with a matching content hash and run mode, have metadata, be available,
+  and contain the snippet after normalising only whitespace, quote characters and case.
+  Failures are marked `citation_failed` and can only appear under Sources › Limitations.
+- **Semantic verification** (source-verifier, Opus): every finding that passed is kept or
+  dropped against the saved text, with reasons (overstated, missing context, not relevant,
+  recommendation adds unsupported specifics, …). Only `status_rules.py verification` sets
+  `kept`/`dropped`; no decision can approve a finding that is not kept, and research-supported
+  never means approved.
+- **Inspecting**: `fetch_log.jsonl` (every fetch), `sources/` (exact text the snippets come from),
+  `citation_check.json` (per-finding reasons), `verified_findings.json` (keep/drop reasons).
+
 ## Run directory
 
 Normal runs live in `runs/`; fixture-mode runs live in `evals/runs/`. Both are gitignored
@@ -174,6 +206,11 @@ runs/
     inventory.json      mockup-extractor
     requirements.json   requirements-parser
     gaps.json           gap-analyst
+    findings/<gap>.json web-researcher; fetch_requests/ in fallback mode
+    sources/            SRC-<hash>.txt + .metadata.json (fetch_source.py); fetch_log.jsonl
+    budget/             fetches-<gap>.json (fetch_source.py), searches.jsonl (hook H3), active_gap.json
+    citation_check.json verify_citations.py
+    verified_findings.json  source-verifier
     checkpoints/        checkpoint-<N>-answers.json, every decide round (status_rules.py)
     decisions.json      DECs (status_rules.py)
     status_registry.json, status_history.jsonl, status_labels.json   (status_rules.py)
@@ -201,7 +238,7 @@ guarded session could rewrite a file and its recorded hash together.
 ## Hooks
 
 Registered in `.claude/settings.json`. They run under the system `python3` (stdlib only).
-A single PreToolUse dispatcher (`.claude/hooks/guard.py`) runs H5 → H1 → H2 in that order,
+A single PreToolUse dispatcher (`.claude/hooks/guard.py`) runs H5 → H1 → H2 → H3 → H4 in that order,
 because separately registered hooks run in parallel.
 
 | Hook | What it does during a run (owning session only) |
@@ -210,7 +247,8 @@ because separately registered hooks run in parallel.
 | **H2** Write guard | Blocks Write/Edit everywhere outside the active run directory. Blocks script- and hook-owned files for everyone, and blocks all orchestrator writes in the run directory. Each subagent may write only the files it owns. Symlinks and relative paths are resolved first. |
 | **H5** Tool guard | Blocks Skill, WebFetch and every `mcp__*` tool. WebSearch is allowed only for the installed researcher. The Agent tool is allowed only for the nine workflow agents. Any other tool not on the run allow-list (for example Monitor, Workflow, CronCreate, AskUserQuestion) is also blocked. |
 | Recorder | SubagentStart: records each subagent invocation in `.hook_events.jsonl`. |
-| H3, H4 | Search budget and eval search stub, Phase 3. |
+| **H3** Search budget | Counts each WebSearch against the active gap and the run, blocks over budget, applies the domain lists, pins mode `standard`. |
+| **H4** Eval search stub | Fixture mode only, after H3: answers the search with the case's recorded results (in the block message), so stubbed searches are counted like live ones. |
 
 The active run is bound to the Claude Code session that started it: hooks compare the
 payload `session_id` with `.active_run`. With no active run, or in another session, the
@@ -282,7 +320,9 @@ process, and the directory must resolve inside `evals/fixtures/`. Config keys, s
 arguments and in-session env prefixes (blocked by H1) cannot enable it. Scripts refuse to
 run when `.active_run`, the manifest and the environment disagree about the mode.
 
-Fixture runs use `evals/runs/`, read fixture files only, and serve fixture pages to the
+Fixture runs use `evals/runs/`, read fixture files only, fetch sources only through
+`evals/cases/<fixture-dir-name>/sources.json` (URL → file under `evals/fixtures/`, or
+`unavailable`), get recorded search results from the same file through H4, and serve fixture pages to the
 browser from the reserved origin `http://fixture.invalid/`. Every other request is aborted,
 so nothing reaches the network. Fixture-mode output is always publication status
 `eval_only`.

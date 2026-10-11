@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "source_id": "SRC-cccc0003",
+  "run_id": "20261011-120000-abcdef",
+  "original_url": "https://blog.example.com/award-confirmations",
+  "final_url": "https://blog.example.com/award-confirmations",
+  "title": "Award confirmations",
+  "fetched_at": "2026-10-11T10:00:00.000Z",
+  "publication_date": null,
+  "http_status": 200,
+  "content_type": "text/html",
+  "source_type": "other",
+  "content_sha256": "25b25fcc42a985ec3fbee46196992ef9a56b916a72011d8a13aa562aee50875a",
+  "available": true,
+  "extraction": "trafilatura",
+  "mode": "normal",
+  "fixture_dir": null,
+  "gap_ids": [
+    "GAP-002"
+  ],
+  "warnings": []
+}

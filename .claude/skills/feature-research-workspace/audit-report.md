@@ -51,3 +51,15 @@ user answers → DECs with exact verbatim, Checkpoint 2, abort at Stage 8 (eval 
 blocking question unanswered → re-asked, not bypassed (iterations 7–8) PASS; `--resume <id>` at an open
 checkpoint → re-present with recorded rounds (resume row; unit tests) PASS.
 feature-research-subagent-rules: unchanged.
+
+## Phase 3 re-audit (§21.1): feature-research APPROVED
+
+Changed: stages 8–10 available; references stage-08..10 (sequential research with set-gap, both researcher
+variants, budgets enforced by H3 and fetch_source.py, citation check, semantic verification, stage skips);
+build label Phase 3. check_skill.py: 0 FAIL; WARNs are library modules and agents-src files (accepted).
+Consistency checked against fetch_source.py (command form, refusals), verify_citations.py (exit 1 is a result),
+status_rules.py (register findings, verification --from), run_state.py (set-gap, --skip), H1 (exact fetch
+form for web-researcher), H3/H4. Test prompts: research path (e2e eval 8, 16/16: 2 approved gaps researched,
+4 searches stubbed by H4 and counted by H3, 3 fetches, 7/7 citations passed, 6 kept / 1 dropped) PASS;
+no approved research gaps → stages 8–10 skipped (stage-08/09/10 skip rules; unit test) PASS; earlier prompts
+unchanged in behaviour (evals 1–6 iteration 12). Eval 7 superseded by eval 8 (recorded in evals.json).

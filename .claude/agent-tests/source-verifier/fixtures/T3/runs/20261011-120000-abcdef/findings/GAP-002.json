@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "gap_id": "GAP-002",
+  "findings": [
+    {
+      "id": "F-GAP-002-01",
+      "gap_id": "GAP-002",
+      "claim": "Award confirmation dialogs list the supplier name and package value.",
+      "source_id": "SRC-cccc0003",
+      "snippet": "Confirmation dialogs list the supplier name and package value before the user confirms.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "other",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "F-GAP-002-02",
+      "gap_id": "GAP-002",
+      "claim": "Award confirmations are legally required to show the package value.",
+      "source_id": "SRC-cccc0003",
+      "snippet": "Confirmation dialogs list the supplier name and package value before the user confirms.",
+      "how_source_supports": "Quoted guidance.",
+      "recommendation": null,
+      "source_type": "other",
+      "publication_date": null,
+      "confidence": {
+        "level": "high",
+        "explanation": "Primary source."
+      },
+      "limitations": [],
+      "needs_confirmation": false,
+      "provenance": "research_evidence",
+      "kind": "finding"
+    }
+  ],
+  "unanswered_questions": [],
+  "disagreements": [],
+  "proposed_status_changes": []
+}

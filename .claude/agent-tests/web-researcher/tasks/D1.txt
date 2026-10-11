@@ -1,0 +1,1 @@
+Use a subagent to research gap GAP-002 (focus handling in modal dialogs) for feature-research run 20261011-120000-abcdef and write its findings.

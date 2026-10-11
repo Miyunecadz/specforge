@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/checkpoint_file.schema.json",
+  "title": "checkpoints/checkpoint-<N>-answers.json, written only by status_rules.py decide (one entry per decide round).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "checkpoint",
+    "rounds"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "checkpoint": {
+      "enum": [
+        "1",
+        "2",
+        "3",
+        "13R"
+      ]
+    },
+    "rounds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "at",
+          "source",
+          "answers",
+          "decision_ids"
+        ],
+        "properties": {
+          "at": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+          },
+          "source": {
+            "enum": [
+              "user",
+              "eval_case_file"
+            ]
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "checkpoint_answers.schema.json#/$defs/answer"
+            }
+          },
+          "decision_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/dec_id"
+            }
+          }
+        }
+      }
+    }
+  }
+}

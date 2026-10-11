@@ -81,7 +81,7 @@ Every Bash call is exactly one script invocation:
 | Form | Action |
 |---|---|
 | `<mockup-url> <requirements>` | New run. Read `references/stage-01.md` before running any command, then follow it. `<requirements>` is a file path if it names an existing file; otherwise it is the requirements text itself (everything after the URL). |
-| `--resume <run-id>` | Resume (implemented in Phase 2; until then, say so and stop). |
+| `--resume <run-id>` | `run_state.py resume --run <run-id>`. If it refuses, report why (another session may still own the run: offer `--abort`). If `open_checkpoint` is set and the status is `awaiting_user`, Read that checkpoint's reference and its `checkpoints/checkpoint-<N>-answers.json` (rounds already recorded), present the checkpoint again with those answers, and end your turn. Otherwise continue the stage loop from `next_stage`. |
 | `--abort <run-id>` | `run_state.py abort --run <run-id> --reason '<reason the user gave, or "aborted by user">'`, report the result, stop. |
 | `--non-interactive ...` | Evals only. Pass it to `run_state.py start`, which refuses it unless eval fixture mode is active. Never try to enable fixture mode yourself. |
 
@@ -98,10 +98,10 @@ Stages run in this order. Each has the reference file named in the table (for ex
 | 1 | Intake | `run_state.py start`, `check_url.py` | `stage-01.md` | available |
 | 2 | Capture mockup | `capture_mockup.py` | `stage-02.md` | available (HTML, image, Figma) |
 | 3 | Extract inventory | `mockup-extractor` | `stage-03.md` | available |
-| 4 | Parse requirements | `requirements-parser` | `stage-04.md` | Phase 2 |
-| 5 | Checkpoint 1: confirm requirements | you + `status_rules.py decide` | `stage-05.md` | Phase 2 |
-| 6 | Analyse gaps | `gap-analyst` | `stage-06.md` | Phase 2 |
-| 7 | Checkpoint 2: approve gaps and routing | you + `status_rules.py decide` | `stage-07.md` | Phase 2 |
+| 4 | Parse requirements | `requirements-parser` | `stage-04.md` | available |
+| 5 | Checkpoint 1: confirm requirements | you + `status_rules.py decide` | `stage-05.md` | available |
+| 6 | Analyse gaps | `gap-analyst` | `stage-06.md` | available |
+| 7 | Checkpoint 2: approve gaps and routing | you + `status_rules.py decide` | `stage-07.md` | available |
 | 8 | Research | researcher + `fetch_source.py` | `stage-08.md` | Phase 3 |
 | 9 | Mechanical citation check | `verify_citations.py` | `stage-09.md` | Phase 3 |
 | 10 | Semantic verification | `source-verifier` | `stage-10.md` | Phase 3 |
@@ -122,8 +122,9 @@ itself, so skip steps 1 and 2 there):
 3. Read the stage's reference file and do what it says, giving scripts and subagents only the
    inputs it lists.
 4. Validate the output with `validate.py <schema> <file>` where the reference names one.
-   If it is invalid, give the same subagent the exact validation errors and ask for a
-   corrected file **once**. If it fails again, stop dependent stages.
+   If it is invalid, start the same agent type again with a **new Agent call** (SendMessage
+   is blocked during a run), giving it the original prompt plus the exact validation errors,
+   and ask for a corrected file **once**. If it fails again, stop dependent stages.
 5. Where the reference says so, run `status_rules.py register <artifact>` (Phase 2 onward).
 6. `run_state.py stage <N> --run <run-id> --complete`. This re-validates, checks that agent
    outputs came from the right subagent, and records hashes. If it fails, read its `errors`;
@@ -134,7 +135,7 @@ itself, so skip steps 1 and 2 there):
 Never continue downstream on invalid, incomplete or tampered artifacts.
 
 **When you reach a stage this build does not implement yet**, do not improvise it. Run
-`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 1b)'`
+`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 2)'`
 so the session is released, then give the stage report described below and stop.
 
 ## Subagents
@@ -158,8 +159,10 @@ invocation, and H2 blocks your writes.
    another session for other work, or `/feature-research --abort <run-id>`."
 2. When the user replies, run `run_state.py continue --run <run-id>`, then
    `status_rules.py decide --run <run-id> --checkpoint <N> --answers-b64 <base64>` with the
-   user's answers as base64-encoded UTF-8 JSON, each answer carrying its **verbatim text**
-   copied exactly from the user's message plus your interpretation.
+   user's answers as base64-encoded UTF-8 JSON (format in the checkpoint's reference), each
+   answer carrying its **verbatim text** copied exactly from the user's message plus your
+   interpretation. If an answer contradicts an earlier decision or is unclear, do not
+   decide: ask the user to clarify (run `await-user` again and end your turn).
 3. H1 checks that every verbatim answer appears in a message the user typed after the
    checkpoint. If it blocks the command, do not rephrase or retry with altered text: show
    the user what was rejected and ask them to answer again.
@@ -195,13 +198,16 @@ User types:
 ```
 
 You read the setup file and `references/stage-01.md`, start the run, check the URL, run
-Stages 2 and 3, reach Stage 4 (not built in this build), abort with the "not built yet"
-reason, and report:
+Stages 2–4, then open Checkpoint 1 and present it:
 
 ```
-Run 20261011-062709-0ceeae, fixture mode, eval_only; artifacts kept in its run directory.
-Stage 1 intake: completed; requirements preserved exactly; mockup.png checked as image.
-Stage 2 capture: complete (image); limitation: "A static image is not an interactive prototype ..."
-Stage 3 inventory: completed; 1 screen, 3 components, 0 flows, 0 entities, 2 ambiguous behaviours.
-Stopped at Stage 4: stages 4-16 are not built yet (Phase 1b). Run aborted; artifacts preserved.
+Checkpoint 1: confirm requirements (run 20261011-062709-0ceeae)
+| ID | Requirement (customer's words) | Priority | Type |
+| REQ-001 | Package managers award a supplier package to exactly one supplier. | unspecified | functional |
+Questions: CQ-001 (blocking) Who counts as a package manager? It decides who may award.
+Answer by ID, e.g. "CQ-001: only the Procurement team". Blocking questions cannot be skipped.
+This session is dedicated to run 20261011-062709-0ceeae while it is open ...
 ```
+
+and end your turn. After the user answers, you record the answers with `decide`, then
+continue to Stages 6 and 7.

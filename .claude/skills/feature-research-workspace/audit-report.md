@@ -37,3 +37,17 @@ _lib/figma.py. Test prompts: Figma URL without a token → check_url auth_requir
 aborted with setup instructions (stage-01.md step 4/7) PASS; Figma recording in fixture mode → stages 1–3
 (e2e eval 6, 11/11) PASS; earlier prompts re-run in iteration 6, all PASS (57/57).
 feature-research-subagent-rules: unchanged, no re-audit required.
+
+## Phase 2 re-audit (§21.1): feature-research APPROVED
+
+Changed: stages 4–7 available; `--resume` row; checkpoint protocol (clarify instead of deciding on
+contradictory answers); retry is a new Agent call (SendMessage is blocked by H5); Example shows Checkpoint 1;
+new references stage-04..07; stage-01 records prior decisions. check_skill.py: 0 FAIL, 17 accepted WARNs
+(library modules and three agents-src files consumed by install_agents.py). Checklist all PASS; consistency
+checked against status_rules.py (decide flags, actions), run_state.py (await-user/continue/resume),
+stages.py (blocking questions, registration checks) and hooks (H1 provenance, H5 SendMessage).
+Test prompts: `/feature-research <url> '<reqs>'` → Checkpoint 1 presented, turn ended (e2e eval 7) PASS;
+user answers → DECs with exact verbatim, Checkpoint 2, abort at Stage 8 (eval 7, 14/14) PASS;
+blocking question unanswered → re-asked, not bypassed (iterations 7–8) PASS; `--resume <id>` at an open
+checkpoint → re-present with recorded rounds (resume row; unit tests) PASS.
+feature-research-subagent-rules: unchanged.

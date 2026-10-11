@@ -1,0 +1,5 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Read: runs/20261011-120000-abcdef/input/requirements.md (and runs/20261011-120000-abcdef/decisions.json if it exists).
+Write: runs/20261011-120000-abcdef/requirements.json (schema: requirements). Set run_id to 20261011-120000-abcdef.
+Warnings, if any: runs/20261011-120000-abcdef/warnings/requirements-parser.json (schema: warnings).

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/status_registry.schema.json",
+  "title": "status_registry.json (§6). Written only by status_rules.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "items",
+    "registered_artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "items": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "provenance",
+          "source_artifact",
+          "approval",
+          "issues",
+          "decision_ids",
+          "stale",
+          "stale_reason"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/tracked_item_id"
+          },
+          "kind": {
+            "$ref": "common.schema.json#/$defs/kind"
+          },
+          "provenance": {
+            "$ref": "common.schema.json#/$defs/provenance"
+          },
+          "source_artifact": {
+            "type": "string"
+          },
+          "approval": {
+            "$ref": "common.schema.json#/$defs/approval"
+          },
+          "issues": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/issue"
+            }
+          },
+          "decision_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/dec_id"
+            }
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "stale_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verification": {
+            "$ref": "common.schema.json#/$defs/verification"
+          },
+          "superseded_by": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/tracked_item_id"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "registered_artifacts": {
+      "type": "object",
+      "description": "artifact -> sha256 of the version last registered",
+      "additionalProperties": {
+        "$ref": "common.schema.json#/$defs/sha256"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "provenance",
+        "source_artifact",
+        "approval",
+        "issues",
+        "decision_ids",
+        "stale",
+        "stale_reason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/tracked_item_id"
+        },
+        "kind": {
+          "$ref": "common.schema.json#/$defs/kind"
+        },
+        "provenance": {
+          "$ref": "common.schema.json#/$defs/provenance"
+        },
+        "source_artifact": {
+          "type": "string"
+        },
+        "approval": {
+          "$ref": "common.schema.json#/$defs/approval"
+        },
+        "issues": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/issue"
+          }
+        },
+        "decision_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/dec_id"
+          }
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "stale_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verification": {
+          "$ref": "common.schema.json#/$defs/verification"
+        },
+        "superseded_by": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "common.schema.json#/$defs/tracked_item_id"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

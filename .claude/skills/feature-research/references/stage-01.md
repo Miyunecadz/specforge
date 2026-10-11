@@ -43,8 +43,9 @@ captured. Performed by `run_state.py start` and `check_url.py`. §4, §7 Stage 1
 
    Whatever the status, continue with steps 5 and 6 before stopping: the inputs were
    preserved, so Stage 1 itself is complete even when the mockup cannot be captured.
-5. **Prior decisions.** In this build they are preserved in `input/prior_decisions.json` but
-   not yet registered (registration with `status_rules.py decide` arrives in Phase 2). Say so.
+5. **Prior decisions.** If the user supplied a decisions file, record it now:
+   `<python> <skill_dir>/scripts/status_rules.py decide --run <run-id> --prior`. Each prior
+   decision becomes a DEC with source `prior_decisions_file`; later agents read them.
 6. **Complete (always):** `run_state.py stage 1 --run <run-id> --complete`.
 7. Only now, if `check_url.py` did not return `ok`, do not start Stage 2. Run
    `run_state.py abort --run <run-id> --reason 'mockup cannot be captured: <reason>'`, report,

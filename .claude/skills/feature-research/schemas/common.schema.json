@@ -1,55 +1,141 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://feature-research.local/schemas/common.schema.json",
-  "title": "Shared definitions (BUILD_SPEC §5, §6)",
+  "title": "Shared definitions (BUILD_SPEC \u00a75, \u00a76)",
   "description": "The single definition of the status vocabulary, ID patterns and shared shapes. Every other schema references these.",
   "$defs": {
-    "schema_version": { "type": "integer", "const": 1 },
-    "timestamp": { "type": "string", "format": "date-time" },
-    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "nonempty_string": { "type": "string", "minLength": 1 },
-    "run_id": { "type": "string", "pattern": "^[0-9]{8}-[0-9]{6}-[0-9a-f]{6}$" },
-    "run_mode": { "enum": ["normal", "fixture"] },
-    "session_id": { "type": ["string", "null"], "minLength": 1 },
-    "agent_name": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$" },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonempty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9]{8}-[0-9]{6}-[0-9a-f]{6}$"
+    },
+    "run_mode": {
+      "enum": [
+        "normal",
+        "fixture"
+      ]
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "agent_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,63}$"
+    },
     "rel_path": {
       "type": "string",
       "minLength": 1,
       "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+$",
       "description": "Path relative to the run directory; no absolute paths, no '..' segments."
     },
-
-    "req_id": { "type": "string", "pattern": "^REQ-[0-9]{3,}$" },
-    "scr_id": { "type": "string", "pattern": "^SCR-[0-9]{3,}$" },
-    "gap_id": { "type": "string", "pattern": "^GAP-[0-9]{3,}$" },
-    "finding_id": { "type": "string", "pattern": "^F-GAP-[0-9]{3,}-[0-9]{2,}$" },
-    "src_id": { "type": "string", "pattern": "^SRC-[0-9a-f]{8}$" },
-    "fea_id": { "type": "string", "pattern": "^FEA-[0-9]{3,}$" },
-    "q_id": { "type": "string", "pattern": "^Q-[0-9]{3,}$" },
-    "dec_id": { "type": "string", "pattern": "^DEC-[0-9]{3,}$" },
-    "asm_id": { "type": "string", "pattern": "^ASM-[PGFW]-[0-9]{3,}$" },
-    "page_id": { "type": "string", "pattern": "^PAGE-[0-9]{3,}$" },
-    "frame_id": { "type": "string", "pattern": "^FRAME-[0-9]{3,}$" },
-    "asset_id": { "type": "string", "pattern": "^ASSET-[0-9]{3,}$" },
+    "req_id": {
+      "type": "string",
+      "pattern": "^REQ-[0-9]{3,}$"
+    },
+    "scr_id": {
+      "type": "string",
+      "pattern": "^SCR-[0-9]{3,}$"
+    },
+    "gap_id": {
+      "type": "string",
+      "pattern": "^GAP-[0-9]{3,}$"
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^F-GAP-[0-9]{3,}-[0-9]{2,}$"
+    },
+    "src_id": {
+      "type": "string",
+      "pattern": "^SRC-[0-9a-f]{8}$"
+    },
+    "fea_id": {
+      "type": "string",
+      "pattern": "^FEA-[0-9]{3,}$"
+    },
+    "q_id": {
+      "type": "string",
+      "pattern": "^Q-[0-9]{3,}$"
+    },
+    "dec_id": {
+      "type": "string",
+      "pattern": "^DEC-[0-9]{3,}$"
+    },
+    "asm_id": {
+      "type": "string",
+      "pattern": "^ASM-[PGFW]-[0-9]{3,}$"
+    },
+    "page_id": {
+      "type": "string",
+      "pattern": "^PAGE-[0-9]{3,}$"
+    },
+    "frame_id": {
+      "type": "string",
+      "pattern": "^FRAME-[0-9]{3,}$"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^ASSET-[0-9]{3,}$"
+    },
     "tracked_item_id": {
       "anyOf": [
-        { "$ref": "#/$defs/req_id" },
-        { "$ref": "#/$defs/gap_id" },
-        { "$ref": "#/$defs/finding_id" },
-        { "$ref": "#/$defs/fea_id" },
-        { "$ref": "#/$defs/asm_id" }
+        {
+          "$ref": "#/$defs/req_id"
+        },
+        {
+          "$ref": "#/$defs/gap_id"
+        },
+        {
+          "$ref": "#/$defs/finding_id"
+        },
+        {
+          "$ref": "#/$defs/fea_id"
+        },
+        {
+          "$ref": "#/$defs/asm_id"
+        }
       ]
     },
     "any_item_id": {
       "anyOf": [
-        { "$ref": "#/$defs/tracked_item_id" },
-        { "$ref": "#/$defs/scr_id" },
-        { "$ref": "#/$defs/src_id" },
-        { "$ref": "#/$defs/q_id" },
-        { "$ref": "#/$defs/dec_id" }
+        {
+          "$ref": "#/$defs/tracked_item_id"
+        },
+        {
+          "$ref": "#/$defs/scr_id"
+        },
+        {
+          "$ref": "#/$defs/src_id"
+        },
+        {
+          "$ref": "#/$defs/q_id"
+        },
+        {
+          "$ref": "#/$defs/dec_id"
+        },
+        {
+          "$ref": "#/$defs/cq_id"
+        }
       ]
     },
-
     "provenance": {
       "enum": [
         "customer_requirement",
@@ -60,75 +146,181 @@
         "user_decision"
       ]
     },
-    "kind": { "enum": ["requirement", "recommendation", "finding", "gap", "assumption", "observation"] },
-    "approval": {
-      "enum": ["not_reviewed", "awaiting_user_input", "approved", "rejected", "deferred", "superseded"]
+    "kind": {
+      "enum": [
+        "requirement",
+        "recommendation",
+        "finding",
+        "gap",
+        "assumption",
+        "observation"
+      ]
     },
-    "verification": { "enum": ["pending", "kept", "dropped", "citation_failed"] },
-    "issue": { "enum": ["conflicting", "unknown"] },
+    "approval": {
+      "enum": [
+        "not_reviewed",
+        "awaiting_user_input",
+        "approved",
+        "rejected",
+        "deferred",
+        "superseded"
+      ]
+    },
+    "verification": {
+      "enum": [
+        "pending",
+        "kept",
+        "dropped",
+        "citation_failed"
+      ]
+    },
+    "issue": {
+      "enum": [
+        "conflicting",
+        "unknown"
+      ]
+    },
     "confidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["level", "explanation"],
+      "required": [
+        "level",
+        "explanation"
+      ],
       "properties": {
-        "level": { "enum": ["high", "medium", "low"] },
-        "explanation": { "$ref": "#/$defs/nonempty_string" },
-        "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/evidence_ref" } }
+        "level": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "explanation": {
+          "$ref": "#/$defs/nonempty_string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_ref"
+          }
+        }
       }
     },
-
     "evidence_ref": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["artifact", "locator"],
+      "required": [
+        "artifact",
+        "locator"
+      ],
       "properties": {
-        "artifact": { "$ref": "#/$defs/rel_path" },
+        "artifact": {
+          "$ref": "#/$defs/rel_path"
+        },
         "locator": {
           "$ref": "#/$defs/nonempty_string",
           "description": "Where inside the artifact: a page/frame/node id, a screenshot region, a line or character range, or a quoted label."
         },
-        "note": { "type": "string" }
+        "note": {
+          "type": "string"
+        }
       }
     },
-
     "proposed_status_change": {
       "description": "Agents propose; only status_rules.py applies. Agents can never propose approval, verification or stale changes.",
       "oneOf": [
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "item_id", "issue", "reason"],
+          "required": [
+            "type",
+            "item_id",
+            "issue",
+            "reason"
+          ],
           "properties": {
-            "type": { "const": "add_issue" },
-            "item_id": { "$ref": "#/$defs/tracked_item_id" },
-            "issue": { "$ref": "#/$defs/issue" },
-            "reason": { "$ref": "#/$defs/nonempty_string" },
-            "related_ids": { "type": "array", "items": { "$ref": "#/$defs/any_item_id" } }
+            "type": {
+              "const": "add_issue"
+            },
+            "item_id": {
+              "$ref": "#/$defs/tracked_item_id"
+            },
+            "issue": {
+              "$ref": "#/$defs/issue"
+            },
+            "reason": {
+              "$ref": "#/$defs/nonempty_string"
+            },
+            "related_ids": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/any_item_id"
+              }
+            }
           }
         },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["type", "item_id", "reason"],
+          "required": [
+            "type",
+            "item_id",
+            "reason"
+          ],
           "properties": {
-            "type": { "const": "request_user_input" },
-            "item_id": { "$ref": "#/$defs/tracked_item_id" },
-            "reason": { "$ref": "#/$defs/nonempty_string" }
+            "type": {
+              "const": "request_user_input"
+            },
+            "item_id": {
+              "$ref": "#/$defs/tracked_item_id"
+            },
+            "reason": {
+              "$ref": "#/$defs/nonempty_string"
+            }
           }
         }
       ]
     },
-
     "no_status_fields": {
-      "description": "Content artifacts hold content and provenance only (§5, Artifact rules).",
+      "description": "Content artifacts hold content and provenance only (\u00a75, Artifact rules).",
       "not": {
         "anyOf": [
-          { "required": ["approval"] },
-          { "required": ["issues"] },
-          { "required": ["verification"] },
-          { "required": ["stale"] }
+          {
+            "required": [
+              "approval"
+            ]
+          },
+          {
+            "required": [
+              "issues"
+            ]
+          },
+          {
+            "required": [
+              "verification"
+            ]
+          },
+          {
+            "required": [
+              "stale"
+            ]
+          }
         ]
       }
+    },
+    "cq_id": {
+      "type": "string",
+      "pattern": "^CQ-[0-9]{3,}$",
+      "description": "Clarifying question raised by the requirements-parser (Phase 2 addition)."
+    },
+    "checkpoint": {
+      "enum": [
+        "prior",
+        "1",
+        "2",
+        "3",
+        "13R"
+      ]
     }
   }
 }

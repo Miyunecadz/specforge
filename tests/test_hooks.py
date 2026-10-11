@@ -148,13 +148,6 @@ def test_h1_web_researcher_bash_blocked_in_fallback_mode(active):
     assert decide(repo, bash(repo, ok, agent="web-researcher"))[0] == 2
 
 
-def test_h1_decide_fails_closed_until_phase2(active):
-    repo, run_id = active
-    cmd = f"{PY} {script(repo, 'status_rules')} decide --checkpoint 1 --answers-b64 e30="
-    code, msg = decide(repo, bash(repo, cmd))
-    assert code == 2 and "Phase 2" in msg
-
-
 def test_h1_without_setup_blocks_bash(active):
     repo, run_id = active
     (repo / ".claude/feature-research.local.json").unlink()

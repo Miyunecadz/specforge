@@ -1,0 +1,371 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/checkpoint_answers.schema.json",
+  "title": "Answers passed to status_rules.py decide (base64) and the checkpoints/checkpoint-<N>-answers.json it writes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "checkpoint",
+    "source",
+    "answers"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "checkpoint": {
+      "enum": [
+        "1",
+        "2",
+        "3",
+        "13R"
+      ]
+    },
+    "source": {
+      "enum": [
+        "user",
+        "eval_case_file"
+      ]
+    },
+    "answers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "verbatim",
+          "interpretation",
+          "presented",
+          "affected_ids",
+          "actions"
+        ],
+        "properties": {
+          "verbatim": {
+            "$ref": "common.schema.json#/$defs/nonempty_string",
+            "description": "The user's words, copied exactly from their message (checked by H1)."
+          },
+          "interpretation": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "presented": {
+            "$ref": "common.schema.json#/$defs/nonempty_string",
+            "description": "The question or item shown to the user that this answers."
+          },
+          "question_ids": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "common.schema.json#/$defs/cq_id"
+                },
+                {
+                  "$ref": "common.schema.json#/$defs/q_id"
+                }
+              ]
+            }
+          },
+          "affected_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/any_item_id"
+            }
+          },
+          "supersedes": {
+            "$ref": "common.schema.json#/$defs/dec_id"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "defer",
+                    "reopen",
+                    "supersede",
+                    "reconfirm",
+                    "leave_open",
+                    "clear_issue",
+                    "create_requirement",
+                    "create_gap",
+                    "set_priority",
+                    "set_resolution_path",
+                    "set_research_questions"
+                  ]
+                },
+                "item_id": {
+                  "$ref": "common.schema.json#/$defs/tracked_item_id"
+                },
+                "issue": {
+                  "$ref": "common.schema.json#/$defs/issue"
+                },
+                "statement": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "req_type": {
+                  "enum": [
+                    "functional",
+                    "non_functional",
+                    "constraint",
+                    "preference"
+                  ]
+                },
+                "priority": {
+                  "enum": [
+                    "must",
+                    "should",
+                    "could",
+                    "unspecified",
+                    "critical",
+                    "important",
+                    "optional"
+                  ]
+                },
+                "title": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "description": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "resolution_path": {
+                  "enum": [
+                    "research",
+                    "customer",
+                    "both"
+                  ]
+                },
+                "research_questions": {
+                  "type": "array",
+                  "maxItems": 3,
+                  "items": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  }
+                },
+                "replacement_id": {
+                  "$ref": "common.schema.json#/$defs/tracked_item_id"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rounds": {
+      "description": "Only in the stored file: every decide call at this checkpoint, in order.",
+      "type": "array"
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "approve",
+            "reject",
+            "defer",
+            "reopen",
+            "supersede",
+            "reconfirm",
+            "leave_open",
+            "clear_issue",
+            "create_requirement",
+            "create_gap",
+            "set_priority",
+            "set_resolution_path",
+            "set_research_questions"
+          ]
+        },
+        "item_id": {
+          "$ref": "common.schema.json#/$defs/tracked_item_id"
+        },
+        "issue": {
+          "$ref": "common.schema.json#/$defs/issue"
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "req_type": {
+          "enum": [
+            "functional",
+            "non_functional",
+            "constraint",
+            "preference"
+          ]
+        },
+        "priority": {
+          "enum": [
+            "must",
+            "should",
+            "could",
+            "unspecified",
+            "critical",
+            "important",
+            "optional"
+          ]
+        },
+        "title": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "description": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "resolution_path": {
+          "enum": [
+            "research",
+            "customer",
+            "both"
+          ]
+        },
+        "research_questions": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        },
+        "replacement_id": {
+          "$ref": "common.schema.json#/$defs/tracked_item_id"
+        }
+      }
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verbatim",
+        "interpretation",
+        "presented",
+        "affected_ids",
+        "actions"
+      ],
+      "properties": {
+        "verbatim": {
+          "$ref": "common.schema.json#/$defs/nonempty_string",
+          "description": "The user's words, copied exactly from their message (checked by H1)."
+        },
+        "interpretation": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "presented": {
+          "$ref": "common.schema.json#/$defs/nonempty_string",
+          "description": "The question or item shown to the user that this answers."
+        },
+        "question_ids": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "common.schema.json#/$defs/cq_id"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/q_id"
+              }
+            ]
+          }
+        },
+        "affected_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/any_item_id"
+          }
+        },
+        "supersedes": {
+          "$ref": "common.schema.json#/$defs/dec_id"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "approve",
+                  "reject",
+                  "defer",
+                  "reopen",
+                  "supersede",
+                  "reconfirm",
+                  "leave_open",
+                  "clear_issue",
+                  "create_requirement",
+                  "create_gap",
+                  "set_priority",
+                  "set_resolution_path",
+                  "set_research_questions"
+                ]
+              },
+              "item_id": {
+                "$ref": "common.schema.json#/$defs/tracked_item_id"
+              },
+              "issue": {
+                "$ref": "common.schema.json#/$defs/issue"
+              },
+              "statement": {
+                "$ref": "common.schema.json#/$defs/nonempty_string"
+              },
+              "req_type": {
+                "enum": [
+                  "functional",
+                  "non_functional",
+                  "constraint",
+                  "preference"
+                ]
+              },
+              "priority": {
+                "enum": [
+                  "must",
+                  "should",
+                  "could",
+                  "unspecified",
+                  "critical",
+                  "important",
+                  "optional"
+                ]
+              },
+              "title": {
+                "$ref": "common.schema.json#/$defs/nonempty_string"
+              },
+              "description": {
+                "$ref": "common.schema.json#/$defs/nonempty_string"
+              },
+              "resolution_path": {
+                "enum": [
+                  "research",
+                  "customer",
+                  "both"
+                ]
+              },
+              "research_questions": {
+                "type": "array",
+                "maxItems": 3,
+                "items": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                }
+              },
+              "replacement_id": {
+                "$ref": "common.schema.json#/$defs/tracked_item_id"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

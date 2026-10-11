@@ -4,8 +4,8 @@
 Owns <runs-root>/.active_run, run_manifest.json, log.jsonl, input/**, budget/active_gap.json,
 warnings.json, run_summary.json and integrity/run_state.json. Reads, never writes, .heartbeat.
 
-Subcommands available in Phase 1a: start, verify, stage, log, end, abort.
-Later phases add: await-user, continue, resume (Phase 2), set-gap (Phase 3), report (Phase 5).
+Subcommands: start, verify, stage, log, await-user, continue, resume, end, abort.
+Later phases add: set-gap (Phase 3), report (Phase 5).
 Exit codes: 0 ok, 1 usage/validation error, 3 refused, 4 tamper detected.
 """
 
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _lib import attest, fsutil, hashing, modes, ownership, paths, runctx, schema, stages  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
-WORKFLOW_VERSION = "0.1.0-phase1b"
+WORKFLOW_VERSION = "0.2.0-phase2"
 MAX_REQUIREMENTS_BYTES = 1_000_000
 EXIT_OK, EXIT_ERROR, EXIT_REFUSED, EXIT_TAMPER = 0, 1, 3, 4
 
@@ -310,9 +310,12 @@ def cmd_start(args, repo: Path, env: Mapping[str, str], argv: Sequence[str]) -> 
     if args.prior_decisions:
         pd = Path(args.prior_decisions).expanduser()
         try:
-            json.loads(pd.read_text(encoding="utf-8"))
+            pdoc = json.loads(pd.read_text(encoding="utf-8"))
         except (OSError, ValueError) as exc:
             raise RunError(f"prior decisions file is not readable JSON: {exc}") from exc
+        errs = schema.errors("decisions", pdoc)
+        if errs:
+            raise RunError("prior decisions file does not match schemas/decisions.schema.json: " + "; ".join(errs[:5]))
         shutil.copyfile(pd, run_dir / "input" / "prior_decisions.json")
         prior = {"original_path": str(pd.resolve()), "copy_path": "input/prior_decisions.json",
                  "sha256": hashing.sha256_file(run_dir / "input" / "prior_decisions.json")}
@@ -342,7 +345,7 @@ def cmd_start(args, repo: Path, env: Mapping[str, str], argv: Sequence[str]) -> 
         "status": "running", "created_at": started, "updated_at": started, "session_id": session_id,
         "versions": _versions(repo, setup), "models": _models(repo),
         "config_sha256": hashing.sha256_file(config_src), "current_stage": "1",
-        "awaiting_checkpoint": None,
+        "awaiting_checkpoint": None, "open_checkpoint": None,
         "stages": {"1": {"status": "running", "started_at": started, "completed_at": None,
                          "attempts": 1, "outputs": {}, "note": None}},
         "active_run_sha256": None,
@@ -414,6 +417,8 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
             raise RunError(f"stage {key} is already running (stage 1 is started by run_state.py start)")
         if st and st["status"] == "completed":
             raise RunError(f"stage {key} is already completed")
+        if any(m["stages"].get(k, {}).get("status") == "running" for k in m["stages"] if k != key):
+            raise RunError("another stage is still running; complete or fail it first")
         attempts = (st["attempts"] + 1) if st else 1
         m["stages"][key] = {"status": "running", "started_at": now, "completed_at": None,
                             "attempts": attempts, "outputs": {}, "note": None}
@@ -461,6 +466,8 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
         _out({"ok": False, "stage": key, "errors": errors})
         return EXIT_ERROR
     st.update(status="completed", completed_at=now, outputs={rel: hashing.sha256_file(p) for rel, p in found.items()})
+    if stage.kind == "checkpoint":
+        m["open_checkpoint"] = None
     _log(ctx, ctx.run_id, "stage_completed", key, outputs=st["outputs"], attempts=st["attempts"])
     _write_manifest(ctx.run_dir, m)
     _out({"ok": True, "stage": key, "status": "completed", "outputs": sorted(st["outputs"])})
@@ -475,6 +482,126 @@ def _subagent_seen(ctx: runctx.RunContext, agent: str, since: str) -> bool:
                 and ev.get("agent_type") in names and runctx.parse_iso(ev["ts"]) >= since_dt):
             return True
     return False
+
+
+def cmd_await_user(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    ctx = runctx.require_active_run(repo, args.run, env)
+    cp = args.checkpoint.upper()
+    key = stages.STAGE_OF_CHECKPOINT.get(cp)
+    if key is None:
+        raise RunError(f"unknown checkpoint {args.checkpoint!r} (expected 1, 2, 3 or 13R)")
+    m = ctx.manifest
+    st = m["stages"].get(key)
+    if not st or st["status"] != "running":
+        raise RunError(f"stage {key} (checkpoint {cp}) is not running; start it first")
+    try:
+        _verify_or_raise(ctx)
+    except Tamper as t:
+        _out({"ok": False, "tamper": t.problems})
+        return EXIT_TAMPER
+    m.update(status="awaiting_user", awaiting_checkpoint=cp, open_checkpoint=cp)
+    _log(ctx, ctx.run_id, "await_user", key, checkpoint=cp)
+    _write_manifest(ctx.run_dir, m)
+    _out({"ok": True, "checkpoint": cp, "status": "awaiting_user",
+          "next": "present the checkpoint and end your turn"})
+    return EXIT_OK
+
+
+def cmd_continue(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    ctx = runctx.require_active_run(repo, args.run, env)
+    _require_attestation(ctx.runs_root, runctx.session_from_env(env), argv)
+    m = ctx.manifest
+    if m["status"] != "awaiting_user":
+        raise RunError(f"run is {m['status']}, not waiting for the user")
+    try:
+        _verify_or_raise(ctx)
+    except Tamper as t:
+        _out({"ok": False, "tamper": t.problems})
+        return EXIT_TAMPER
+    cp = m["awaiting_checkpoint"]
+    m.update(status="running", awaiting_checkpoint=None)
+    _log(ctx, ctx.run_id, "continued", stages.STAGE_OF_CHECKPOINT.get(cp), checkpoint=cp)
+    _write_manifest(ctx.run_dir, m)
+    _out({"ok": True, "checkpoint": cp, "status": "running",
+          "next": f"record the answers with status_rules.py decide --checkpoint {cp}"})
+    return EXIT_OK
+
+
+def _owner_heartbeat_expired(ctx: runctx.RunContext, repo: Path) -> bool:
+    hb_path = ctx.runs_root / ".heartbeat"
+    owner = (ctx.active or {}).get("session_id")
+    timeout = runctx.load_config(repo)["run"]["active_run_timeout_minutes"]
+    if not hb_path.exists():
+        return True
+    hb = json.loads(hb_path.read_text(encoding="utf-8"))
+    stamps = [runctx.parse_iso(v["updated_at"]) for k, v in hb.get("sessions", {}).items() if owner is None or k == owner]
+    if not stamps:
+        return True
+    age_min = (datetime.now(timezone.utc) - max(stamps)).total_seconds() / 60
+    return age_min > timeout
+
+
+def cmd_resume(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    """Take over a run that is waiting at a checkpoint or whose owner's heartbeat expired (§4, Resume)."""
+    ctx = runctx.load_run(repo, args.run, env)
+    m = ctx.manifest
+    if m["status"] in ("aborted", "completed"):
+        raise RunError(f"run {ctx.run_id} is {m['status']} and cannot be resumed")
+    if ctx.active and ctx.active.get("run_id") != ctx.run_id:
+        raise RunError(f"another run is active ({ctx.active.get('run_id')})")
+    session_id = runctx.session_from_env(env)
+    _require_attestation(ctx.runs_root, session_id, argv)
+    same_session = ctx.active and ctx.active.get("session_id") == session_id
+    if not same_session and m["status"] != "awaiting_user" and not _owner_heartbeat_expired(ctx, repo):
+        raise RunError("another session may still be working on this run (heartbeat is fresh and the run is not "
+                       "waiting at a checkpoint); use --abort first if it is stuck")
+    try:
+        _sync_hook_events(ctx)
+        problems = verify_run(ctx)
+    except (OSError, ValueError) as exc:
+        problems = [{"file": "?", "owner": "?", "last_writer": None, "problem": f"cannot verify: {exc}"}]
+    if problems:
+        _log(ctx, ctx.run_id, "tamper_report", None, problems=problems)
+        _out({"ok": False, "tamper": problems})
+        return EXIT_TAMPER
+    # Re-validate completed outputs against today's schemas; invalid ones make their stage and later ones stale.
+    stale_from = None
+    for key in stages.ORDER:
+        st = m["stages"].get(key)
+        stage = stages.STAGES[key]
+        if not st or st["status"] != "completed" or stale_from:
+            if stale_from and st and st["status"] == "completed":
+                st.update(status="stale", note=f"stale: earlier stage {stale_from} is stale")
+            continue
+        errs = []
+        for rel, sname in stage.schemas.items():
+            p = ctx.run_dir / rel
+            if p.exists():
+                errs += schema.errors(sname, json.loads(p.read_text(encoding="utf-8")))
+        if errs:
+            st.update(status="stale", note="stale: output no longer matches its schema: " + errs[0])
+            stale_from = key
+    now = now_iso()
+    active = {"schema_version": 1, "run_id": ctx.run_id, "mode": ctx.mode.mode, "fixture_dir": m["fixture_dir"],
+              "session_id": session_id, "started_at": m["created_at"], "resumed_at": now}
+    data = fsutil.dumps_json(active).encode("utf-8")
+    m["active_run_sha256"] = hashing.sha256_bytes(data)
+    m["session_id"] = session_id
+    nxt = next((k for k in stages.ORDER if k not in stages.OPTIONAL_STAGES
+                and m["stages"].get(k, {}).get("status") != "completed"), None)
+    _log(ctx, ctx.run_id, "run_resumed", nxt, session_id=session_id, previous_session=(ctx.active or {}).get("session_id"),
+         stale_from=stale_from)
+    _write_manifest(ctx.run_dir, m)
+    fsutil.atomic_write_bytes(ctx.runs_root / ".active_run", data)
+    rounds = []
+    if m.get("open_checkpoint"):
+        p = ctx.run_dir / f"checkpoints/checkpoint-{m['open_checkpoint']}-answers.json"
+        if p.exists():
+            rounds = json.loads(p.read_text(encoding="utf-8"))["rounds"]
+    _out({"ok": True, "run_id": ctx.run_id, "status": m["status"], "next_stage": nxt,
+          "open_checkpoint": m.get("open_checkpoint"), "recorded_answer_rounds": len(rounds),
+          "stale_from": stale_from})
+    return EXIT_OK
 
 
 def cmd_log(args, repo: Path, env, argv) -> int:
@@ -578,8 +705,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--stage")
     p.set_defaults(func=cmd_log)
 
-    for name, phase in (("await-user", "Phase 2"), ("continue", "Phase 2"), ("resume", "Phase 2"),
-                        ("set-gap", "Phase 3"), ("report", "Phase 5")):
+    p = sub.add_parser("await-user")
+    p.add_argument("checkpoint")
+    p.add_argument("--run", required=True)
+    p.set_defaults(func=cmd_await_user)
+    for name, func in (("continue", cmd_continue), ("resume", cmd_resume)):
+        p = sub.add_parser(name)
+        p.add_argument("--run", required=True)
+        p.set_defaults(func=func)
+
+    for name, phase in (("set-gap", "Phase 3"), ("report", "Phase 5")):
         p = sub.add_parser(name)
         p.add_argument("rest", nargs="*")
         p.add_argument("--run")

@@ -69,6 +69,7 @@ def file_lock(
     stale_after: float = DEFAULT_STALE_AFTER,
 ) -> Iterator[None]:
     path = lock_path(target)
+    path.parent.mkdir(parents=True, exist_ok=True)
     deadline = time.monotonic() + timeout
     while True:
         try:

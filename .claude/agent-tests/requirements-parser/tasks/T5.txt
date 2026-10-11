@@ -1,0 +1,3 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory)
+Turn the customer requirements in runs/20261011-120000-abcdef/input/requirements.md into user stories with acceptance criteria and write them to runs/20261011-120000-abcdef/spec.md.

@@ -94,7 +94,7 @@ def test_every_schema_is_valid_and_versioned():
     for f in sorted((SKILL / "schemas").glob("*.schema.json")):
         doc = json.loads(f.read_text())
         Draft202012Validator.check_schema(doc)
-        if f.name != "common.schema.json":
+        if f.name not in ("common.schema.json", "status_change.schema.json"):  # shared defs; embedded entries
             assert "schema_version" in json.dumps(doc), f.name
 
 

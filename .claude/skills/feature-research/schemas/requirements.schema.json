@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/requirements.schema.json",
+  "title": "requirements.json (§9.2). Written only by requirements-parser.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "requirements",
+    "assumptions",
+    "clarifying_questions",
+    "conflicts",
+    "proposed_status_changes"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "statement",
+          "type",
+          "priority",
+          "source_quote",
+          "source_location",
+          "provenance",
+          "kind",
+          "ambiguity_notes",
+          "related_ids"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/req_id"
+          },
+          "statement": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "type": {
+            "enum": [
+              "functional",
+              "non_functional",
+              "constraint",
+              "preference"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "must",
+              "should",
+              "could",
+              "unspecified"
+            ]
+          },
+          "source_quote": {
+            "$ref": "common.schema.json#/$defs/nonempty_string",
+            "description": "Exact words copied from input/requirements.md."
+          },
+          "source_location": {
+            "$ref": "common.schema.json#/$defs/nonempty_string",
+            "description": "e.g. 'line 4' or 'paragraph 2, sentence 1'."
+          },
+          "provenance": {
+            "const": "customer_requirement"
+          },
+          "kind": {
+            "const": "requirement"
+          },
+          "ambiguity_notes": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "related_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/any_item_id"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "common.schema.json#/$defs/no_status_fields"
+          }
+        ]
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "why",
+          "impact",
+          "to_confirm",
+          "provenance",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ASM-P-[0-9]{3,}$"
+          },
+          "text": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "why": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "impact": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "to_confirm": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "provenance": {
+            "const": "assumption"
+          },
+          "kind": {
+            "const": "assumption"
+          },
+          "related_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/any_item_id"
+            }
+          }
+        }
+      }
+    },
+    "clarifying_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "question",
+          "why_it_matters",
+          "blocking",
+          "related_ids",
+          "consequence_if_unanswered"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/cq_id"
+          },
+          "question": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "why_it_matters": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "related_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/any_item_id"
+            }
+          },
+          "consequence_if_unanswered": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "topic": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ids",
+          "description"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "$ref": "common.schema.json#/$defs/req_id"
+            }
+          },
+          "description": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        }
+      }
+    },
+    "proposed_status_changes": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/proposed_status_change"
+      }
+    }
+  }
+}

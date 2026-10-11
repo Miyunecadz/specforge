@@ -134,3 +134,10 @@ def test_fixture_mode_cannot_be_enabled_by_env_prefix_inside_a_session(repo):
            f"{repo}/.claude/skills/feature-research/scripts/run_state.py verify --run {run_id}")
     p = {"session_id": "11111111-2222-3333-4444-555555555555", "tool_name": "Bash", "tool_input": {"command": cmd}}
     assert guard.decide(p, {}, repo=repo)[0] == 2
+
+
+def test_unparseable_frontmatter_is_rejected(repo):
+    p = add_src(repo, "doc-writer")
+    p.write_text(p.read_text().replace("description: test agent doc-writer.", "description: writes spec.md: the spec"))
+    with pytest.raises(ia.InstallError, match="YAML"):
+        install(repo)

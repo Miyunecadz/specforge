@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/status_history_entry.schema.json",
+  "title": "One line of status_history.jsonl (§6). Append-only, hash-chained, written only by status_rules.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "ts",
+    "item_id",
+    "field",
+    "old",
+    "new",
+    "reason",
+    "decision_id",
+    "stale_reason",
+    "prev_hash",
+    "line_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "ts": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "item_id": {
+      "type": "string"
+    },
+    "field": {
+      "enum": [
+        "registered",
+        "approval",
+        "issues",
+        "stale",
+        "verification",
+        "decision_ids",
+        "superseded_by",
+        "decision"
+      ]
+    },
+    "old": {},
+    "new": {},
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decision_id": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/dec_id"
+        }
+      ]
+    },
+    "stale_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prev_hash": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "line_hash": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    }
+  }
+}

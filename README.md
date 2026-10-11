@@ -7,10 +7,11 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 1b.** Stages 1–3 work: intake, mockup capture (HTML prototypes,
-> images and Figma files) and inventory extraction. When a run reaches Stage 4 the
-> orchestrator aborts it with the reason "stages 4–16 are not built yet", so the session is
-> released. Requirements, checkpoints, status rules, resume (Phase 2), research and
+> **Build status: Phase 2.** Stages 1–7 work: intake (with prior decisions), mockup capture
+> (HTML, images, Figma), inventory extraction, requirements parsing, Checkpoint 1, gap
+> analysis and Checkpoint 2, with the status registry, decision provenance, `--resume` and
+> `--abort`. When a run reaches Stage 8 the orchestrator aborts it with the reason "stages
+> 8–16 are not built yet", so the session is released. Research and
 > citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
 > (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
 > exists now.
@@ -27,7 +28,11 @@ silently making product decisions.
   │
   ├─ Stage 1  run_state.py start, check_url.py   → input/, run_manifest.json
   ├─ Stage 2  capture_mockup.py                   → capture/
-  └─ Stage 3  mockup-extractor subagent           → inventory.json
+  ├─ Stage 3  mockup-extractor subagent           → inventory.json
+  ├─ Stage 4  requirements-parser subagent        → requirements.json (registered)
+  ├─ Stage 5  Checkpoint 1 (you answer)           → decisions.json via status_rules.py decide
+  ├─ Stage 6  gap-analyst subagent                → gaps.json (registered)
+  └─ Stage 7  Checkpoint 2 (you answer)           → decisions.json, status_labels.json
 ```
 
 - **Scripts** do everything deterministic: run state, URL validation, capture, schema
@@ -105,12 +110,51 @@ Requirements can be text or a path to a file. Text is passed to `run_state.py` a
 base64, and the orchestrator compares the preserved copy with what you typed. If they differ
 (possible with very long text), it aborts and asks you for a file instead.
 
-`--resume` is implemented in Phase 2. `--non-interactive` exists only for evals and is
+`/feature-research --resume <run-id>` takes over a run that is waiting at a checkpoint, or
+whose owning session has been silent for `active_run_timeout_minutes`; otherwise another
+session may still be working on it and you must `--abort` first. Resume re-verifies every
+hash, re-validates completed outputs against the current schemas (invalid ones make their
+stage and later stages stale), binds the run to your session, and re-presents an open
+checkpoint with the answers already recorded. Continuing the same conversation
+(`claude --resume`) keeps the same session ID, so no resume is needed then.
+
+`--non-interactive` exists only for evals and is
 refused unless eval fixture mode is active (see "Eval fixture mode").
 
 **A session is dedicated to its run** until the run ends or is aborted. During the run,
 Bash in that session can run only the workflow's scripts. Other Claude Code sessions in
 this repository are not affected. `/feature-research --abort <run-id>` works from any session.
+
+## Checkpoints, decisions and status
+
+At Checkpoints 1 and 2 the orchestrator presents what it needs, runs
+`run_state.py await-user <N>`, and **ends its turn**. It never answers its own checkpoint.
+When you reply, it runs `run_state.py continue` and then
+`status_rules.py decide --checkpoint <N> --answers-b64 <base64>`. Each of your answers
+becomes a `DEC-nnn` in `decisions.json`: your verbatim words, the orchestrator's
+interpretation (shown back to you at the next checkpoint), the affected items and the
+actions taken (approve, reject, defer, reopen, clear an issue, create a requirement or gap,
+change a gap's priority, route or research questions). Blocking clarifying questions cannot
+be bypassed: Stage 5 will not complete until each has an answer.
+
+**Decision provenance.** Before `decide` runs, hook H1 reads the session transcript, finds
+the `await-user <N>` call, and checks that every verbatim answer appears in a message you
+**typed** after it. Tool results, hook-injected context (for example a style hook's
+`additionalContext`), system reminders, skill expansions and command output never count,
+so text from a fetched page or a mockup cannot become a decision. If the check fails the
+command is blocked and you are asked to answer again. It fails closed if the transcript
+cannot be read.
+
+**Status registry.** `status_registry.json` (written only by `status_rules.py`) holds each
+tracked item's approval, issues, decisions, staleness and (for findings) verification;
+content artifacts never contain these fields. Every change is appended to the hash-chained
+`status_history.jsonl`. Transitions follow BUILD_SPEC §6 exactly: nothing defaults to
+approved except items created by your decisions, approval needs a decision, rejected items
+need an explicit reopen, superseded is terminal, and approved items that become stale stay
+approved and are re-confirmed by you. `status_rules.py labels` derives each item's display
+label (Explicit, Decided: DEC-…, Approved: DEC-…, Inferred, Assumption, Stale: re-confirm,
+Rejected, Deferred, …), its placement, and which approved gaps may be researched, into
+`status_labels.json`.
 
 ## Run directory
 
@@ -128,8 +172,13 @@ runs/
     input/              request.json, requirements.md, config.yaml, prior_decisions.json
     capture/            manifest.json, pages/, frames/, screenshots/, assets/ (capture_mockup.py)
     inventory.json      mockup-extractor
+    requirements.json   requirements-parser
+    gaps.json           gap-analyst
+    checkpoints/        checkpoint-<N>-answers.json, every decide round (status_rules.py)
+    decisions.json      DECs (status_rules.py)
+    status_registry.json, status_history.jsonl, status_labels.json   (status_rules.py)
     warnings/<agent>.json
-    integrity/<script>.json   hashes of continuously updated files (later phases)
+    integrity/<script>.json   hashes of continuously updated files
 ```
 
 ### File ownership, concurrent writes, tamper detection
@@ -157,7 +206,7 @@ because separately registered hooks run in parallel.
 
 | Hook | What it does during a run (owning session only) |
 |---|---|
-| **H1** Bash guard | Every Bash call must be exactly `<python> <skill>/scripts/<name>.py <args>`, using the recorded interpreter. It blocks env-variable prefixes, chaining, pipes, redirection, subshells, `$(...)`, backticks, globs and `~`. Arguments may be single-quoted (any characters except `'`) or double-quoted (no `$`, `` ` ``, `\`, `!`). Subagents get no Bash, except `web-researcher`, which may run only the exact `fetch_source.py` form (Phase 3). `status_rules.py decide` stays blocked until decision provenance is built (Phase 2). |
+| **H1** Bash guard | Every Bash call must be exactly `<python> <skill>/scripts/<name>.py <args>`, using the recorded interpreter. It blocks env-variable prefixes, chaining, pipes, redirection, subshells, `$(...)`, backticks, globs and `~`. Arguments may be single-quoted (any characters except `'`) or double-quoted (no `$`, `` ` ``, `\`, `!`). Subagents get no Bash, except `web-researcher`, which may run only the exact `fetch_source.py` form (Phase 3). `status_rules.py decide` runs only after the decision-provenance check passes. |
 | **H2** Write guard | Blocks Write/Edit everywhere outside the active run directory. Blocks script- and hook-owned files for everyone, and blocks all orchestrator writes in the run directory. Each subagent may write only the files it owns. Symlinks and relative paths are resolved first. |
 | **H5** Tool guard | Blocks Skill, WebFetch and every `mcp__*` tool. WebSearch is allowed only for the installed researcher. The Agent tool is allowed only for the nine workflow agents. Any other tool not on the run allow-list (for example Monitor, Workflow, CronCreate, AskUserQuestion) is also blocked. |
 | Recorder | SubagentStart: records each subagent invocation in `.hook_events.jsonl`. |
@@ -204,8 +253,9 @@ attestation**: H1 records a digest of the exact `start` command, from the same s
 ### Residual risks
 
 1. Outside a run (before `start`, after `end`), sessions have their normal permissions.
-2. Decision provenance (Phase 2) will read the Claude Code transcript, whose format is
-   internal. It will fail closed if the format changes.
+2. Decision provenance reads the Claude Code transcript, whose format is internal; it fails
+   closed (blocks `decide`) if the format changes. It verifies your words, not the
+   orchestrator's interpretation of them, which is shown back to you instead.
 3. If `python3` is missing, hook commands fail with a non-2 exit, which Claude Code treats
    as non-blocking. The start-time attestation prevents new runs in that state.
 4. DNS rebinding is mitigated for script fetches (pinned IP). Browser requests are fetched
@@ -276,6 +326,8 @@ report). Their iteration outputs are gitignored.
 | Figma `auth_required` | `FIGMA_TOKEN` is not set in the shell that started Claude Code (see "Figma token"). |
 | Figma `access_denied` | The token cannot read the file: check it has File content read access and the file is shared with you. |
 | Figma `rate_limited` | Retries exhausted; wait and start a new run, or lower `figma_max_frames`. |
-| `this run belongs to another Claude Code session` | The run is bound to the session that started it. Use `--abort` (resume arrives in Phase 2). |
+| `this run belongs to another Claude Code session` | The run is bound to the session that started it. Use `--resume <run-id>` when it is waiting at a checkpoint or the owner is gone, otherwise `--abort`. |
+| `decision provenance check failed` | The answer text passed to `decide` was not found in a message you typed after the checkpoint. Answer again in your own words; the orchestrator must copy them exactly. |
+| `blocking question CQ-… has no recorded answer` | Answer that question; blocking questions cannot be skipped. |
 | Tamper report | A file changed outside its owner. Read the report (file, owner, last writer). The run cannot continue. Start a new run. |
 | Stuck run blocking a session | `/feature-research --abort <run-id>` from any session. Do not delete run files by hand. |

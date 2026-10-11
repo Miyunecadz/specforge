@@ -1,0 +1,6 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Checklist path: checklist/gap-checklist.md (relative to your current working directory; use the absolute form)
+Read: runs/20261011-120000-abcdef/inventory.json, runs/20261011-120000-abcdef/requirements.json, runs/20261011-120000-abcdef/status_registry.json, runs/20261011-120000-abcdef/decisions.json and the checklist.
+Write: runs/20261011-120000-abcdef/gaps.json (schema: gaps). Set run_id to 20261011-120000-abcdef.
+Warnings, if any: runs/20261011-120000-abcdef/warnings/gap-analyst.json (schema: warnings).

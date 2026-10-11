@@ -102,6 +102,13 @@ def parse_tools(front: str) -> list[str]:
 
 def render(src: Path, rules: str, python: str, skill_dir: Path, preload: bool) -> str:
     front, body = split_frontmatter(src.read_text(encoding="utf-8"))
+    try:
+        import yaml
+        meta = yaml.safe_load(front)
+    except Exception as exc:  # Claude Code silently skips agents whose frontmatter does not parse
+        raise InstallError(f"{src.name}: frontmatter is not valid YAML: {exc}") from exc
+    if not isinstance(meta, dict) or not all(isinstance(meta.get(k), str) for k in ("name", "description", "tools")):
+        raise InstallError(f"{src.name}: frontmatter needs string name, description and tools")
     name_m = re.search(r"^name:\s*(\S+)\s*$", front, re.M)
     if not name_m or name_m.group(1) != src.stem:
         raise InstallError(f"{src.name}: frontmatter name must equal the file stem {src.stem!r}")

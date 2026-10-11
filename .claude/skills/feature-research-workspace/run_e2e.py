@@ -18,6 +18,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True); ap.add_argument("--prompt", required=True)
     ap.add_argument("--fixture"); ap.add_argument("--model", default="sonnet"); ap.add_argument("--budget", default="3")
+    ap.add_argument("--followups", help="JSON list of {match: regex, reply: text, max_uses: n}; after each turn the first "
+                    "rule whose regex matches the orchestrator's last message (and has uses left) is sent as the "
+                    "user's reply with claude -p --resume; stops when none matches or after 8 replies")
     a = ap.parse_args()
     out = Path(a.out).resolve(); out.mkdir(parents=True, exist_ok=True)
     sb = Path(tempfile.mkdtemp(prefix="fra-e2e-"))
@@ -38,9 +41,35 @@ def main():
            "--output-format", "stream-json", "--verbose"]
     t0 = time.time()
     proc = subprocess.run(cmd, cwd=sb, env=env, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=1800)
-    (out / "transcript.jsonl").write_text(proc.stdout); (out / "stderr.txt").write_text(proc.stderr)
+    stdout_all, stderr_all = proc.stdout, proc.stderr
     events = [json.loads(l) for l in proc.stdout.splitlines() if l.strip().startswith("{")]
     result = next((e for e in reversed(events) if e.get("type") == "result"), {})
+    turns = [{"prompt": a.prompt, "final": result.get("result"), "cost_usd": result.get("total_cost_usd")}]
+    total_cost = result.get("total_cost_usd") or 0
+    import re
+    rules = json.loads(a.followups) if a.followups else []
+    uses = [0] * len(rules)
+    for _ in range(8):
+        sid = result.get("session_id")
+        last = str(result.get("result") or "")
+        pick = next((i for i, r in enumerate(rules) if uses[i] < r.get("max_uses", 1)
+                     and re.search(r["match"], last, re.I | re.S)), None)
+        ended = re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended)\b", last, re.I)
+        if not sid or pick is None or ended:
+            break
+        uses[pick] += 1
+        reply = rules[pick]["reply"]
+        fcmd = list(cmd); fcmd[2] = reply; fcmd += ["--resume", sid]
+        proc = subprocess.run(fcmd, cwd=sb, env=env, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=1800)
+        stdout_all += proc.stdout; stderr_all += proc.stderr
+        new_events = [json.loads(l) for l in proc.stdout.splitlines() if l.strip().startswith("{")]
+        events += new_events
+        result = next((e for e in reversed(new_events) if e.get("type") == "result"), {})
+        turns.append({"prompt": reply, "final": result.get("result"), "cost_usd": result.get("total_cost_usd")})
+        total_cost += result.get("total_cost_usd") or 0
+    (out / "transcript.jsonl").write_text(stdout_all); (out / "stderr.txt").write_text(stderr_all)
+    (out / "turns.json").write_text(json.dumps(turns, indent=2, ensure_ascii=False))
+    result = {**result, "total_cost_usd": total_cost}
     calls = []
     for e in events:
         if e.get("type") == "assistant":

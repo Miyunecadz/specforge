@@ -38,6 +38,7 @@ RUN_RULES: list[tuple[str, str, str]] = [
     ("decisions.json", "status_rules.py", SCRIPT),
     ("status_registry.json", "status_rules.py", SCRIPT),
     ("status_history.jsonl", "status_rules.py", SCRIPT),
+    ("status_labels.json", "status_rules.py", SCRIPT),
     ("integrity/status_rules.json", "status_rules.py", SCRIPT),
     ("sources/**", "fetch_source.py", SCRIPT),
     ("fetch_log.jsonl", "fetch_source.py", SCRIPT),

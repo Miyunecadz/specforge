@@ -34,10 +34,15 @@ STAGES: dict[str, Stage] = {
         {"inventory.json": "inventory", "warnings/mockup-extractor.json": "warnings"},
         agent="mockup-extractor", available=True,
     ),
-    "4": Stage("4", "Parse requirements", "agent", ("requirements.json",), agent="requirements-parser"),
-    "5": Stage("5", "Checkpoint 1: confirm requirements", "checkpoint", ()),
-    "6": Stage("6", "Analyse gaps", "agent", ("gaps.json",), agent="gap-analyst"),
-    "7": Stage("7", "Checkpoint 2: approve gaps and routing", "checkpoint", ()),
+    "4": Stage("4", "Parse requirements", "agent", ("requirements.json", "warnings/requirements-parser.json?"),
+               {"requirements.json": "requirements", "warnings/requirements-parser.json": "warnings"},
+               agent="requirements-parser", available=True),
+    "5": Stage("5", "Checkpoint 1: confirm requirements", "checkpoint", ("checkpoints/checkpoint-1-answers.json",),
+               {"checkpoints/checkpoint-1-answers.json": "checkpoint_file"}, available=True),
+    "6": Stage("6", "Analyse gaps", "agent", ("gaps.json", "warnings/gap-analyst.json?"),
+               {"gaps.json": "gaps", "warnings/gap-analyst.json": "warnings"}, agent="gap-analyst", available=True),
+    "7": Stage("7", "Checkpoint 2: approve gaps and routing", "checkpoint", ("checkpoints/checkpoint-2-answers.json",),
+               {"checkpoints/checkpoint-2-answers.json": "checkpoint_file"}, available=True),
     "8": Stage("8", "Research", "agent", ("findings/**",), agent="web-researcher"),
     "9": Stage("9", "Mechanical citation check", "script", ("citation_check.json",)),
     "10": Stage("10", "Semantic verification", "agent", ("verified_findings.json",), agent="source-verifier"),
@@ -49,6 +54,9 @@ STAGES: dict[str, Stage] = {
     "15": Stage("15", "Review and validate", "mixed", ("validation.json", "review.json"), agent="doc-reviewer"),
     "16": Stage("16", "Report", "script", ("run_summary.json",)),
 }
+
+CHECKPOINT_OF_STAGE = {"5": "1", "7": "2", "13": "3", "13R": "13R"}
+STAGE_OF_CHECKPOINT = {v: k for k, v in CHECKPOINT_OF_STAGE.items()}
 
 ORDER = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "13R", "14", "15", "16"]
 OPTIONAL_STAGES = {"13R"}
@@ -81,9 +89,52 @@ def _transient(p: Path) -> bool:
     return p.name.endswith(".lock") or (p.name.startswith(".") and p.name.endswith(".tmp"))
 
 
+def _registered(run_dir: Path, rel: str) -> bool:
+    from . import hashing
+    reg = run_dir / "status_registry.json"
+    if not reg.exists():
+        return False
+    return json.loads(reg.read_text(encoding="utf-8"))["registered_artifacts"].get(rel) == hashing.sha256_file(run_dir / rel)
+
+
 def semantic_checks(run_dir: Path, stage: Stage, manifest: dict) -> list[str]:
     """Mechanical checks beyond schema validation."""
     problems: list[str] = []
+    if stage.key == "1":
+        req = json.loads((run_dir / "input/request.json").read_text(encoding="utf-8"))
+        if req.get("prior_decisions"):
+            dec = run_dir / "decisions.json"
+            ok = dec.exists() and any(d["source"] == "prior_decisions_file"
+                                      for d in json.loads(dec.read_text(encoding="utf-8"))["decisions"])
+            if not ok:
+                problems.append("prior decisions were supplied but not recorded: run 'status_rules.py decide --prior'")
+    if stage.key in ("4", "6"):
+        rel = "requirements.json" if stage.key == "4" else "gaps.json"
+        doc = json.loads((run_dir / rel).read_text(encoding="utf-8"))
+        if doc.get("run_id") != manifest["run_id"]:
+            problems.append(f"{rel} run_id does not match the run")
+        if not _registered(run_dir, rel):
+            problems.append(f"{rel} (this version) is not registered: run 'status_rules.py register {rel}'")
+        if stage.key == "4":
+            src = (run_dir / "input/requirements.md").read_text(encoding="utf-8")
+            norm = " ".join(src.split())
+            for r in doc["requirements"]:
+                if " ".join(r["source_quote"].split()) not in norm:
+                    problems.append(f"{r['id']} source_quote is not an exact quote from input/requirements.md")
+    if stage.key in ("5", "7"):
+        if manifest.get("open_checkpoint") != CHECKPOINT_OF_STAGE[stage.key]:
+            problems.append("the checkpoint was never opened with run_state.py await-user")
+        if stage.key == "5":
+            reqs = json.loads((run_dir / "requirements.json").read_text(encoding="utf-8"))
+            cp = json.loads((run_dir / "checkpoints/checkpoint-1-answers.json").read_text(encoding="utf-8"))
+            answered = set()
+            for rnd in cp["rounds"]:
+                for a in rnd["answers"]:
+                    if any(x["type"] != "leave_open" for x in a["actions"]) or not a["actions"]:
+                        answered.update(a.get("question_ids", []))
+            for q in reqs["clarifying_questions"]:
+                if q["blocking"] and q["id"] not in answered:
+                    problems.append(f"blocking question {q['id']} has no recorded answer; it cannot be bypassed")
     if stage.key == "3":
         inv = json.loads((run_dir / "inventory.json").read_text(encoding="utf-8"))
         cap = json.loads((run_dir / "capture/manifest.json").read_text(encoding="utf-8"))

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import re
 
+import provenance
 from _common import Deny, HookContext
 from _lib import attest, paths
 
@@ -132,7 +133,22 @@ def check(ctx: HookContext) -> None:
             return
         raise Deny("H1", f"subagent {agent!r} has no Bash access during a run")
 
+    if len(argv) == 3 and argv[2] in ("-h", "--help") or len(argv) == 2 and argv[1] in ("-h", "--help"):
+        return  # argparse prints usage and exits before touching any file
     if name == "status_rules" and len(argv) > 1 and argv[1] == "decide":
-        # Decision provenance (§11.3) is implemented with status_rules.py in Phase 2.
-        # Until then, fail closed.
-        raise Deny("H1", "status_rules.py decide is unavailable until decision provenance is built (Phase 2)")
+        if "--prior" not in argv and not all(f in argv for f in ("--run", "--checkpoint", "--answers-b64")):
+            raise Deny("H1", "decide needs --run <run-id> --checkpoint <N> --answers-b64 <base64> (or --run <run-id> "
+                             "--prior); see the checkpoint's stage reference")
+        try:
+            provenance.check(argv, run_id=ctx.run_id, transcript_path=ctx.payload.get("transcript_path"),
+                             run_dir=ctx.runs_root / ctx.run_id, repo=ctx.repo,
+                             fixture_env="FRA_EVAL_FIXTURES" in ctx.env and ctx.active.get("mode") == "fixture",
+                             split=strict_split)
+        except provenance.ProvenanceError as exc:
+            raise Deny("H1", f"decision provenance check failed: {exc}. Ask the user to answer again; never "
+                             "rephrase their words.", event="provenance_rejection",
+                       detail={"checkpoint": _flag_value(argv, "--checkpoint")}) from exc
+
+
+def _flag_value(argv: list[str], name: str) -> str | None:
+    return argv[argv.index(name) + 1] if name in argv and argv.index(name) + 1 < len(argv) else None

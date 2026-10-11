@@ -1,0 +1,1 @@
+Find the gaps between the captured mockup and the confirmed requirements for run 20261011-120000-abcdef and write gaps.json (checklist at checklist/gap-checklist.md).

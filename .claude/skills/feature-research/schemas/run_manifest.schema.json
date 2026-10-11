@@ -1,83 +1,250 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://feature-research.local/schemas/run_manifest.schema.json",
-  "title": "run_manifest.json (BUILD_SPEC §4, §5, §7). Written only by run_state.py.",
+  "title": "run_manifest.json (BUILD_SPEC \u00a74, \u00a75, \u00a77). Written only by run_state.py.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "run_id", "mode", "fixture_dir", "status", "created_at", "updated_at",
-    "session_id", "versions", "models", "config_sha256", "current_stage", "awaiting_checkpoint",
-    "stages", "active_run_sha256", "hook_events", "abort_reason", "publication_status", "dependencies"
+    "schema_version",
+    "run_id",
+    "mode",
+    "fixture_dir",
+    "status",
+    "created_at",
+    "updated_at",
+    "session_id",
+    "versions",
+    "models",
+    "config_sha256",
+    "current_stage",
+    "awaiting_checkpoint",
+    "stages",
+    "active_run_sha256",
+    "hook_events",
+    "abort_reason",
+    "publication_status",
+    "dependencies",
+    "open_checkpoint"
   ],
   "properties": {
-    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
-    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
-    "mode": { "$ref": "common.schema.json#/$defs/run_mode" },
-    "fixture_dir": { "type": ["string", "null"] },
-    "status": { "enum": ["running", "awaiting_user", "completed", "aborted", "failed", "blocked"] },
-    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
-    "updated_at": { "$ref": "common.schema.json#/$defs/timestamp" },
-    "session_id": { "$ref": "common.schema.json#/$defs/session_id" },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "mode": {
+      "$ref": "common.schema.json#/$defs/run_mode"
+    },
+    "fixture_dir": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "running",
+        "awaiting_user",
+        "completed",
+        "aborted",
+        "failed",
+        "blocked"
+      ]
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "session_id": {
+      "$ref": "common.schema.json#/$defs/session_id"
+    },
     "versions": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["workflow", "schemas_sha256", "template_sha256", "agents_src_sha256", "skill_sha256", "claude_version"],
+      "required": [
+        "workflow",
+        "schemas_sha256",
+        "template_sha256",
+        "agents_src_sha256",
+        "skill_sha256",
+        "claude_version"
+      ],
       "properties": {
-        "workflow": { "type": "string" },
-        "schemas_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
-        "template_sha256": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/sha256" }] },
-        "agents_src_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
-        "skill_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
-        "claude_version": { "type": ["string", "null"] }
+        "workflow": {
+          "type": "string"
+        },
+        "schemas_sha256": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "template_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "common.schema.json#/$defs/sha256"
+            }
+          ]
+        },
+        "agents_src_sha256": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "skill_sha256": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "claude_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "models": {
       "type": "object",
       "description": "Model per agent as declared in agents-src frontmatter (identifiers where available).",
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": {
+        "type": "string"
+      }
     },
-    "config_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
-    "current_stage": { "type": ["string", "null"] },
-    "awaiting_checkpoint": { "type": ["string", "null"] },
+    "config_sha256": {
+      "$ref": "common.schema.json#/$defs/sha256"
+    },
+    "current_stage": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "awaiting_checkpoint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "stages": {
       "type": "object",
-      "propertyNames": { "pattern": "^(1[0-6]|[1-9]|13R)$" },
+      "propertyNames": {
+        "pattern": "^(1[0-6]|[1-9]|13R)$"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["status", "started_at", "completed_at", "attempts", "outputs", "note"],
+        "required": [
+          "status",
+          "started_at",
+          "completed_at",
+          "attempts",
+          "outputs",
+          "note"
+        ],
         "properties": {
-          "status": { "enum": ["running", "completed", "failed", "skipped", "stale"] },
-          "started_at": { "$ref": "common.schema.json#/$defs/timestamp" },
-          "completed_at": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/timestamp" }] },
-          "attempts": { "type": "integer", "minimum": 1 },
+          "status": {
+            "enum": [
+              "running",
+              "completed",
+              "failed",
+              "skipped",
+              "stale"
+            ]
+          },
+          "started_at": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/timestamp"
+              }
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 1
+          },
           "outputs": {
             "type": "object",
-            "propertyNames": { "$ref": "common.schema.json#/$defs/rel_path" },
-            "additionalProperties": { "$ref": "common.schema.json#/$defs/sha256" }
+            "propertyNames": {
+              "$ref": "common.schema.json#/$defs/rel_path"
+            },
+            "additionalProperties": {
+              "$ref": "common.schema.json#/$defs/sha256"
+            }
           },
-          "note": { "type": ["string", "null"] }
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
-    "active_run_sha256": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/sha256" }] },
+    "active_run_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      ]
+    },
     "hook_events": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["copied_lines", "last_hash"],
+      "required": [
+        "copied_lines",
+        "last_hash"
+      ],
       "properties": {
-        "copied_lines": { "type": "integer", "minimum": 0 },
-        "last_hash": { "$ref": "common.schema.json#/$defs/sha256" }
+        "copied_lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_hash": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
       }
     },
-    "abort_reason": { "type": ["string", "null"] },
+    "abort_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "publication_status": {
-      "enum": [null, "validated", "validated_with_warnings", "not_fully_validated", "blocked", "eval_only"]
+      "enum": [
+        null,
+        "validated",
+        "validated_with_warnings",
+        "not_fully_validated",
+        "blocked",
+        "eval_only"
+      ]
     },
     "dependencies": {
       "type": "object",
-      "description": "Artifact -> artifacts it was derived from, for change-impact analysis (§15).",
-      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+      "description": "Artifact -> artifacts it was derived from, for change-impact analysis (\u00a715).",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "open_checkpoint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Checkpoint whose answers may be recorded (set by await-user, cleared when the checkpoint stage completes)."
     }
   }
 }

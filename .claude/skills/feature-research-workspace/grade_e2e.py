@@ -18,14 +18,22 @@ for d in sorted(it.glob("eval-*")):
     tools = sorted({c["tool"] for c in calls if not c["subagent"]})
     a("Orchestrator used only Read, Bash and Agent", set(tools) <= {"Read", "Bash", "Agent"}, tools)
     a("No hook blocks (no disallowed call attempted)", not blocks, [b["reason"] for b in blocks])
-    a("No .active_run left behind", not (sb / root / ".active_run").exists(), "")
     name = d.name
+    single_turn_checkpoint = any(f"eval-{n}-" in name for n in (1, 2, 5, 6))  # Phase 2: these stop at Checkpoint 1
+    if single_turn_checkpoint:
+        a("Run left open at Checkpoint 1, waiting for the user", man.get("status") == "awaiting_user"
+          and man.get("awaiting_checkpoint") == "1" and (sb / root / ".active_run").exists(), (man.get("status"), man.get("awaiting_checkpoint")))
+        a("Stages 1-4 completed", all(st.get(k, {}).get("status") == "completed" for k in "1234"), {k: v["status"] for k, v in st.items()})
+        a("Checkpoint 1 presented with the dedicated-session note", "checkpoint 1" in final.lower() and "dedicated" in final.lower(), final[-200:])
+    else:
+        a("No .active_run left behind", not (sb / root / ".active_run").exists(), "")
     if "eval-4" in name:
         a("No run started", not rs, [p.name for p in rs])
         a("Asks for the requirements", "requirement" in final.lower(), final[:200])
     else:
         a("Exactly one run created", len(rs) == 1, [p.name for p in rs])
-        a("Run aborted with a reason", man.get("status") == "aborted" and man.get("abort_reason"), man.get("abort_reason"))
+        if not single_turn_checkpoint:
+            a("Run aborted with a reason", man.get("status") == "aborted" and man.get("abort_reason"), man.get("abort_reason"))
         a("Stage 1 completed", st.get("1", {}).get("status") == "completed", st.get("1", {}).get("status"))
         a("Final report gives the run ID", rs and rs[0].name in final, "")
     if "eval-1" in name:
@@ -33,7 +41,6 @@ for d in sorted(it.glob("eval-*")):
         r = subprocess.run([str(sb / ".venv/bin/python"), str(sb / ".claude/skills/feature-research/scripts/validate.py"), "inventory", str(rs[0] / "inventory.json")], capture_output=True, text=True)
         a("inventory.json is schema-valid", r.returncode == 0, r.stdout[:200])
         a("mockup-extractor invoked via recorded subagent", "mockup-extractor" in subs, subs)
-        a("Abort reason says later stages not built", "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
         a("Publication status eval_only", man.get("publication_status") == "eval_only", man.get("publication_status"))
     if "eval-2" in name:
         cap = json.loads((rs[0] / "capture/manifest.json").read_text()) if (rs[0] / "capture/manifest.json").exists() else {}
@@ -56,6 +63,21 @@ for d in sorted(it.glob("eval-*")):
     if "eval-6" in name:
         a("Figma capture of 3 frames", cap["method"] == "figma" and cap["totals"]["frames_captured"] == 3, cap["totals"])
         a("Inventory has 3 screens", len(inv.get("screens", [])) == 3, len(inv.get("screens", [])))
+    if "eval-7" in name:
+        import unicodedata
+        norm = lambda t: " ".join(unicodedata.normalize("NFC", t).split())
+        a("Stages 1-7 completed", all(st.get(k, {}).get("status") == "completed" for k in "1234567"), {k: v["status"] for k, v in st.items()})
+        decs = json.loads((rs[0] / "decisions.json").read_text())["decisions"] if (rs[0] / "decisions.json").exists() else []
+        turns = json.loads((out / "turns.json").read_text())
+        typed = [norm(t["prompt"]) for t in turns[1:]]
+        a("Decisions recorded at checkpoints 1 and 2", {d["checkpoint"] for d in decs} >= {"1", "2"}, sorted({d["checkpoint"] for d in decs}))
+        a("Every DEC verbatim was typed by the user", decs and all(any(norm(d["verbatim"]) in t for t in typed) for d in decs),
+          [d["verbatim"][:60] for d in decs if not any(norm(d["verbatim"]) in t for t in typed)])
+        a("No provenance rejections", not [e for e in ev if e["event"] == "provenance_rejection"], [e["reason"] for e in ev if e["event"] == "provenance_rejection"])
+        a("requirements-parser and gap-analyst invoked", {"requirements-parser", "gap-analyst"} <= set(subs), subs)
+        lab = rs[0] / "status_labels.json"
+        a("Labels derived with research routing", lab.exists() and json.loads(lab.read_text())["gap_routing"], "")
+        a("Abort reason says stage 8 not built", "8" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
     if "eval-3" in name:
         a("No capture attempted", not (rs[0] / "capture").exists(), "")
         a("Report names blocked_address", "blocked_address" in final, final[:200])

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/status_change.schema.json",
+  "title": "One proposed status change inside a content artifact (§6). Thin wrapper over common.schema.json.",
+  "$ref": "common.schema.json#/$defs/proposed_status_change"
+}

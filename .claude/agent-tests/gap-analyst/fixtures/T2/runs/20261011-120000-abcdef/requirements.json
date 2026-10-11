@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Package managers can award a supplier package to one supplier.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Package managers must be able to award a supplier package to one supplier.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [],
+      "related_ids": []
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Awarded packages are read-only.",
+      "type": "functional",
+      "priority": "should",
+      "source_quote": "Awarded packages should be read-only.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [],
+      "related_ids": []
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Finance users can export the award list.",
+      "type": "functional",
+      "priority": "could",
+      "source_quote": "Finance users could export the award list.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [],
+      "related_ids": []
+    },
+    {
+      "id": "REQ-005",
+      "statement": "Suppliers are notified when they win a package.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Suppliers must be notified when they win a package.",
+      "source_location": "line 4",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [],
+      "related_ids": []
+    }
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Who counts as a package manager?",
+      "why_it_matters": "permissions",
+      "blocking": true,
+      "related_ids": [
+        "REQ-001"
+      ],
+      "consequence_if_unanswered": "cannot specify access"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": []
+}

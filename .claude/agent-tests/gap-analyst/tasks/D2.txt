@@ -1,0 +1,1 @@
+Use a subagent to parse the customer's requirements text in runs/20261011-120000-abcdef/input/requirements.md into requirements.json.

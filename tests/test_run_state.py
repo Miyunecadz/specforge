@@ -161,7 +161,7 @@ def test_manifest_mode_tampering_is_refused(repo):
 
 def test_later_phase_subcommands_are_refused(repo):
     run_id = start_run(repo)
-    for cmd in ("await-user", "continue", "resume", "set-gap", "report"):
+    for cmd in ("set-gap", "report"):
         rc, out = rs(repo, cmd, "--run", run_id)
         assert rc == 3 and "Phase" in out["refused"]
 

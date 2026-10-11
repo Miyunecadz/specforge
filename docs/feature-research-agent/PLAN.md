@@ -113,6 +113,44 @@ both skills APPROVED by skill-auditor, orchestrator e2e 36/36 plus two HTML runs
 6. A blocked or failed frame-image download is recorded in blocked/failed requests and makes
    the capture partial, matching the HTML path.
 7. Live Figma tests: **blocked** (no token supplied, decision f).
+
+## Phase 2 implementation notes (2026-10-11)
+
+**Phase 2 gate: approved by the user on 2026-10-11** (595 passed; requirements-parser 8/8, gap-analyst 8/8;
+orchestrator e2e 74/74 incl. both checkpoints; re-audit APPROVED; measured cost of a 3-turn case US$4.40).
+
+1. **status_rules.py** (`register`, `decide`, `decide --prior`, `labels`; `apply` Phase 6,
+   `verification` Phase 3) over pure logic in `_lib/status.py`; every command is all-or-nothing.
+   The transition table is data; tests cover every valid row, every invalid pair, stale,
+   verification, placement and label rules.
+2. **Decide format** (`checkpoint_answers.schema.json`): one answer → one DEC with verbatim,
+   interpretation, presented question, question/affected ids and actions (approve, reject,
+   defer, reopen, supersede, reconfirm, leave_open, clear_issue, create_requirement, create_gap,
+   set_priority, set_resolution_path, set_research_questions). Gap attribute changes live in
+   DECs; `labels` computes effective routing into `status_labels.json` (new file owned by
+   status_rules.py, new schema).
+3. **Clarifying questions get ids `CQ-nnn`** (common.schema.json addition) so blocking questions
+   can be tracked; Stage 5 cannot complete while a blocking CQ lacks an answer.
+4. **Checkpoint files** keep every decide round (`checkpoint_file.schema.json`).
+5. **Prior decisions**: `input/prior_decisions.json` uses `decisions.schema.json` (full DECs or a
+   simple `prior` list), is validated at `start`, and is recorded at Stage 1 with `decide --prior`
+   (source `prior_decisions_file`; H1 allows it only when the user supplied the file).
+6. **Gap provenance**: `inference`, or `mockup_observation` when the basis is an observed
+   limitation.
+7. **Decision provenance** (`.claude/hooks/provenance.py`): typed messages are transcript
+   entries of type `user` with plain-text content after the latest matching `await-user`
+   call; entries with tool_result blocks, `toolUseResult`, `isMeta`, `isCompactSummary`,
+   sidechains, attachments, system reminders, hook context and command-output wrappers are
+   skipped. Whitespace-normalised substring match; fails closed.
+8. **run_state.py**: `await-user`, `continue` (hook-attested), `resume` (refused unless waiting at
+   a checkpoint, same session, or the owner's heartbeat expired; re-verifies hashes; re-validates
+   schemas and marks invalid stages stale); manifest gains `open_checkpoint`; only one stage may
+   run at a time; agent stages 4 and 6 require the artifact version to be registered; Stage 4
+   checks every source quote is exact.
+9. **Platform fact (probed)**: `claude -p --resume <id>` keeps the same session ID and transcript
+   file, so continuing a conversation keeps ownership of its run.
+10. **install_agents.py** now rejects agent frontmatter that is not valid YAML (a `:` in a
+    description made Claude Code skip an agent silently; caught by the agent-creator lint).
 ---
 
 ## 1. Current-state findings

@@ -43,6 +43,30 @@
       "prompt": "/feature-research award.figma.json 'Package managers award a supplier package; awarded packages are read-only.'",
       "fixture": "evals/fixtures/case-figma-01-award-packages",
       "expected_output": "Figma capture from the recording (3 frames, offline); stages 1-3 complete; inventory from frames."
+    },
+    {
+      "id": 7,
+      "name": "checkpoints-1-and-2",
+      "fixture": "evals/fixtures/case-01-award-packages",
+      "prompt": "/feature-research index.html 'Package managers must be able to award a supplier package to one supplier. Awarded packages should be read-only. Suppliers must be notified when they win.'",
+      "expected_output": "Stages 1-7 complete; checkpoint answers recorded as DECs whose verbatim text the user typed; no provenance rejections; run aborted at Stage 8 (not built).",
+      "followup_rules": [
+        {
+          "match": "checkpoint 2",
+          "max_uses": 1,
+          "reply": "Approve all the gaps with their proposed routes and priorities."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 1,
+          "reply": "Package managers means only people in the Procurement team. The supplier is chosen from the quotes attached to the package. A package is awarded to exactly one supplier and the award is final; it cannot be undone by anyone. Awarded packages are read-only for everyone and all fields are locked. Suppliers are notified by email when the award is made. Everything else is approved as written."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 2,
+          "reply": "For anything still open at checkpoint 1: read-only for everyone with all fields locked; only Procurement team members award; awards cannot be undone; the supplier is chosen from the attached quotes. Leave the remaining non-blocking questions open."
+        }
+      ]
     }
   ]
 }

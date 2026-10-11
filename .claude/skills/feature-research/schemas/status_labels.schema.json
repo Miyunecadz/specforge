@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/status_labels.schema.json",
+  "title": "status_labels.json: labels and placement derived by status_rules.py labels (§6). Phase 2 addition.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "items",
+    "gap_routing"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "items": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "placement",
+          "decision_id"
+        ],
+        "properties": {
+          "label": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "placement": {
+            "enum": [
+              "main_body",
+              "out_of_scope_rejected",
+              "deferred",
+              "decisions_log",
+              "sources_limitations",
+              "nowhere"
+            ]
+          },
+          "decision_id": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "common.schema.json#/$defs/dec_id"
+              }
+            ]
+          },
+          "open_question": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "gap_routing": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "approval",
+          "resolution_path",
+          "priority",
+          "research_questions",
+          "research_allowed"
+        ],
+        "properties": {
+          "approval": {
+            "$ref": "common.schema.json#/$defs/approval"
+          },
+          "resolution_path": {
+            "enum": [
+              "research",
+              "customer",
+              "both"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "critical",
+              "important",
+              "optional"
+            ]
+          },
+          "research_questions": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "research_allowed": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

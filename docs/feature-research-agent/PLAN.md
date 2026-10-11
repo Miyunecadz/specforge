@@ -15,7 +15,7 @@ that conflicts with them.
 | c | Tool guard adopted as **H5** and added to `BUILD_SPEC.md` §11.3. Scoped to the owning session during a run: blocks Skill, WebFetch and all `mcp__*` tools; blocks WebSearch in the main session; allows the Agent tool only for the nine workflow agents. Tests for each case. |
 | d | `uv`-managed `.venv`, `uv.lock` committed. The user runs `sudo .venv/bin/playwright install-deps chromium` themselves. |
 | e | Models: **Opus** for gap-analyst, source-verifier, feasibility-analyst, doc-reviewer, eval-citation-grader; **Sonnet** for mockup-extractor, requirements-parser, web-researcher (both variants), question-generator, doc-writer, and the orchestrator during development. Eval caps: **US$10 per case, US$60 per full eval run**; a case that hits its cap is stopped and reported **blocked**. Cases 6–8 run first. |
-| f | **Not yet answered.** The reply contained both alternatives unedited. Must be resolved before Phase 1b: either `FIGMA_TOKEN` + test file is supplied (live tests run), or 1b is built against recorded responses and live tests are reported blocked. |
+| f | Phase 1b is built against recorded/mocked Figma REST responses (429 back-off, frame limits, partial labelling tested offline). Live Figma tests are reported **blocked** until a read-only `FIGMA_TOKEN` and test file are supplied. (Answered 2026-10-11.) |
 | g | Added test: decision provenance ignores hook-injected text (for example the caveman SessionStart/UserPromptSubmit output). Added to `BUILD_SPEC.md` §11.3 test list. |
 
 **How the CLI enforces the eval budget (probed 2026-10-11, Claude Code 2.1.296):**

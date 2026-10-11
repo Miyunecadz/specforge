@@ -1,0 +1,5 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Maximum questions: 3
+Write: runs/20261011-120000-abcdef/questions.json (schema: questions).
+Warnings, if any: runs/20261011-120000-abcdef/warnings/question-generator.json.

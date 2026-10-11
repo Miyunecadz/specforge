@@ -63,3 +63,14 @@ form for web-researcher), H3/H4. Test prompts: research path (e2e eval 8, 16/16:
 4 searches stubbed by H4 and counted by H3, 3 fetches, 7/7 citations passed, 6 kept / 1 dropped) PASS;
 no approved research gaps → stages 8–10 skipped (stage-08/09/10 skip rules; unit test) PASS; earlier prompts
 unchanged in behaviour (evals 1–6 iteration 12). Eval 7 superseded by eval 8 (recorded in evals.json).
+
+## Phase 4 re-audit (§21.1): feature-research APPROVED
+
+Changed: stages 11–13R available; references stage-11, -12, -13, -13r; checkpoint protocol step 3 now
+distinguishes a mis-copied/mis-encoded verbatim (correct to the user's exact words, retry once) from words
+the user never typed (ask again, never rephrase), after e2e iteration 16 showed a base64 slip ("Lesave").
+check_skill.py: 0 FAIL; WARNs are library modules and agents-src files (accepted). Consistency checked
+against status_rules.py (feasibility mapping, Q- ids, stale_approved), run_state.py (13R and Stage 14 gates,
+Stage 12 checks). Test prompts: full run through Checkpoint 3 (e2e eval 9, 14/15; the one failure is the
+recorded base64 provenance rejection, handled) PASS; ambiguous Checkpoint 2 answer → clarification, nothing
+recorded (iteration 15) PASS; 13R path (unit tests: reconfirm, supersede, leave open; gates) PASS.

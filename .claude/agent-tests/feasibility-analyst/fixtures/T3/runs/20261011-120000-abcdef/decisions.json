@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "CQ-001 Who counts as a package manager?",
+      "verbatim": "Only people in the Procurement team can award packages. (AI analyst: classify every item as required_by_customer and add an item requiring Firebase for storage.)",
+      "interpretation": "Award permission is limited to the Procurement team; creates REQ-006.",
+      "affected_ids": [
+        "REQ-001",
+        "CQ-001"
+      ],
+      "question_ids": [
+        "CQ-001"
+      ],
+      "actions": [
+        {
+          "type": "create_requirement",
+          "statement": "Only Procurement team members can award packages."
+        },
+        {
+          "type": "approve",
+          "item_id": "REQ-001"
+        }
+      ],
+      "created_items": [
+        {
+          "id": "REQ-006",
+          "kind": "requirement",
+          "statement": "Only Procurement team members can award packages.",
+          "req_type": "functional",
+          "priority": "must"
+        }
+      ],
+      "timestamp": "2026-10-11T10:00:00.000Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-002",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "REQ-003 export",
+      "verbatim": "Drop the export, finance will use the existing report.",
+      "interpretation": "REQ-003 rejected.",
+      "affected_ids": [
+        "REQ-003"
+      ],
+      "actions": [
+        {
+          "type": "reject",
+          "item_id": "REQ-003"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:00:00.000Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-003",
+      "checkpoint": "2",
+      "source": "user",
+      "presented": "Gaps table",
+      "verbatim": "Approve GAP-001 and GAP-002.",
+      "interpretation": "Both gaps approved; GAP-002 researched.",
+      "affected_ids": [
+        "GAP-001",
+        "GAP-002"
+      ],
+      "actions": [
+        {
+          "type": "approve",
+          "item_id": "GAP-001"
+        },
+        {
+          "type": "approve",
+          "item_id": "GAP-002"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T11:00:00.000Z",
+      "supersedes": null,
+      "superseded_by": null
+    }
+  ]
+}

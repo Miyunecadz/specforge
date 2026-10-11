@@ -7,11 +7,12 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 3.** Stages 1–10 work: intake, capture (HTML, images, Figma),
-> inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within budget, the
-> mechanical citation check and semantic verification, with the status registry, decision
-> provenance, `--resume` and `--abort`. When a run reaches Stage 11 the orchestrator aborts it
-> with the reason "stages 11–16 are not built yet", so the session is released. and
+> **Build status: Phase 4.** Stages 1–13R work: intake, capture (HTML, images, Figma),
+> inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within budget, citation
+> check, semantic verification, feasibility, customer questions, Checkpoint 3 and the 13R
+> re-confirmation checkpoint, with the status registry, decision provenance, `--resume` and
+> `--abort`. When a run reaches Stage 14 the orchestrator aborts it with the reason "stages
+> 14–16 are not built yet", so the session is released. and
 > citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
 > (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
 > exists now.
@@ -35,7 +36,11 @@ silently making product decisions.
   ├─ Stage 7  Checkpoint 2 (you answer)           → decisions.json, status_labels.json
   ├─ Stage 8  web-researcher, one gap at a time   → findings/<gap>.json, sources/ (fetch_source.py)
   ├─ Stage 9  verify_citations.py                 → citation_check.json
-  └─ Stage 10 source-verifier                     → verified_findings.json (kept / dropped)
+  ├─ Stage 10 source-verifier                     → verified_findings.json (kept / dropped)
+  ├─ Stage 11 feasibility-analyst                 → feasibility.json (registered, §9.9 mapping)
+  ├─ Stage 12 question-generator                  → questions.json (≤ max_customer_questions)
+  ├─ Stage 13 Checkpoint 3 (you answer)           → decisions.json
+  └─ Stage 13R re-confirmation (only if approved items went stale) → decisions.json
 ```
 
 - **Scripts** do everything deterministic: run state, URL validation, capture, schema
@@ -188,6 +193,25 @@ Rejected, Deferred, …), its placement, and which approved gaps may be research
 - **Inspecting**: `fetch_log.jsonl` (every fetch), `sources/` (exact text the snippets come from),
   `citation_check.json` (per-finding reasons), `verified_findings.json` (keep/drop reasons).
 
+## Feasibility, questions and re-confirmation
+
+- **Feasibility** items each get exactly one classification, enforced by the schema and by
+  `status_rules.py register`: `required_by_customer` (must cite a live requirement; label
+  Explicit), `supported_by_evidence` (must cite a kept finding; Research-supported),
+  `recommended_for_consideration` (Recommended, awaiting approval) or `undecided` (gets an
+  `unknown` issue; Unknown). The analyst never names an existing API, table or service unless
+  a document you supplied establishes it; unknown integration points are recorded as
+  uncertainties.
+- **Customer questions**: at most `max_customer_questions` (default 10), ordered by impact,
+  with options and trade-offs; a recommendation only when a kept finding backs a listed option.
+  Minor items are folded into implementation details instead of asked.
+- **Checkpoint 3** records your product decisions; questions you leave open stay open and
+  appear in Open Questions.
+- **Checkpoint 13R** runs only when approved items became stale after Checkpoint 3 (stale
+  flags come from change-impact analysis, Phase 6). For each you re-confirm, supersede or leave
+  it open; left-open items stay labelled Stale. Stage 14 refuses to start while approved items
+  are stale and 13R has not run.
+
 ## Run directory
 
 Normal runs live in `runs/`; fixture-mode runs live in `evals/runs/`. Both are gitignored
@@ -211,6 +235,8 @@ runs/
     budget/             fetches-<gap>.json (fetch_source.py), searches.jsonl (hook H3), active_gap.json
     citation_check.json verify_citations.py
     verified_findings.json  source-verifier
+    feasibility.json    feasibility-analyst
+    questions.json      question-generator
     checkpoints/        checkpoint-<N>-answers.json, every decide round (status_rules.py)
     decisions.json      DECs (status_rules.py)
     status_registry.json, status_history.jsonl, status_labels.json   (status_rules.py)
@@ -304,7 +330,7 @@ attestation**: H1 records a digest of the exact `start` command, from the same s
 `.claude/skills/feature-research/config.yaml` is validated against `config.schema.json`.
 Every object is closed and every limit has a hard maximum, so configuration cannot disable
 safety controls, enable fixture mode or `--non-interactive`, set the interpreter, or exceed
-the eval budget caps ($10 per case, $60 per run).
+the eval budget caps ($20 per case, $150 per run).
 
 Safe to change: capture limits (`max_pages`, `max_depth`, `figma_max_frames`, timeouts,
 byte limits, `image_content_types`), `network.blocked_hostnames` (extra blocks only),

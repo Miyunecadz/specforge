@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "items": {},
+  "gap_routing": {
+    "GAP-001": {
+      "approval": "approved",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What do suppliers expect in an award notification?"
+      ],
+      "research_allowed": true
+    },
+    "GAP-002": {
+      "approval": "approved",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "Where should focus move?"
+      ],
+      "research_allowed": true
+    }
+  },
+  "stale_approved": [
+    "FEA-001"
+  ]
+}

@@ -80,8 +80,8 @@ def test_config_rejects_safety_and_mode_keys(path, key, value):
     (("network", "allowed_schemes"), ["ftp"]),
     (("review", "revision_rounds"), 5),
     (("review", "stage_retries"), 3),
-    (("evals", "per_case_budget_usd"), 11),
-    (("evals", "per_run_budget_usd"), 61),
+    (("evals", "per_case_budget_usd"), 21),
+    (("evals", "per_run_budget_usd"), 151),
     (("capture", "max_pages"), 10000),
 ])
 def test_config_limits_cannot_be_widened(path, value):

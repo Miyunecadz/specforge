@@ -52,10 +52,16 @@ STAGES: dict[str, Stage] = {
     "10": Stage("10", "Semantic verification", "agent", ("verified_findings.json", "warnings/source-verifier.json?"),
                 {"verified_findings.json": "verified_findings", "warnings/source-verifier.json": "warnings"},
                 agent="source-verifier", available=True),
-    "11": Stage("11", "Feasibility and cross-cutting analysis", "agent", ("feasibility.json",), agent="feasibility-analyst"),
-    "12": Stage("12", "Generate customer questions", "agent", ("questions.json",), agent="question-generator"),
-    "13": Stage("13", "Checkpoint 3: product decisions", "checkpoint", ()),
-    "13R": Stage("13R", "Re-confirmation checkpoint", "checkpoint", ()),
+    "11": Stage("11", "Feasibility and cross-cutting analysis", "agent", ("feasibility.json", "warnings/feasibility-analyst.json?"),
+                {"feasibility.json": "feasibility", "warnings/feasibility-analyst.json": "warnings"},
+                agent="feasibility-analyst", available=True),
+    "12": Stage("12", "Generate customer questions", "agent", ("questions.json", "warnings/question-generator.json?"),
+                {"questions.json": "questions", "warnings/question-generator.json": "warnings"},
+                agent="question-generator", available=True),
+    "13": Stage("13", "Checkpoint 3: product decisions", "checkpoint", ("checkpoints/checkpoint-3-answers.json",),
+                {"checkpoints/checkpoint-3-answers.json": "checkpoint_file"}, available=True),
+    "13R": Stage("13R", "Re-confirmation checkpoint", "checkpoint", ("checkpoints/checkpoint-13R-answers.json",),
+                 {"checkpoints/checkpoint-13R-answers.json": "checkpoint_file"}, available=True),
     "14": Stage("14", "Write specification", "agent", ("spec.md",), agent="doc-writer"),
     "15": Stage("15", "Review and validate", "mixed", ("validation.json", "review.json"), agent="doc-reviewer"),
     "16": Stage("16", "Report", "script", ("run_summary.json",)),
@@ -112,8 +118,14 @@ def research_gaps(run_dir: Path) -> set:
     return {g for g, r in json.loads(p.read_text(encoding="utf-8"))["gap_routing"].items() if r["research_allowed"]}
 
 
+def stale_approved(run_dir: Path) -> list:
+    return sorted(i for i, it in _registry(run_dir).items() if it.get("stale") and it.get("approval") == "approved")
+
+
 def skip_allowed(run_dir: Path, key: str) -> str | None:
     """Return None if the stage may be skipped, otherwise the reason it may not."""
+    if key == "13R":
+        return None if not stale_approved(run_dir) else "approved items are stale and must be presented for re-confirmation"
     if key == "8":
         return None if not research_gaps(run_dir) else "gaps are approved for research"
     if key == "10":
@@ -181,7 +193,36 @@ def semantic_checks(run_dir: Path, stage: Stage, manifest: dict) -> list[str]:
         pending = sorted(i for i, it in _registry(run_dir).items() if it.get("verification") == "pending")
         if pending:
             problems.append(f"findings still pending verification: {', '.join(pending)}; run 'status_rules.py verification --from semantic'")
-    if stage.key in ("5", "7"):
+    if stage.key == "11":
+        if not _registered(run_dir, "feasibility.json"):
+            problems.append("feasibility.json (this version) is not registered: run 'status_rules.py register feasibility.json'")
+    if stage.key == "12":
+        import yaml
+        cfg_p = run_dir / "input/config.yaml"
+        limit = yaml.safe_load(cfg_p.read_text(encoding="utf-8"))["review"]["max_customer_questions"] if cfg_p.exists() else 10
+        qs = json.loads((run_dir / "questions.json").read_text(encoding="utf-8"))
+        if qs["run_id"] != manifest["run_id"]:
+            problems.append("questions.json run_id does not match the run")
+        if len(qs["questions"]) > limit:
+            problems.append(f"{len(qs['questions'])} questions exceed max_customer_questions={limit}; fold minor ones into implementation_details")
+        reg = _registry(run_dir)
+        ids = [q["id"] for q in qs["questions"]]
+        if ids != [f"Q-{n:03d}" for n in range(1, len(ids) + 1)]:
+            problems.append("question ids must be Q-001, Q-002, ... in order")
+        order = {"critical": 0, "important": 1, "optional": 2}
+        if [order[q["priority"]] for q in qs["questions"]] != sorted(order[q["priority"]] for q in qs["questions"]):
+            problems.append("questions must be ordered by priority (critical, important, optional)")
+        for q in qs["questions"]:
+            for a in q["affected_ids"]:
+                if a.startswith(("REQ-", "GAP-", "F-", "FEA-", "ASM-")) and a not in reg:
+                    problems.append(f"{q['id']} affects unknown item {a}")
+            if q["recommendation"]:
+                bad = [f for f in q["recommendation"]["finding_ids"] if reg.get(f, {}).get("verification") != "kept"]
+                if bad:
+                    problems.append(f"{q['id']} recommendation cites findings that are not kept: {', '.join(bad)}")
+                if q["recommendation"]["option"] not in [o["option"] for o in q["options"]]:
+                    problems.append(f"{q['id']} recommends an option that is not listed")
+    if stage.key in ("5", "7", "13", "13R"):
         if manifest.get("open_checkpoint") != CHECKPOINT_OF_STAGE[stage.key]:
             problems.append("the checkpoint was never opened with run_state.py await-user")
         if stage.key == "5":

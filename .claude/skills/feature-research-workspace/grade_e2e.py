@@ -17,7 +17,7 @@ for d in sorted(it.glob("eval-*")):
     def a(text, ok, evidence): A.append({"text": text, "passed": bool(ok), "evidence": str(evidence)[:400]})
     tools = sorted({c["tool"] for c in calls if not c["subagent"]})
     a("Orchestrator used only Read, Bash and Agent", set(tools) <= {"Read", "Bash", "Agent"}, tools)
-    if "eval-8" not in d.name:  # eval 8 may hit the search budget (H3 blocks are expected there)
+    if "eval-8" not in d.name and "eval-9" not in d.name:  # research evals may hit the search budget
         a("No hook blocks (no disallowed call attempted)", not blocks, [b["reason"] for b in blocks])
     name = d.name
     single_turn_checkpoint = any(f"eval-{n}-" in name for n in (1, 2, 5, 6))  # Phase 2: these stop at Checkpoint 1
@@ -95,6 +95,23 @@ for d in sorted(it.glob("eval-*")):
         a("No provenance rejections", not [e for e in ev if e["event"] == "provenance_rejection"], "")
         a("Only budget blocks, if any", all(e["hook"] == "H3" for e in ev if e["event"] == "block"), [(e["hook"], e["reason"][:80]) for e in ev if e["event"] == "block"])
         a("Abort reason says stage 11 not built", "11" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
+    if "eval-9" in name:
+        import unicodedata
+        norm = lambda t: " ".join(unicodedata.normalize("NFC", t).split())
+        a("Stages 1-13 completed (8-10 may be skipped)", all(st.get(k, {}).get("status") in ("completed", "skipped") for k in [str(i) for i in range(1, 14)]), {k: v["status"] for k, v in st.items()})
+        decs = json.loads((rs[0] / "decisions.json").read_text())["decisions"] if (rs[0] / "decisions.json").exists() else []
+        typed = [norm(t["prompt"]) for t in json.loads((out / "turns.json").read_text())[1:]]
+        a("Decisions at checkpoints 1, 2 and 3", {d["checkpoint"] for d in decs} >= {"1", "2", "3"}, sorted({d["checkpoint"] for d in decs}))
+        a("Every DEC verbatim was typed by the user", decs and all(any(norm(d["verbatim"]) in t for t in typed) for d in decs),
+          [d["verbatim"][:60] for d in decs if not any(norm(d["verbatim"]) in t for t in typed)])
+        reg = json.loads((rs[0] / "status_registry.json").read_text())["items"]
+        a("Feasibility items registered", any(k.startswith("FEA-") for k in reg), "")
+        qs = json.loads((rs[0] / "questions.json").read_text())["questions"] if (rs[0] / "questions.json").exists() else []
+        a("1-10 customer questions", 1 <= len(qs) <= 10, len(qs))
+        a("feasibility-analyst and question-generator invoked", {"feasibility-analyst", "question-generator"} <= set(subs), subs)
+        a("No provenance rejections", not [e for e in ev if e["event"] == "provenance_rejection"], [e["reason"] for e in ev if e["event"] == "provenance_rejection"])
+        a("Only budget blocks, if any", all(e["hook"] == "H3" for e in ev if e["event"] == "block"), [(e["hook"], e["reason"][:80]) for e in ev if e["event"] == "block"])
+        a("Abort reason says stage 14 not built", "14" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
     if "eval-3" in name:
         a("No capture attempted", not (rs[0] / "capture").exists(), "")
         a("Report names blocked_address", "blocked_address" in final, final[:200])

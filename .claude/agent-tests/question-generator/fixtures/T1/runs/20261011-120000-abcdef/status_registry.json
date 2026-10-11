@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "items": {
+    "REQ-001": {
+      "id": "REQ-001",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-002"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-005": {
+      "id": "REQ-005",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-006": {
+      "id": "REQ-006",
+      "kind": "requirement",
+      "provenance": "user_decision",
+      "source_artifact": "decisions.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-001": {
+      "id": "GAP-001",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-002": {
+      "id": "GAP-002",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "F-GAP-002-01": {
+      "id": "F-GAP-002-01",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-002.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "kept"
+    },
+    "F-GAP-002-02": {
+      "id": "F-GAP-002-02",
+      "kind": "recommendation",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-002.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "dropped"
+    },
+    "FEA-001": {
+      "id": "FEA-001",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-002": {
+      "id": "FEA-002",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-003": {
+      "id": "FEA-003",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-004": {
+      "id": "FEA-004",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-005": {
+      "id": "FEA-005",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-006": {
+      "id": "FEA-006",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-007": {
+      "id": "FEA-007",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-008": {
+      "id": "FEA-008",
+      "kind": "recommendation",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-009": {
+      "id": "FEA-009",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    }
+  },
+  "registered_artifacts": {}
+}

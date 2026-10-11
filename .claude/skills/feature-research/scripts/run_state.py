@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _lib import attest, fsutil, hashing, modes, ownership, paths, runctx, schema, stages  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
-WORKFLOW_VERSION = "0.3.0-phase3"
+WORKFLOW_VERSION = "0.4.0-phase4"
 MAX_REQUIREMENTS_BYTES = 1_000_000
 EXIT_OK, EXIT_ERROR, EXIT_REFUSED, EXIT_TAMPER = 0, 1, 3, 4
 
@@ -410,6 +410,10 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
     now = now_iso()
 
     if args.action == "start":
+        if key == "13R" and not stages.stale_approved(ctx.run_dir):
+            raise RunError("checkpoint 13R runs only when approved items are stale; there are none")
+        if key == "14" and stages.stale_approved(ctx.run_dir) and m["stages"].get("13R", {}).get("status") != "completed":
+            raise RunError("approved items are stale: run checkpoint 13R before writing the specification")
         missing = _prior_stages_done(m, key)
         if missing:
             raise RunError(f"cannot start stage {key}: earlier stages not complete: {', '.join(missing)}")

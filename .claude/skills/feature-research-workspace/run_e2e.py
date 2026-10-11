@@ -18,11 +18,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True); ap.add_argument("--prompt", required=True)
     ap.add_argument("--fixture"); ap.add_argument("--model", default="sonnet"); ap.add_argument("--budget", default="3")
+    ap.add_argument("--continue-from", help="outputs dir of an earlier run: reuse its sandbox and session, send only the followups")
     ap.add_argument("--followups", help="JSON list of {match: regex, reply: text, max_uses: n}; after each turn the first "
                     "rule whose regex matches the orchestrator's last message (and has uses left) is sent as the "
                     "user's reply with claude -p --resume; stops when none matches or after 8 replies")
     a = ap.parse_args()
     out = Path(a.out).resolve(); out.mkdir(parents=True, exist_ok=True)
+    if a.continue_from:
+        return continue_run(a, out)
     sb = Path(tempfile.mkdtemp(prefix="fra-e2e-"))
     def ignore(d, names):
         return [n for n in names if n in SKIP or (Path(d).name == "evals" and n == "runs")]
@@ -84,6 +87,56 @@ def main():
                "exit": proc.returncode, "prompt": a.prompt, "fixture": a.fixture, "model": a.model}
     (out / "metrics.json").write_text(json.dumps(metrics, indent=2))
     print(json.dumps(metrics))
+
+def continue_run(a, out):
+    """Resume an earlier run's sandbox and session (same transcript, same hooks), sending only the followups."""
+    import re
+    prev = Path(a.continue_from).resolve()
+    m = json.loads((prev / "metrics.json").read_text())
+    sb = Path(m["sandbox"])
+    events = [json.loads(l) for l in (prev / "transcript.jsonl").read_text().splitlines() if l.strip().startswith("{")]
+    result = next(e for e in reversed(events) if e.get("type") == "result")
+    py = str(sb / ".venv/bin/python"); scripts = str(sb / ".claude/skills/feature-research/scripts")
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE_CODE_SESSION", "FRA_"))}
+    env.pop("CLAUDECODE", None)
+    if m.get("fixture"):
+        env["FRA_EVAL_FIXTURES"] = m["fixture"]
+    base = ["claude", "-p", "", "--model", m["model"], "--permission-mode", "dontAsk", "--allowedTools", "Read", "Write", "Agent",
+            f"Bash({py} {scripts}/*)", "--setting-sources", "project", "--max-budget-usd", str(a.budget),
+            "--output-format", "stream-json", "--verbose"]
+    rules = json.loads(a.followups) if a.followups else []
+    uses = [0] * len(rules)
+    turns = json.loads((prev / "turns.json").read_text())
+    stdout_all, total = (prev / "transcript.jsonl").read_text(), sum(t.get("cost_usd") or 0 for t in turns)
+    t0 = time.time()
+    first = True
+    for _ in range(8):
+        last = str(result.get("result") or "")
+        if first and rules:
+            pick, first = 0, False
+        else:
+            pick = next((i for i, r in enumerate(rules) if uses[i] < r.get("max_uses", 1) and re.search(r["match"], last, re.I | re.S)), None)
+        if pick is None or re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended)\b", last, re.I):
+            break
+        uses[pick] += 1
+        cmd = list(base); cmd[2] = rules[pick]["reply"]; cmd += ["--resume", result["session_id"]]
+        proc = subprocess.run(cmd, cwd=sb, env=env, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=1800)
+        stdout_all += proc.stdout
+        evs = [json.loads(l) for l in proc.stdout.splitlines() if l.strip().startswith("{")]
+        result = next((e for e in reversed(evs) if e.get("type") == "result"), {})
+        turns.append({"prompt": rules[pick]["reply"], "final": result.get("result"), "cost_usd": result.get("total_cost_usd")})
+        total += result.get("total_cost_usd") or 0
+    (out / "transcript.jsonl").write_text(stdout_all)
+    (out / "turns.json").write_text(json.dumps(turns, indent=2, ensure_ascii=False))
+    (out / "final.md").write_text(str(result.get("result", "")))
+    all_events = [json.loads(l) for l in stdout_all.splitlines() if l.strip().startswith("{")]
+    calls = [{"tool": c["name"], "input": json.dumps(c["input"])[:300], "subagent": e.get("parent_tool_use_id") is not None}
+             for e in all_events if e.get("type") == "assistant" for c in e["message"].get("content", []) if c.get("type") == "tool_use"]
+    (out / "tool_calls.json").write_text(json.dumps(calls, indent=1))
+    metrics = {**m, "duration_s": round(m["duration_s"] + time.time() - t0, 1), "cost_usd": total, "continued_from": str(prev)}
+    (out / "metrics.json").write_text(json.dumps(metrics, indent=2))
+    print(json.dumps(metrics))
+
 
 if __name__ == "__main__":
     main()

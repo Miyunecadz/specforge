@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "items": [
+    {
+      "id": "FEA-001",
+      "title": "Award permission limited to the Procurement team",
+      "area": "roles_and_permissions",
+      "description": "Award permission limited to the Procurement team.",
+      "classification": "required_by_customer",
+      "related_ids": [
+        "REQ-006",
+        "DEC-001"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [],
+      "provenance": "customer_requirement",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-002",
+      "title": "Awarded packages are read-only",
+      "area": "data_integrity_and_concurrency",
+      "description": "Awarded packages are read-only.",
+      "classification": "required_by_customer",
+      "related_ids": [
+        "REQ-002"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Which fields stay editable for corrections is not stated"
+      ],
+      "provenance": "customer_requirement",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-003",
+      "title": "Two Procurement users award the same package at once",
+      "area": "data_integrity_and_concurrency",
+      "description": "Two Procurement users award the same package at once.",
+      "classification": "undecided",
+      "related_ids": [
+        "REQ-001"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "How simultaneous awards are resolved"
+      ],
+      "provenance": "inference",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-004",
+      "title": "Channel and timing of the supplier notification",
+      "area": "notifications",
+      "description": "Channel and timing of the supplier notification.",
+      "classification": "undecided",
+      "related_ids": [
+        "REQ-005",
+        "GAP-001"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Notification channel"
+      ],
+      "provenance": "inference",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-005",
+      "title": "What happens when the award or the notification fails",
+      "area": "failure_recovery_and_retries",
+      "description": "What happens when the award or the notification fails.",
+      "classification": "undecided",
+      "related_ids": [
+        "REQ-001",
+        "REQ-005"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Failure handling"
+      ],
+      "provenance": "inference",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-006",
+      "title": "Whether an award can be revoked",
+      "area": "other",
+      "description": "Whether an award can be revoked.",
+      "classification": "undecided",
+      "related_ids": [
+        "REQ-002"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Revocation policy"
+      ],
+      "provenance": "inference",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-007",
+      "title": "Focus moves into the award confirmation dialog",
+      "area": "accessibility_and_responsiveness",
+      "description": "Focus moves into the award confirmation dialog.",
+      "classification": "supported_by_evidence",
+      "related_ids": [
+        "F-GAP-002-01",
+        "GAP-002"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [],
+      "provenance": "research_evidence",
+      "kind": "finding"
+    },
+    {
+      "id": "FEA-008",
+      "title": "Record who awarded a package and when",
+      "area": "auditability",
+      "description": "Record who awarded a package and when.",
+      "classification": "recommended_for_consideration",
+      "related_ids": [
+        "REQ-006"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Retention period"
+      ],
+      "provenance": "inference",
+      "kind": "recommendation"
+    },
+    {
+      "id": "FEA-009",
+      "title": "Validation rules for the award note",
+      "area": "validation_and_errors",
+      "description": "Validation rules for the award note.",
+      "classification": "undecided",
+      "related_ids": [
+        "REQ-001"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "uncertainties": [
+        "Length and required status"
+      ],
+      "provenance": "inference",
+      "kind": "finding"
+    }
+  ],
+  "new_unknowns": [
+    {
+      "question": "Should unsuccessful bidders be told they lost?",
+      "why_it_matters": "Supplier relations",
+      "related_ids": [
+        "FEA-004"
+      ]
+    },
+    {
+      "question": "How long must award records be kept?",
+      "why_it_matters": "Retention policy",
+      "related_ids": [
+        "FEA-008"
+      ]
+    }
+  ],
+  "assumptions": [],
+  "proposed_status_changes": [],
+  "inspected_documents": []
+}

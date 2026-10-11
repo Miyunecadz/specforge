@@ -1,0 +1,1 @@
+Use a subagent to turn the open product decisions of feature-research run 20261011-120000-abcdef into customer questions with options and trade-offs (max 10).

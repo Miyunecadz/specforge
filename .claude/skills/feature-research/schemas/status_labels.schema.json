@@ -1,14 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://feature-research.local/schemas/status_labels.schema.json",
-  "title": "status_labels.json: labels and placement derived by status_rules.py labels (§6). Phase 2 addition.",
+  "title": "status_labels.json: labels and placement derived by status_rules.py labels (\u00a76). Phase 2 addition.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
     "run_id",
     "items",
-    "gap_routing"
+    "gap_routing",
+    "stale_approved"
   ],
   "properties": {
     "schema_version": {
@@ -97,6 +98,12 @@
             "type": "boolean"
           }
         }
+      }
+    },
+    "stale_approved": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/tracked_item_id"
       }
     }
   }

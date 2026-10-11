@@ -43,6 +43,7 @@ OWNER = "status_rules.py"
 ARTIFACTS = {
     "requirements.json": "requirements",
     "gaps.json": "gaps",
+    "feasibility.json": "feasibility",
 }
 
 
@@ -93,6 +94,9 @@ def items_of(rel: str, doc: dict) -> list[dict]:
         out += [status.new_item(a["id"], "assumption", "assumption", rel) for a in doc["assumptions"]]
     elif rel.startswith("findings/"):
         out += [status.new_item(f["id"], f["kind"], "research_evidence", rel) for f in doc["findings"]]
+    elif rel == "feasibility.json":
+        out += [status.new_item(i["id"], i["kind"], i["provenance"], rel) for i in doc["items"]]
+        out += [status.new_item(a["id"], "assumption", "assumption", rel) for a in doc["assumptions"]]
     elif rel == "gaps.json":
         out += [status.new_item(g["id"], "gap", g["provenance"], rel) for g in doc["gaps"]]
         out += [status.new_item(a["id"], "assumption", "assumption", rel) for a in doc["assumptions"]]
@@ -124,6 +128,8 @@ def cmd_register(args, ctx: runctx.RunContext) -> int:
         if bad:
             raise status.StatusError(f"findings not scoped to {gap}: {', '.join(bad)}")
     st = load_state(ctx.run_dir, ctx.run_id)
+    if rel == "feasibility.json":
+        _check_feasibility_mapping(st, doc)
     new = items_of(rel, doc)
     ids = [i["id"] for i in new]
     dupes = sorted({i for i in ids if ids.count(i) > 1})
@@ -133,6 +139,10 @@ def cmd_register(args, ctx: runctx.RunContext) -> int:
         status.register_item(st, item)
     for change in doc.get("proposed_status_changes", []):
         status.apply_proposed(st, change)
+    if rel == "feasibility.json":
+        for i in doc["items"]:
+            if i["classification"] == "undecided":
+                status.add_issue(st, i["id"], "unknown", "feasibility item classified undecided")
     if rel == "requirements.json":
         for conflict in doc.get("conflicts", []):
             for rid in conflict["ids"]:
@@ -141,6 +151,25 @@ def cmd_register(args, ctx: runctx.RunContext) -> int:
     save_state(ctx.run_dir, st, decisions_changed=False)
     _out({"ok": True, "artifact": rel, "items": len(new), "changes": len(st.changes)})
     return 0
+
+
+def _check_feasibility_mapping(st: status.State, doc: dict) -> None:
+    """§9.9 registration mapping: references must point at live requirements or kept findings."""
+    items = st.registry["items"]
+    for i in doc["items"]:
+        cls = i["classification"]
+        if cls == "required_by_customer":
+            live = [r for r in i["related_ids"] if r.startswith("REQ-") and r in items
+                    and items[r]["approval"] not in ("rejected", "superseded")]
+            if not live:
+                raise status.StatusError(f"{i['id']} is required_by_customer but references no live REQ")
+        elif cls == "supported_by_evidence":
+            kept = [r for r in i["related_ids"] if r.startswith("F-") and items.get(r, {}).get("verification") == "kept"]
+            if not kept:
+                raise status.StatusError(f"{i['id']} is supported_by_evidence but references no finding with verification kept")
+        for r in i["related_ids"]:
+            if r.startswith(("REQ-", "GAP-", "F-", "ASM-")) and r not in items:
+                raise status.StatusError(f"{i['id']} references unknown item {r}")
 
 
 # --------------------------------------------------------------------------- decide
@@ -182,12 +211,19 @@ def cmd_decide(args, ctx: runctx.RunContext) -> int:
     st = load_state(ctx.run_dir, ctx.run_id)
     reqs = _load_doc(ctx.run_dir, "requirements.json") or {}
     cq_ids = {q["id"] for q in reqs.get("clarifying_questions", [])}
+    q_ids = {q["id"] for q in (_load_doc(ctx.run_dir, "questions.json") or {}).get("questions", [])}
     for a in answers["answers"]:
+        for q in a.get("question_ids", []):
+            if q.startswith("Q-") and q not in q_ids:
+                raise status.StatusError(f"unknown customer question {q}")
         for i in a.get("affected_ids", []):
             if i.startswith("CQ-"):
                 if i not in cq_ids:
                     raise status.StatusError(f"unknown clarifying question {i}")
-            elif not i.startswith(("SCR-", "SRC-", "Q-", "DEC-")):
+            elif i.startswith("Q-"):
+                if i not in q_ids:
+                    raise status.StatusError(f"unknown customer question {i}")
+            elif not i.startswith(("SCR-", "SRC-", "DEC-")):
                 st.item(i)
         for q in a.get("question_ids", []):
             if q.startswith("CQ-") and q not in cq_ids:
@@ -242,12 +278,14 @@ def cmd_labels(args, ctx: runctx.RunContext) -> int:
     st = load_state(ctx.run_dir, ctx.run_id)
     doc = {"schema_version": 1, "run_id": ctx.run_id,
            "items": {iid: status.label(item) for iid, item in sorted(st.registry["items"].items())},
-           "gap_routing": status.gap_routing(st.registry, st.decisions, _load_doc(ctx.run_dir, "gaps.json"))}
+           "gap_routing": status.gap_routing(st.registry, st.decisions, _load_doc(ctx.run_dir, "gaps.json")),
+           "stale_approved": sorted(i for i, it in st.registry["items"].items() if it["stale"] and it["approval"] == "approved")}
     schema.check("status_labels", doc, what="status_labels.json")
     fsutil.atomic_write_json(ctx.run_dir / "status_labels.json", doc)
     runctx.record_integrity(ctx.run_dir, OWNER, "status_labels.json")
     _out({"ok": True, "items": len(doc["items"]), "gaps": len(doc["gap_routing"]),
-          "research_allowed": sorted(g for g, r in doc["gap_routing"].items() if r["research_allowed"])})
+          "research_allowed": sorted(g for g, r in doc["gap_routing"].items() if r["research_allowed"]),
+          "stale_approved": doc["stale_approved"]})
     return 0
 
 

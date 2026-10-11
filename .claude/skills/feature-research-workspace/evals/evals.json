@@ -78,7 +78,7 @@
         {
           "match": "checkpoint 2",
           "max_uses": 1,
-          "reply": "Approve the two highest-priority gaps that are routed to research or both, with their proposed research questions. Reject every other gap."
+          "reply": "Approve for research only the first two gaps in your table that are routed to research or both, in the order you listed them. Reject every other gap."
         },
         {
           "match": "checkpoint 1",
@@ -91,7 +91,37 @@
           "reply": "For anything still open at checkpoint 1: read-only for everyone with all fields locked; only Procurement team members award; awards cannot be undone; the supplier is chosen from the attached quotes. Leave the remaining non-blocking questions open."
         }
       ],
-      "expected_output": "Stages 1-10 complete in fixture mode: research on approved gaps only, recorded searches via H4 counted by H3, sources fetched through the fixture map, citation check, semantic verification; run aborted at Stage 11 (not built)."
+      "expected_output": "Stages 1-10 complete in fixture mode: research on approved gaps only, recorded searches via H4 counted by H3, sources fetched through the fixture map, citation check, semantic verification; run aborted at Stage 11 (not built).",
+      "status": "superseded by eval 9 from Phase 4 (eval 9 continues past stage 10 into stages 11-13)"
+    },
+    {
+      "id": 9,
+      "name": "feasibility-questions-checkpoint-3",
+      "fixture": "evals/fixtures/case-01-award-packages",
+      "prompt": "/feature-research index.html 'Package managers must be able to award a supplier package to one supplier. Awarded packages should be read-only. Suppliers must be notified when they win.'",
+      "followup_rules": [
+        {
+          "match": "checkpoint 3",
+          "max_uses": 1,
+          "reply": "For each question that has a recommendation, take the recommended option. Suppliers are told by email as soon as the award is confirmed. Bidders who lose are not told. Award records are kept for seven years. Leave every other question open."
+        },
+        {
+          "match": "checkpoint 2",
+          "max_uses": 1,
+          "reply": "Approve for research only the first two gaps in your table that are routed to research or both, in the order you listed them. Reject every other gap."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 1,
+          "reply": "Package managers means only people in the Procurement team. The supplier is chosen from the quotes attached to the package. A package is awarded to exactly one supplier and the award is final; it cannot be undone by anyone. Awarded packages are read-only for everyone and all fields are locked. Suppliers are notified by email when the award is made. Everything else is approved as written."
+        },
+        {
+          "match": "checkpoint 1",
+          "max_uses": 2,
+          "reply": "For anything still open at checkpoint 1: read-only for everyone with all fields locked; only Procurement team members award; awards cannot be undone; the supplier is chosen from the attached quotes. Leave the remaining non-blocking questions open."
+        }
+      ],
+      "expected_output": "Stages 1-13 complete: research, feasibility (mapping enforced at register), customer questions, Checkpoint 3 decisions with typed verbatim answers; aborted at Stage 14 (not built)."
     }
   ]
 }

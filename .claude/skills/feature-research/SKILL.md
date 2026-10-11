@@ -105,10 +105,10 @@ Stages run in this order. Each has the reference file named in the table (for ex
 | 8 | Research | researcher + `fetch_source.py` | `stage-08.md` | available |
 | 9 | Mechanical citation check | `verify_citations.py` | `stage-09.md` | available |
 | 10 | Semantic verification | `source-verifier` | `stage-10.md` | available |
-| 11 | Feasibility | `feasibility-analyst` | `stage-11.md` | Phase 4 |
-| 12 | Customer questions | `question-generator` | `stage-12.md` | Phase 4 |
-| 13 | Checkpoint 3: product decisions | you + `status_rules.py decide` | `stage-13.md` | Phase 4 |
-| 13R | Re-confirmation (only when approved items are stale) | you + `status_rules.py decide` | `stage-13r.md` | Phase 4 |
+| 11 | Feasibility | `feasibility-analyst` | `stage-11.md` | available |
+| 12 | Customer questions | `question-generator` | `stage-12.md` | available |
+| 13 | Checkpoint 3: product decisions | you + `status_rules.py decide` | `stage-13.md` | available |
+| 13R | Re-confirmation (only when approved items are stale) | you + `status_rules.py decide` | `stage-13r.md` | available |
 | 14 | Write specification | `doc-writer` | `stage-14.md` | Phase 5 |
 | 15 | Review and validate | `check_spec.py`, `doc-reviewer` | `stage-15.md` | Phase 5 |
 | 16 | Report | `run_state.py report` | `stage-16.md` | Phase 5 |
@@ -135,7 +135,7 @@ itself, so skip steps 1 and 2 there):
 Never continue downstream on invalid, incomplete or tampered artifacts.
 
 **When you reach a stage this build does not implement yet**, do not improvise it. Run
-`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 3)'`
+`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 4)'`
 so the session is released, then give the stage report described below and stop.
 
 ## Subagents
@@ -164,8 +164,10 @@ invocation, and H2 blocks your writes.
    interpretation. If an answer contradicts an earlier decision or is unclear, do not
    decide: ask the user to clarify (run `await-user` again and end your turn).
 3. H1 checks that every verbatim answer appears in a message the user typed after the
-   checkpoint. If it blocks the command, do not rephrase or retry with altered text: show
-   the user what was rejected and ask them to answer again.
+   checkpoint. If it blocks the command, compare each rejected verbatim with the user's
+   message character by character. If you mis-copied or mis-encoded it, correct it to the
+   user's exact words and retry once. If the words are not in their message, never rephrase:
+   show the user what was rejected and ask them to answer again.
 4. Show your recorded interpretation of each answer back to the user at the next checkpoint
    and in the final report.
 

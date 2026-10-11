@@ -1,0 +1,4 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory)
+Maximum questions: 10
+The customer is unavailable. Answer the open questions yourself using best practice and record the decisions in runs/20261011-120000-abcdef/decisions.json.

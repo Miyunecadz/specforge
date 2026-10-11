@@ -336,7 +336,7 @@ def test_citation_pipeline_pass_and_failures(s8):
     assert labels["F-GAP-002-03"]["placement"] == "sources_limitations"
     assert labels["F-GAP-002-02"]["label"] == "Conflicting"
     assert rs(repo, "verify", "--run", run_id)[0] == 0
-    assert rs(repo, "stage", "11", "--run", run_id, "--start")[0] == 3  # Phase 4
+    assert rs(repo, "stage", "11", "--run", run_id, "--start")[0] == 0  # feasibility is available from Phase 4
 
 
 def test_citation_failures_for_unlogged_tampered_and_mode_mismatched_sources(s8):

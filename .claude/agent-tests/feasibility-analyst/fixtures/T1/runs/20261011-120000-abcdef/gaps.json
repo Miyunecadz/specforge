@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "title": "Supplier win notification not shown",
+      "description": "REQ-005 asks for supplier notification; the mockup shows none.",
+      "category": "notifications",
+      "reason": "requirement_uncovered",
+      "related_req_ids": [
+        "REQ-005"
+      ],
+      "related_scr_ids": [
+        "SCR-010"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-010"
+        }
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Suppliers may not learn they won",
+      "consequences_if_unresolved": "Missed deliveries",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What do suppliers expect in an award notification?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-002",
+      "title": "Focus handling in the award confirmation",
+      "description": "Where focus goes is undefined.",
+      "category": "accessibility",
+      "reason": "checklist",
+      "related_req_ids": [
+        "REQ-001"
+      ],
+      "related_scr_ids": [
+        "SCR-007"
+      ],
+      "evidence_refs": [
+        {
+          "artifact": "inventory.json",
+          "locator": "SCR-007"
+        }
+      ],
+      "basis": "inference",
+      "why_it_matters": "Keyboard users",
+      "consequences_if_unresolved": "Lost focus",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "Where should focus move when a confirmation dialog opens and closes?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    }
+  ],
+  "assumptions": [],
+  "proposed_status_changes": []
+}

@@ -55,8 +55,8 @@ run:
   lock_stale_seconds: 30
 
 evals:
-  per_case_budget_usd: 10
-  per_run_budget_usd: 60
+  per_case_budget_usd: 20
+  per_run_budget_usd: 150
   budget_margin_usd: 1
   case_order: [case-06, case-07, case-08]   # run first; remaining cases follow in name order
 

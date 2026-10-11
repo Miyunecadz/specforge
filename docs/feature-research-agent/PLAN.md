@@ -15,6 +15,7 @@ that conflicts with them.
 | c | Tool guard adopted as **H5** and added to `BUILD_SPEC.md` §11.3. Scoped to the owning session during a run: blocks Skill, WebFetch and all `mcp__*` tools; blocks WebSearch in the main session; allows the Agent tool only for the nine workflow agents. Tests for each case. |
 | d | `uv`-managed `.venv`, `uv.lock` committed. The user runs `sudo .venv/bin/playwright install-deps chromium` themselves. |
 | e | Models: **Opus** for gap-analyst, source-verifier, feasibility-analyst, doc-reviewer, eval-citation-grader; **Sonnet** for mockup-extractor, requirements-parser, web-researcher (both variants), question-generator, doc-writer, and the orchestrator during development. Eval caps: **US$10 per case, US$60 per full eval run**; a case that hits its cap is stopped and reported **blocked**. Cases 6–8 run first. |
+| e2 | **Eval caps raised (2026-10-11, Phase 4 gate):** US$20 per case and US$150 per full eval run, after measuring US$9–11 per case through Checkpoint 3 and projecting US$12–16 with Phase 5. Model choices unchanged; a case that hits its cap is still stopped and reported blocked. |
 | f | Phase 1b is built against recorded/mocked Figma REST responses (429 back-off, frame limits, partial labelling tested offline). Live Figma tests are reported **blocked** until a read-only `FIGMA_TOKEN` and test file are supplied. (Answered 2026-10-11.) |
 | g | Added test: decision provenance ignores hook-injected text (for example the caveman SessionStart/UserPromptSubmit output). Added to `BUILD_SPEC.md` §11.3 test list. |
 
@@ -179,6 +180,27 @@ source-verifier 8/8; research e2e 16/16 at US$4.52 per case; re-audit APPROVED).
    fallback variant is fully sandbox-tested and not installed in identified mode.
 8. **Schemas**: budget, fetch_log_entry, fetch_request, source_metadata, findings,
    citation_check, verified_findings, fixture_sources.
+
+## Phase 4 implementation notes (2026-10-11)
+
+**Phase 4 gate: approved by the user on 2026-10-11** (640 passed; feasibility-analyst 8/8, question-generator 8/8;
+e2e through Checkpoint 3 14/15 with the one provenance rejection handled; re-audit APPROVED; caps raised, decision e2).
+
+1. **§9.9 mapping enforced twice**: `feasibility.schema.json` ties each classification to its
+   provenance and kind and requires a REQ id, a finding id or evidence refs; `status_rules.py
+   register` additionally checks the REQ is live (not rejected or superseded) and the finding's
+   verification is `kept`, and adds an `unknown` issue to `undecided` items.
+2. **`inspected_documents`** (feasibility addition) lists the documents the analyst actually read;
+   empty means no existing architecture was established.
+3. **Stage 12 checks** (run_state.py): question limit from the run's config snapshot, `Q-001…`
+   sequence, priority ordering, affected ids exist, recommendations name a listed option and cite
+   only kept findings.
+4. **Checkpoint 3** validates `Q-` ids in answers; no blocking enforcement (open questions stay
+   open, §9.11).
+5. **13R**: `run_state.py` refuses to start 13R when nothing approved is stale, and refuses to start
+   Stage 14 while approved items are stale and 13R has not completed. `labels` now lists
+   `stale_approved`. Stale flags are produced by `status_rules.py apply` (change-impact
+   analysis, Phase 6); Phase 4 tests create them through the owning script's own write path.
 ---
 
 ## 1. Current-state findings

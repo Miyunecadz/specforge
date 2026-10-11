@@ -7,10 +7,10 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 1a.** Stages 1–3 work: intake, mockup capture (HTML prototypes
-> and images) and inventory extraction. When a run reaches Stage 4 the orchestrator aborts it
-> with the reason "stages 4–16 are not built yet", so the session is released. Figma capture
-> is Phase 1b. Requirements, checkpoints, status rules, resume (Phase 2), research and
+> **Build status: Phase 1b.** Stages 1–3 work: intake, mockup capture (HTML prototypes,
+> images and Figma files) and inventory extraction. When a run reaches Stage 4 the
+> orchestrator aborts it with the reason "stages 4–16 are not built yet", so the session is
+> released. Requirements, checkpoints, status rules, resume (Phase 2), research and
 > citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
 > (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
 > exists now.
@@ -55,6 +55,23 @@ uv sync                                                  # creates .venv from uv
 sudo .venv/bin/playwright install-deps chromium          # system libraries (needs sudo)
 .venv/bin/python .claude/skills/feature-research/scripts/install_agents.py
 ```
+
+### Figma token
+
+Figma capture needs a personal access token with **File content: Read-only** scope and no
+write scopes (Figma → Settings → Security → Personal access tokens). Keep it outside the
+repository and export it as `FIGMA_TOKEN` in the shell that starts Claude Code:
+
+```bash
+mkdir -p ~/.config/figma && chmod 700 ~/.config/figma
+printf '%s' 'YOUR_TOKEN' > ~/.config/figma/token && chmod 600 ~/.config/figma/token
+echo 'export FIGMA_TOKEN="$(cat ~/.config/figma/token)"' >> ~/.bashrc
+```
+
+Never paste it into a chat or a repository file. The workflow sends it only to
+`api.figma.com` (never to the image hosts Figma links to), only on GET requests, and never
+writes it to run files or logs. Without it, Stage 1 reports `auth_required` with these
+instructions and the run stops.
 
 Dependencies are pinned in `uv.lock` (`requirements.txt` is exported from it): `httpx`,
 `trafilatura`, `playwright`, `jsonschema`, `PyYAML`, and `pytest` for development.
@@ -109,7 +126,7 @@ runs/
     run_manifest.json   stages, outputs and hashes, status (run_state.py)
     log.jsonl           audit log, hash-chained (run_state.py)
     input/              request.json, requirements.md, config.yaml, prior_decisions.json
-    capture/            manifest.json, pages/, screenshots/, assets/ (capture_mockup.py)
+    capture/            manifest.json, pages/, frames/, screenshots/, assets/ (capture_mockup.py)
     inventory.json      mockup-extractor
     warnings/<agent>.json
     integrity/<script>.json   hashes of continuously updated files (later phases)
@@ -172,6 +189,12 @@ attestation**: H1 records a digest of the exact `start` command, from the same s
   GET/HEAD is served. WebSockets and service workers are blocked. Forms are never
   submitted. Links that look state-changing (logout, delete, …) are not followed. Blocked
   and failed requests are recorded, and the capture is then labelled **partial**.
+- **Figma.** GET-only calls to the REST API with the read-only token. On HTTP 429 it waits
+  for `Retry-After` (or exponential back-off from `figma_backoff_base_s`) and retries up to
+  `figma_max_retries` times; waits over 120 s or exhausted retries are a capture failure.
+  At most `figma_max_frames` frames are captured (only the linked node with `?node-id=`), and
+  skipped frames make the capture **partial**. Frame images Figma links to go through the
+  same SSRF checks; a blocked image is recorded and makes the capture partial.
 - **Prompt injection.** All captured content is untrusted data. The shared subagent rules
   require agents to ignore embedded instructions and record them as
   `prompt_injection_attempt` warnings. The hooks limit what any injected instruction could
@@ -215,8 +238,11 @@ so nothing reaches the network. Fixture-mode output is always publication status
 `eval_only`.
 
 Fixtures so far: `evals/fixtures/case-01-award-packages` (straightforward HTML mockup and a
-static image) and `evals/fixtures/case-09-partial-capture` (missing pages, external and
-metadata requests). The evaluation runner (`run_evals.py`, headless `claude -p` with
+static image), `evals/fixtures/case-09-partial-capture` (missing pages, external and
+metadata requests) and `evals/fixtures/case-figma-01-award-packages` (recorded Figma REST
+responses, `award.figma.json`, replayed offline; regenerate with
+`.venv/bin/python tests/figma_fake.py <dir>`). Recordings follow
+`schemas/figma_recording.schema.json`. The evaluation runner (`run_evals.py`, headless `claude -p` with
 `--permission-mode dontAsk`, an explicit `--allowedTools` list, `--max-budget-usd`) is
 Phase 6.
 
@@ -231,6 +257,8 @@ chains, the ownership table, mode activation, config restrictions, schemas, SSRF
 DNS and transports), capture request interception, `run_state.py` lifecycle and tamper
 detection, every hook rule, and `install_agents.py` (variant selection, drift). Browser
 tests are skipped and reported **BLOCKED** when Chromium cannot launch.
+The live Figma test runs only when `FIGMA_TOKEN` and `FRA_FIGMA_TEST_URL` (a file you can
+read) are set; otherwise it is reported **BLOCKED**. All other Figma tests replay recordings.
 
 Authoring records (BUILD_SPEC §21):
 `.claude/agent-tests/mockup-extractor/record.md` (agent-creator sandbox tests) and
@@ -245,6 +273,9 @@ report). Their iteration outputs are gitignored.
 | `setup missing: run install_agents.py` | Run the installer (see Setup). |
 | `another run is active (<id>)` | Finish it, or `/feature-research --abort <id>`. |
 | Capture `failed` with `BrowserType.launch` | Chromium system libraries are missing: `sudo .venv/bin/playwright install-deps chromium`. |
+| Figma `auth_required` | `FIGMA_TOKEN` is not set in the shell that started Claude Code (see "Figma token"). |
+| Figma `access_denied` | The token cannot read the file: check it has File content read access and the file is shared with you. |
+| Figma `rate_limited` | Retries exhausted; wait and start a new run, or lower `figma_max_frames`. |
 | `this run belongs to another Claude Code session` | The run is bound to the session that started it. Use `--abort` (resume arrives in Phase 2). |
 | Tamper report | A file changed outside its owner. Read the report (file, owner, last writer). The run cannot continue. Start a new run. |
 | Stuck run blocking a session | `/feature-research --abort <run-id>` from any session. Do not delete run files by hand. |

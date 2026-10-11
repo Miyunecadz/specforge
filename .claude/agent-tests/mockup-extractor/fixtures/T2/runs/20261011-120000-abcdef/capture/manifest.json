@@ -110,6 +110,9 @@
     "pages_failed": 1,
     "pages_skipped": 0,
     "bytes": 12000,
-    "requests_blocked": 1
+    "requests_blocked": 1,
+    "frames_captured": 0,
+    "frames_failed": 0,
+    "frames_skipped": 0
   }
 }

@@ -26,3 +26,14 @@ Round 1 fix: "Use only inside those subagents" → "Use when running as one of t
 heading renamed "Warnings file format (example)". Round 2: 0 FAIL, 0 WARN; every checklist item PASS.
 Test prompts: an ordinary-session question about subagent rules cannot load the skill (both flags,
 probe a/b) PASS; embedded copy present verbatim in the generated agent (drift test) PASS.
+
+## Phase 1b re-audit (§21.1): feature-research APPROVED
+
+Changed: Stage 2 row now "available (HTML, image, Figma)"; stage-02.md describes Figma capture (read-only
+FIGMA_TOKEN never seen by the orchestrator, figma_max_frames, rate-limit retries, partial when frames are
+skipped, recordings in fixture mode); build label Phase 1b. check_skill.py: 0 FAIL, 14 accepted WARNs
+(library modules, agents-src). Checklist items all PASS; consistency checked against capture_mockup.py and
+_lib/figma.py. Test prompts: Figma URL without a token → check_url auth_required, Stage 1 completes, run
+aborted with setup instructions (stage-01.md step 4/7) PASS; Figma recording in fixture mode → stages 1–3
+(e2e eval 6, 11/11) PASS; earlier prompts re-run in iteration 6, all PASS (57/57).
+feature-research-subagent-rules: unchanged, no re-audit required.

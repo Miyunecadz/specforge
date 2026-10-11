@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _lib import attest, fsutil, hashing, modes, ownership, paths, runctx, schema, stages  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
-WORKFLOW_VERSION = "0.1.0-phase1a"
+WORKFLOW_VERSION = "0.1.0-phase1b"
 MAX_REQUIREMENTS_BYTES = 1_000_000
 EXIT_OK, EXIT_ERROR, EXIT_REFUSED, EXIT_TAMPER = 0, 1, 3, 4
 
@@ -169,7 +169,7 @@ def _decode_requirements(args) -> tuple[bytes, str, str | None]:
 
 def _declared_type(url: str) -> str:
     low = url.lower().split("?", 1)[0]
-    if "figma.com/" in low:
+    if "figma.com/" in low or low.endswith(".figma.json"):
         return "figma"
     if low.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg")):
         return "image"

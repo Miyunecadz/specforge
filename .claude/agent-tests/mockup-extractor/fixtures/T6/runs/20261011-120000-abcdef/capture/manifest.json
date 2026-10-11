@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "method": "figma",
+  "mode": "fixture",
+  "fixture_dir": "evals/fixtures/case-a",
+  "captured_at": "2026-10-11T07:11:48.580Z",
+  "original_url": "award.figma.json",
+  "status": "complete",
+  "pages": [],
+  "frames": [
+    {
+      "id": "FRAME-001",
+      "name": "Packages / List",
+      "node_id": "1:2",
+      "page_name": "Packages",
+      "status": "captured",
+      "image": "capture/screenshots/frame-001.png",
+      "node_tree": "capture/frames/frame-001.json",
+      "text": "capture/frames/frame-001.txt",
+      "error": null
+    },
+    {
+      "id": "FRAME-002",
+      "name": "Packages / Details",
+      "node_id": "1:3",
+      "page_name": "Packages",
+      "status": "captured",
+      "image": "capture/screenshots/frame-002.png",
+      "node_tree": "capture/frames/frame-002.json",
+      "text": "capture/frames/frame-002.txt",
+      "error": null
+    },
+    {
+      "id": "FRAME-003",
+      "name": "Packages / Awarded",
+      "node_id": "1:4",
+      "page_name": "Packages",
+      "status": "captured",
+      "image": "capture/screenshots/frame-003.png",
+      "node_tree": "capture/frames/frame-003.json",
+      "text": "capture/frames/frame-003.txt",
+      "error": null
+    }
+  ],
+  "assets": [],
+  "links": [
+    {
+      "from": "FRAME-001",
+      "href": "figma-node:1:3",
+      "text": "Button / View details",
+      "same_origin": true,
+      "followed": true,
+      "to": "FRAME-002"
+    },
+    {
+      "from": "FRAME-002",
+      "href": "figma-node:1:4",
+      "text": "Button / Award Package",
+      "same_origin": true,
+      "followed": true,
+      "to": "FRAME-003"
+    },
+    {
+      "from": "FRAME-002",
+      "href": "figma-node:1:2",
+      "text": "Button / Back",
+      "same_origin": true,
+      "followed": true,
+      "to": "FRAME-001"
+    }
+  ],
+  "blocked_requests": [],
+  "failed_requests": [],
+  "warnings": [],
+  "limitations": [],
+  "access_failures": [],
+  "limits": {
+    "max_pages": 30,
+    "max_depth": 3,
+    "max_bytes_per_resource": 10485760,
+    "max_total_capture_bytes": 209715200,
+    "max_requests_per_page": 300
+  },
+  "totals": {
+    "pages_captured": 0,
+    "pages_failed": 0,
+    "pages_skipped": 0,
+    "frames_captured": 3,
+    "frames_failed": 0,
+    "frames_skipped": 0,
+    "bytes": 216,
+    "requests_blocked": 0
+  }
+}

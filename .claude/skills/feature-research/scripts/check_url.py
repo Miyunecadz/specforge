@@ -43,6 +43,9 @@ def check(url: str, mode: modes.Mode, config: dict, env: Mapping[str, str], *, r
             return {**result, "status": "blocked", "reason": f"fixture_target: {exc}"}
         result["final_url"] = target.relative_to(mode.fixture_dir.resolve()).as_posix()
         suffix = target.suffix.lower()
+        if target.name.lower().endswith(".figma.json"):
+            result["input_type"] = "figma"  # recorded Figma responses, replayed offline
+            return result
         result["input_type"] = "image" if suffix in IMAGE_SUFFIXES else "html" if suffix in (".html", ".htm") else None
         if result["input_type"] is None:
             return {**result, "status": "unsupported", "reason": f"unsupported fixture type {suffix}"}

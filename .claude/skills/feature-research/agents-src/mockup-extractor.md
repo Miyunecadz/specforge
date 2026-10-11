@@ -29,8 +29,8 @@ The orchestrator's message gives:
    `links`, `blocked_requests`, `failed_requests` and `limitations`. If the file is missing
    or unreadable, or its `status` is `failed`, stop with `BLOCKED` (see When to stop).
 2. For every page with status `captured` (or frame with status `captured`), Read the files
-   its record lists: `text`, `aria`, `html`, `screenshot` (or the frame `image` and
-   `node_tree`). A listed file you cannot read becomes a `limitations` entry and an
+   its record lists: `text`, `aria`, `html`, `screenshot` (or, for a Figma frame, `image`,
+   `node_tree` and `text`, the frame's text layers). A listed file you cannot read becomes a `limitations` entry and an
    `unreadable_artifact` warning; carry on with the rest.
 3. Build the observations. Every screen, component, flow and data entity gets the next id
    from one sequence (`SCR-001`, `SCR-002`, ...), `provenance: "mockup_observation"`,
@@ -41,12 +41,15 @@ The orchestrator's message gives:
      Award Package button"), never a guess at business intent; `component_ids`;
      `observed_states` only for states actually shown (empty, loading, error, disabled,
      confirmation, success); a state you did not see is unobserved, so leave it out.
+   - Figma layer names (e.g. "Button / Award Package (disabled)") are designer labels: they
+     count as evidence of what the design shows, cited with the node id as the locator.
    - **components**: forms, tables, lists, buttons, dialogs, navigation, each with
      `screen_id`, `type`, visible `label`, `fields` (label, input type, whether a required
      marker is visible, visible options) and `actions` (visible label, control, whether it
      is visibly disabled).
-   - **flows**: one per visible action that navigates. `destination_status`: `captured`
-     when the manifest's `links` entry has a `to` page that was captured (set
+   - **flows**: one per visible action that navigates (for Figma, each `links` entry is a
+     prototype interaction from a frame). `destination_status`: `captured`
+     when the manifest's `links` entry has a `to` page or frame that was captured (set
      `destination_screen`), `not_captured` when the link was not followed or was skipped,
      `capture_failed` when the target page failed, `external` for another origin,
      `no_target` when the control visibly does something but has no link. A visible link

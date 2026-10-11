@@ -44,6 +44,18 @@ for d in sorted(it.glob("eval-*")):
             a("Stage 2 recorded failed", st.get("2", {}).get("status") == "failed", st.get("2"))
             a("No inventory produced", not (rs[0] / "inventory.json").exists(), "")
             a("Failure quoted in report, not described as inspected", "fail" in final.lower() and (cap.get("access_failures") or ["?"])[0][:40] in final, cap.get("access_failures"))
+    if "eval-5" in name or "eval-6" in name:
+        a("Stages 2 and 3 completed", all(st.get(k, {}).get("status") == "completed" for k in ("2", "3")), {k: v["status"] for k, v in st.items()})
+        cap = json.loads((rs[0] / "capture/manifest.json").read_text())
+        inv = json.loads((rs[0] / "inventory.json").read_text()) if (rs[0] / "inventory.json").exists() else {}
+        a("mockup-extractor invoked via recorded subagent", "mockup-extractor" in subs, subs)
+    if "eval-5" in name:
+        a("Capture partial with failed pages and blocked requests", cap["status"] == "partial" and cap["totals"]["pages_failed"] >= 2 and cap["totals"]["requests_blocked"] >= 3, cap["totals"])
+        a("Inventory labelled partial, first limitation says so", inv.get("capture_status") == "partial" and "partial" in (inv.get("limitations") or [""])[0].lower(), (inv.get("limitations") or [""])[0])
+        a("Report says partial", "partial" in final.lower(), final[:200])
+    if "eval-6" in name:
+        a("Figma capture of 3 frames", cap["method"] == "figma" and cap["totals"]["frames_captured"] == 3, cap["totals"])
+        a("Inventory has 3 screens", len(inv.get("screens", [])) == 3, len(inv.get("screens", [])))
     if "eval-3" in name:
         a("No capture attempted", not (rs[0] / "capture").exists(), "")
         a("Report names blocked_address", "blocked_address" in final, final[:200])

@@ -13,8 +13,14 @@ Goal: a faithful, bounded capture of what the mockup shows. Performed by
    ```
 
    The script reads the URL from the run's `input/request.json`. You pass nothing else.
-   It intercepts and re-validates every browser request, never submits forms or clicks, and
-   follows only same-origin links within the configured limits.
+   - HTML: it serves every browser request itself after re-validating it, never submits
+     forms or clicks, and follows only same-origin links within the configured limits.
+   - Figma: it calls the Figma REST API with the read-only `FIGMA_TOKEN` from the
+     environment (you never see or pass the token), captures up to `figma_max_frames`
+     frames (image, node tree, text layers, prototype links), and waits and retries on
+     rate limits. Frames beyond the limit make the capture **partial**. In fixture mode a
+     recording (`*.figma.json`) is replayed with no network access.
+   - Image: it downloads the image within size and type limits.
 3. Read the JSON it prints (`status`, `method`, `totals`, `access_failures`,
    `limitations`):
    - `complete` → run `run_state.py stage 2 --run <run-id> --complete`.

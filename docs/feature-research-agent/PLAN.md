@@ -89,6 +89,30 @@ both skills APPROVED by skill-auditor, orchestrator e2e 36/36 plus two HTML runs
 15. **Shared-rules wording.** `<your-agent-name>` placeholders were replaced with a concrete
     example (agent-creator lint).
 
+
+## Phase 1b implementation notes (2026-10-11)
+
+**Phase 1b gate: approved by the user on 2026-10-11** (486 passed, live Figma test blocked; mockup-extractor
+9/9 with T6 Figma; orchestrator e2e 57/57; re-audit APPROVED).
+
+1. Figma client in `scripts/_lib/figma.py`; GET only, token in `X-Figma-Token`, sent only to
+   `api.figma.com` (never to the S3 image hosts), scrubbed from error text, never stored.
+2. Rate limiting: `Retry-After` honoured, otherwise `figma_backoff_base_s * 2^attempt`; at most
+   `figma_max_retries` retries; a `Retry-After` above 120 s is treated as a failure rather
+   than waiting.
+3. Frames: top-level FRAME/COMPONENT/COMPONENT_SET/SECTION nodes of every page, in file order,
+   or only the URL's `node-id` (or its child frames). Node trees fetched in batches of 5,
+   trimmed to id, name, type, characters, componentId, visible, bounding box; text layers
+   written to `capture/frames/frame-NNN.txt`; prototype reactions become links.
+4. Schema changes: capture manifest frames gain `text`; links and request records accept
+   FRAME ids; totals gain `frames_captured/failed/skipped`. New `figma_recording.schema.json`.
+5. Fixture mode: a `*.figma.json` recording is replayed through the same client via a mock
+   transport and a fixed resolver; no DNS or sockets. `tests/figma_fake.py` builds
+   recordings (and the eval fixture) from the documented REST response shapes, not from a
+   live capture, so field coverage is limited to what the client uses.
+6. A blocked or failed frame-image download is recorded in blocked/failed requests and makes
+   the capture partial, matching the HTML path.
+7. Live Figma tests: **blocked** (no token supplied, decision f).
 ---
 
 ## 1. Current-state findings

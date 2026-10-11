@@ -1,0 +1,39 @@
+{
+  "id": "1:4",
+  "name": "Packages / Awarded",
+  "type": "FRAME",
+  "children": [
+    {
+      "id": "1:41",
+      "name": "Banner",
+      "type": "TEXT",
+      "characters": "Package awarded to Acme Joinery",
+      "absoluteBoundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 100,
+        "height": 20
+      }
+    },
+    {
+      "id": "1:42",
+      "name": "Button / Award Package (disabled)",
+      "type": "INSTANCE",
+      "componentId": "9:1",
+      "children": [
+        {
+          "id": "1:421",
+          "name": "Label",
+          "type": "TEXT",
+          "characters": "Award Package",
+          "absoluteBoundingBox": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 20
+          }
+        }
+      ]
+    }
+  ]
+}

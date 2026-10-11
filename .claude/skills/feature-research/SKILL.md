@@ -96,7 +96,7 @@ Stages run in this order. Each has the reference file named in the table (for ex
 | # | Stage | Performed by | Reference | Status in this build |
 |---|---|---|---|---|
 | 1 | Intake | `run_state.py start`, `check_url.py` | `stage-01.md` | available |
-| 2 | Capture mockup | `capture_mockup.py` | `stage-02.md` | available (HTML, image; Figma in Phase 1b) |
+| 2 | Capture mockup | `capture_mockup.py` | `stage-02.md` | available (HTML, image, Figma) |
 | 3 | Extract inventory | `mockup-extractor` | `stage-03.md` | available |
 | 4 | Parse requirements | `requirements-parser` | `stage-04.md` | Phase 2 |
 | 5 | Checkpoint 1: confirm requirements | you + `status_rules.py decide` | `stage-05.md` | Phase 2 |
@@ -134,7 +134,7 @@ itself, so skip steps 1 and 2 there):
 Never continue downstream on invalid, incomplete or tampered artifacts.
 
 **When you reach a stage this build does not implement yet**, do not improvise it. Run
-`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 1a)'`
+`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 1b)'`
 so the session is released, then give the stage report described below and stop.
 
 ## Subagents
@@ -203,5 +203,5 @@ Run 20261011-062709-0ceeae, fixture mode, eval_only; artifacts kept in its run d
 Stage 1 intake: completed; requirements preserved exactly; mockup.png checked as image.
 Stage 2 capture: complete (image); limitation: "A static image is not an interactive prototype ..."
 Stage 3 inventory: completed; 1 screen, 3 components, 0 flows, 0 entities, 2 ambiguous behaviours.
-Stopped at Stage 4: stages 4-16 are not built yet (Phase 1a). Run aborted; artifacts preserved.
+Stopped at Stage 4: stages 4-16 are not built yet (Phase 1b). Run aborted; artifacts preserved.
 ```

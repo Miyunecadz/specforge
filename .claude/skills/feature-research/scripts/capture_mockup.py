@@ -12,7 +12,9 @@ never submitted and nothing is clicked. Same-origin links are followed within th
 depth limits, except links that look state-changing (logout, delete, ...).
 
 Image: downloaded (or read from the fixture directory) within size and type limits.
-Figma: implemented in Phase 1b.
+Figma: REST API with the read-only FIGMA_TOKEN (see _lib/figma.py): frame images, node trees,
+text layers, prototype links; 429 back-off; figma_max_frames; partial when frames are skipped.
+In fixture mode a recording (*.figma.json) is replayed with no network access.
 
 Writes only under capture/. capture/manifest.json is written last. Exit 0 when the
 capture is complete or partial, 1 when it failed, 3 when refused.
@@ -34,7 +36,7 @@ from urllib.parse import urldefrag, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from _lib import fixtures, fsutil, hashing, modes, paths, runctx, safe_http, schema, urlsafety  # noqa: E402
+from _lib import figma, fixtures, fsutil, hashing, modes, paths, runctx, safe_http, schema, urlsafety  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
 POLICY_BLOCK_CODES = {
@@ -60,6 +62,7 @@ class Recorder:
     warnings: list = field(default_factory=list)
     limitations: list = field(default_factory=list)
     access_failures: list = field(default_factory=list)
+    figma_links: list = field(default_factory=list)
     bytes_total: int = 0
 
     def block(self, url, page, rtype, reason):
@@ -329,10 +332,10 @@ def capture_image(url: str, mode: modes.Mode, config: dict, cap_dir: Path, rec: 
 # --------------------------------------------------------------------------- main
 
 
-def _method_for(url: str, mode: modes.Mode, config: dict, *, resolver=None, transport=None) -> str:
+def _method_for(url: str, mode: modes.Mode, config: dict, *, resolver=None, transport=None, env=None) -> str:
     from check_url import check
 
-    res = check(url, mode, config, {**os.environ}, resolver=resolver, transport=transport)
+    res = check(url, mode, config, os.environ if env is None else env, resolver=resolver, transport=transport)
     if res["input_type"] == "figma":
         return "figma"
     if res["status"] != "ok":
@@ -340,7 +343,26 @@ def _method_for(url: str, mode: modes.Mode, config: dict, *, resolver=None, tran
     return res["input_type"]
 
 
-def run_capture(ctx: runctx.RunContext, config: dict, *, resolver=None, transport=None, launch=None) -> dict:
+def capture_figma(url, ctx, config, cap_dir, rec, *, resolver=None, transport=None, sleep=None, env=None) -> list:
+    env = os.environ if env is None else env
+    if ctx.mode.mode == modes.FIXTURE:
+        recording = fixtures.resolve_target(url, ctx.mode.fixture_dir)
+        schema.check("figma_recording", json.loads(recording.read_text(encoding="utf-8")), what=str(recording.name))
+        url, transport, resolver = figma.load_recording(recording)
+        token = "fixture-token"
+    else:
+        token = env.get("FIGMA_TOKEN")
+        if not token:
+            raise figma.FigmaError("auth_required", "FIGMA_TOKEN is not set (read-only personal access token needed)")
+    client = figma.FigmaClient(token, config, transport=transport, resolver=resolver or urlsafety.system_resolver,
+                               sleep=sleep or __import__("time").sleep)
+    frames, links = figma.capture(url, client, cap_dir, rec)
+    rec.figma_links = links
+    return frames
+
+
+def run_capture(ctx: runctx.RunContext, config: dict, *, resolver=None, transport=None, launch=None,
+                sleep=None, env=None) -> dict:
     request = json.loads((ctx.run_dir / "input/request.json").read_text(encoding="utf-8"))
     url = request["mockup_url"]
     cap_dir = ctx.run_dir / "capture"
@@ -351,11 +373,13 @@ def run_capture(ctx: runctx.RunContext, config: dict, *, resolver=None, transpor
     pages: list = []
     links: list = []
     assets: list = []
+    frames: list = []
     method = "html"
     try:
-        method = _method_for(url, ctx.mode, config, resolver=resolver, transport=transport)
+        method = _method_for(url, ctx.mode, config, resolver=resolver, transport=transport, env=env)
         if method == "figma":
-            rec.access_failures.append("Figma capture is implemented in Phase 1b; nothing was captured.")
+            frames = capture_figma(url, ctx, config, cap_dir, rec, resolver=resolver, transport=transport,
+                                   sleep=sleep, env=env)
         elif method == "image":
             assets = capture_image(url, ctx.mode, config, cap_dir, rec, resolver=resolver, transport=transport)
         else:
@@ -365,18 +389,21 @@ def run_capture(ctx: runctx.RunContext, config: dict, *, resolver=None, transpor
                 start = fixtures.to_fixture_url(fixtures.resolve_target(url, ctx.mode.fixture_dir),
                                                 ctx.mode.fixture_dir)
             pages, links = capture_html(start, gate, config, cap_dir, rec, launch=launch)
-    except (safe_http.FetchBlocked, fixtures.FixtureError) as exc:
+    except (safe_http.FetchBlocked, fixtures.FixtureError, figma.FigmaError) as exc:
         rec.access_failures.append(f"{getattr(exc, 'code', 'fixture_error')}: {exc}")
+    except schema.SchemaError as exc:
+        rec.access_failures.append(f"invalid_recording: {exc}")
     except Exception as exc:  # browser launch failures and similar: record, never pretend
         rec.access_failures.append(f"capture error: {type(exc).__name__}: {str(exc).splitlines()[0][:300]}")
 
-    captured = [p for p in pages if p["status"] == "captured"]
-    failed = [p for p in pages if p["status"] == "failed"]
-    skipped = [p for p in pages if p["status"] == "skipped"]
+    links = links or rec.figma_links
+    captured = [p for p in pages + frames if p["status"] == "captured"]
+    failed = [p for p in pages + frames if p["status"] == "failed"]
+    skipped = [p for p in pages + frames if p["status"] == "skipped"]
     if failed:
         rec.limitations.append(f"{len(failed)} page(s) failed to capture: "
                                + ", ".join(f"{p['id']} ({p['error'] or 'error'})" for p in failed))
-    if skipped:
+    if skipped and not frames:
         rec.limitations.append(f"{len(skipped)} page(s) were not captured because a limit was reached.")
     if rec.blocked:
         rec.limitations.append(f"{len(rec.blocked)} request(s) were blocked; pages may render incompletely.")
@@ -391,12 +418,15 @@ def run_capture(ctx: runctx.RunContext, config: dict, *, resolver=None, transpor
     manifest = {
         "schema_version": 1, "run_id": ctx.run_id, "method": method, "mode": ctx.mode.mode,
         "fixture_dir": ctx.manifest.get("fixture_dir"), "captured_at": now_iso(), "original_url": _redact(url),
-        "status": status, "pages": pages, "frames": [], "assets": assets, "links": links,
+        "status": status, "pages": pages, "frames": frames, "assets": assets, "links": links,
         "blocked_requests": rec.blocked, "failed_requests": rec.failed, "warnings": rec.warnings,
         "limitations": rec.limitations, "access_failures": rec.access_failures,
         "limits": {k: config["capture"][k] for k in ("max_pages", "max_depth", "max_bytes_per_resource",
                                                      "max_total_capture_bytes", "max_requests_per_page")},
-        "totals": {"pages_captured": len(captured), "pages_failed": len(failed), "pages_skipped": len(skipped),
+        "totals": {**{f"pages_{k}": len([p for p in pages if p["status"] == v])
+                      for k, v in (("captured", "captured"), ("failed", "failed"), ("skipped", "skipped"))},
+                   **{f"frames_{k}": len([f for f in frames if f["status"] == v])
+                      for k, v in (("captured", "captured"), ("failed", "failed"), ("skipped", "skipped"))},
                    "bytes": rec.bytes_total, "requests_blocked": len(rec.blocked)},
     }
     schema.check("capture_manifest", manifest, what="capture/manifest.json")

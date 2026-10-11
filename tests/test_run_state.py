@@ -188,7 +188,8 @@ def _capture_manifest(run_id, status="complete"):
                        "aria": None, "html": None, "nav_labels": [], "error": None}],
             "frames": [], "assets": [], "links": [], "blocked_requests": [], "failed_requests": [],
             "warnings": [], "limitations": [], "access_failures": [], "limits": {},
-            "totals": {"pages_captured": 1, "pages_failed": 0, "pages_skipped": 0, "bytes": 1,
+            "totals": {"pages_captured": 1, "pages_failed": 0, "pages_skipped": 0, "frames_captured": 0,
+                       "frames_failed": 0, "frames_skipped": 0, "bytes": 1,
                        "requests_blocked": 0}}
 
 

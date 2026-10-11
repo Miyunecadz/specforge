@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/run_summary.schema.json",
+  "title": "run_summary.json, written only by run_state.py report (§7 Stage 16).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "mode",
+    "publication_status",
+    "status_reasons",
+    "spec_path",
+    "generated_at",
+    "counts",
+    "capture",
+    "research",
+    "budget",
+    "hooks",
+    "tamper_reports",
+    "review",
+    "outstanding_decisions",
+    "stale_items",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "mode": {
+      "$ref": "common.schema.json#/$defs/run_mode"
+    },
+    "publication_status": {
+      "enum": [
+        "validated",
+        "validated_with_warnings",
+        "not_fully_validated",
+        "blocked",
+        "eval_only"
+      ]
+    },
+    "status_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "spec_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "capture": {
+      "type": "object"
+    },
+    "research": {
+      "type": "object"
+    },
+    "budget": {
+      "type": "object"
+    },
+    "hooks": {
+      "type": "object"
+    },
+    "tamper_reports": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "review": {
+      "type": "object"
+    },
+    "outstanding_decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stale_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array"
+    }
+  }
+}

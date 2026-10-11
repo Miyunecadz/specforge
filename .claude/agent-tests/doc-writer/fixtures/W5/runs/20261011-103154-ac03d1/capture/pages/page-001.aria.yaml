@@ -1,0 +1,35 @@
+- banner:
+  - navigation "Main":
+    - link "Packages":
+      - /url: index.html
+    - link "Reports":
+      - /url: reports.html
+- main:
+  - heading "Supplier packages" [level=1]
+  - text: Search
+  - searchbox "Search"
+  - table:
+    - rowgroup:
+      - row "Package Supplier Value Status":
+        - columnheader "Package"
+        - columnheader "Supplier"
+        - columnheader "Value"
+        - columnheader "Status"
+        - columnheader
+    - rowgroup:
+      - row "PKG-104 Kitchen refit Acme Joinery £12,400 Open View details":
+        - cell "PKG-104 Kitchen refit"
+        - cell "Acme Joinery"
+        - cell "£12,400"
+        - cell "Open"
+        - cell "View details":
+          - link "View details":
+            - /url: package-104.html
+      - row "PKG-105 Roof repair Top Roofing £8,950 Awarded View details":
+        - cell "PKG-105 Roof repair"
+        - cell "Top Roofing"
+        - cell "£8,950"
+        - cell "Awarded"
+        - cell "View details":
+          - link "View details":
+            - /url: package-105.html

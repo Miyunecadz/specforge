@@ -1,0 +1,6 @@
+Packages Reports
+Supplier packages
+Search 
+Package	Supplier	Value	Status	
+PKG-104 Kitchen refit	Acme Joinery	£12,400	Open	View details
+PKG-105 Roof repair	Top Roofing	£8,950	Awarded	View details

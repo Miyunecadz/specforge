@@ -1,0 +1,5 @@
+Confirming irreversible actions (fixture guidance)
+Ask for confirmation before an action that cannot be undone, and state the consequence in the dialog text, for example which package will be awarded and to whom.
+Label the confirm button with the action itself, such as Award package, rather than a generic OK.
+Do not ask for confirmation of actions that can be undone easily; offer undo instead.
+This page is a test fixture for the Feature Research Agent and is not real documentation.

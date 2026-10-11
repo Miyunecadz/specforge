@@ -27,7 +27,8 @@ def to_stage11(repo):
                 rec={"text": "Return focus to the Award Package button.", "rationale": "Applies the rule."})])
     add_subagent_event(repo, run_id, "web-researcher")
     assert sr(repo, "register", "findings/GAP-002.json", "--run", run_id)[0] == 0
-    assert rs(repo, "stage", "8", "--run", run_id, "--complete")[0] == 0
+    rc, out = rs(repo, "stage", "8", "--run", run_id, "--complete")
+    assert rc == 0, out
     assert rs(repo, "stage", "9", "--run", run_id, "--start")[0] == 0
     assert run_cli(vc.main, script_argv(repo, "verify_citations", "--run", run_id), repo, env_for())[0] == 0
     assert sr(repo, "verification", "--run", run_id, "--from", "citations")[0] == 0

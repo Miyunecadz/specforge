@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "source_id": "SRC-b6836a9a",
+  "run_id": "20261011-103154-ac03d1",
+  "original_url": "https://docs.fixture.example/supplier-notifications",
+  "final_url": "https://docs.fixture.example/supplier-notifications",
+  "title": "Notifying suppliers of award outcomes (fixture guidance)",
+  "fetched_at": "2026-10-11T10:41:41.988Z",
+  "publication_date": null,
+  "http_status": 200,
+  "content_type": "text/html",
+  "source_type": "official_documentation",
+  "content_sha256": "de241874b551dab65289234c4f5932b43afca9b1a51a968994f6dade71fd2a30",
+  "available": true,
+  "extraction": "trafilatura",
+  "mode": "fixture",
+  "fixture_dir": "evals/fixtures/case-01-award-packages",
+  "gap_ids": [
+    "GAP-004"
+  ],
+  "warnings": [
+    "fixture mode: robots.txt not checked (no network)"
+  ]
+}

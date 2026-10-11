@@ -44,6 +44,7 @@ ARTIFACTS = {
     "requirements.json": "requirements",
     "gaps.json": "gaps",
     "feasibility.json": "feasibility",
+    "spec.md": None,
 }
 
 
@@ -110,6 +111,8 @@ def cmd_register(args, ctx: runctx.RunContext) -> int:
     is_findings = re.fullmatch(r"findings/GAP-[0-9]{3,}\.json", rel) is not None
     if rel not in ARTIFACTS and not is_findings:
         raise RunError(f"register supports {', '.join(ARTIFACTS)} and findings/GAP-nnn.json; got {rel!r}")
+    if rel == "spec.md":
+        return _register_spec(ctx)
     doc = _load_doc(ctx.run_dir, rel)
     if doc is None:
         raise RunError(f"{rel} does not exist in the run")
@@ -170,6 +173,38 @@ def _check_feasibility_mapping(st: status.State, doc: dict) -> None:
         for r in i["related_ids"]:
             if r.startswith(("REQ-", "GAP-", "F-", "ASM-")) and r not in items:
                 raise status.StatusError(f"{i['id']} references unknown item {r}")
+
+
+def _register_spec(ctx: runctx.RunContext) -> int:
+    """Register the ASM-W assumptions from the spec's machine-readable block (§7 Stage 14). Always not_reviewed."""
+    spec = ctx.run_dir / "spec.md"
+    if not spec.exists():
+        raise RunError("spec.md does not exist")
+    text = spec.read_text(encoding="utf-8")
+    m = re.search(r"```json asm-w\n(.*?)\n```", text, re.S)
+    if not m:
+        raise status.StatusError("spec.md has no ```json asm-w``` block (write [] when there are no new assumptions)")
+    try:
+        block = json.loads(m.group(1))
+    except ValueError as exc:
+        raise status.StatusError(f"the asm-w block is not valid JSON: {exc}") from exc
+    if not isinstance(block, list):
+        raise status.StatusError("the asm-w block must be a JSON list")
+    st = load_state(ctx.run_dir, ctx.run_id)
+    ids = []
+    for b in block:
+        if not isinstance(b, dict) or not re.fullmatch(r"ASM-W-[0-9]{3,}", str(b.get("id", ""))) \
+                or not all(isinstance(b.get(k), str) and b[k].strip() for k in ("text", "why", "impact", "to_confirm")):
+            raise status.StatusError(f"bad asm-w entry {b!r}: needs id ASM-W-nnn and non-empty text, why, impact, to_confirm")
+        ids.append(b["id"])
+        status.register_item(st, status.new_item(b["id"], "assumption", "assumption", "spec.md"))
+    dupes = sorted({i for i in ids if ids.count(i) > 1})
+    if dupes:
+        raise status.StatusError(f"duplicate ids in the asm-w block: {', '.join(dupes)}")
+    st.registry["registered_artifacts"]["spec.md"] = hashing.sha256_file(spec)
+    save_state(ctx.run_dir, st, decisions_changed=False)
+    _out({"ok": True, "artifact": "spec.md", "asm_w": ids, "changes": len(st.changes)})
+    return 0
 
 
 # --------------------------------------------------------------------------- decide

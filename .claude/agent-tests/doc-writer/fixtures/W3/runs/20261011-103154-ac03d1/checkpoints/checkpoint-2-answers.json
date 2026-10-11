@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "checkpoint": "2",
+  "rounds": [
+    {
+      "at": "2026-10-11T10:41:20.245Z",
+      "source": "user",
+      "answers": [
+        {
+          "verbatim": "Approve for research only the first two gaps in your table that are routed to research or both, in the order you listed them.",
+          "interpretation": "Approve GAP-004 and GAP-005.",
+          "presented": "gaps",
+          "question_ids": [],
+          "affected_ids": [
+            "GAP-004",
+            "GAP-005"
+          ],
+          "actions": [
+            {
+              "type": "approve",
+              "item_id": "GAP-004"
+            },
+            {
+              "type": "approve",
+              "item_id": "GAP-005"
+            }
+          ]
+        },
+        {
+          "verbatim": "Reject every other gap.",
+          "interpretation": "Reject all other gaps.",
+          "presented": "gaps",
+          "question_ids": [],
+          "affected_ids": [
+            "GAP-001",
+            "GAP-002",
+            "GAP-003",
+            "GAP-006",
+            "GAP-007",
+            "GAP-008",
+            "GAP-009",
+            "GAP-010",
+            "GAP-011",
+            "GAP-012",
+            "GAP-013",
+            "GAP-014",
+            "GAP-015",
+            "GAP-016",
+            "GAP-017"
+          ],
+          "actions": [
+            {
+              "type": "reject",
+              "item_id": "GAP-001"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-002"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-003"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-006"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-007"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-008"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-009"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-010"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-011"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-012"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-013"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-014"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-015"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-016"
+            },
+            {
+              "type": "reject",
+              "item_id": "GAP-017"
+            }
+          ]
+        }
+      ],
+      "decision_ids": [
+        "DEC-006",
+        "DEC-007"
+      ]
+    }
+  ]
+}

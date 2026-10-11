@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "checkpoint": "1",
+  "rounds": [
+    {
+      "at": "2026-10-11T10:36:31.004Z",
+      "source": "user",
+      "answers": [
+        {
+          "verbatim": "The supplier is chosen from the quotes attached to the package.",
+          "interpretation": "Only suppliers are eligible.",
+          "presented": "CQ-001",
+          "question_ids": [
+            "CQ-001"
+          ],
+          "affected_ids": [
+            "CQ-001"
+          ],
+          "actions": []
+        },
+        {
+          "verbatim": "the award is final; it cannot be undone by anyone",
+          "interpretation": "Awards are irreversible.",
+          "presented": "CQ-002",
+          "question_ids": [
+            "CQ-002"
+          ],
+          "affected_ids": [
+            "CQ-002"
+          ],
+          "actions": []
+        },
+        {
+          "verbatim": "read-only for everyone and all fields are locked",
+          "interpretation": "Awarded packages are fully locked for all users.",
+          "presented": "CQ-003",
+          "question_ids": [
+            "CQ-003"
+          ],
+          "affected_ids": [
+            "CQ-003",
+            "REQ-002"
+          ],
+          "actions": [
+            {
+              "type": "clear_issue",
+              "item_id": "REQ-002",
+              "issue": "unknown"
+            }
+          ]
+        },
+        {
+          "verbatim": "Suppliers are notified by email when the award is made.",
+          "interpretation": "Winning supplier is emailed when the award is made.",
+          "presented": "CQ-004",
+          "question_ids": [
+            "CQ-004"
+          ],
+          "affected_ids": [
+            "CQ-004",
+            "REQ-003"
+          ],
+          "actions": []
+        },
+        {
+          "verbatim": "Everything else is approved as written.",
+          "interpretation": "Approve REQ-001 to REQ-003.",
+          "presented": "all",
+          "question_ids": [],
+          "affected_ids": [
+            "REQ-001",
+            "REQ-002",
+            "REQ-003"
+          ],
+          "actions": [
+            {
+              "type": "approve",
+              "item_id": "REQ-001"
+            },
+            {
+              "type": "approve",
+              "item_id": "REQ-002"
+            },
+            {
+              "type": "approve",
+              "item_id": "REQ-003"
+            }
+          ]
+        }
+      ],
+      "decision_ids": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-003",
+        "DEC-004",
+        "DEC-005"
+      ]
+    }
+  ]
+}

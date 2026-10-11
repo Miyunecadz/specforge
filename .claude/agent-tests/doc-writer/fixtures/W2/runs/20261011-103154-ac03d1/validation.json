@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "checked_at": "2026-10-11T12:00:00.000Z",
+  "round": 1,
+  "mode": "full",
+  "items": [
+    {
+      "n": 1,
+      "severity": "blocking",
+      "status": "fail",
+      "evidence": [
+        "label 'Approved: DEC-999' for REQ-001",
+        "REQ-001 is missing",
+        "AC whose primary item is not Approved/Decided/Explicit lacks '(draft)'"
+      ]
+    },
+    {
+      "n": 2,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": []
+    },
+    {
+      "n": 4,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": []
+    },
+    {
+      "n": 6,
+      "severity": "blocking",
+      "status": "fail",
+      "evidence": [
+        "label 'Approved: DEC-999' for REQ-001",
+        "REQ-001 is missing",
+        "AC whose primary item is not Approved/Decided/Explicit lacks '(draft)'"
+      ]
+    },
+    {
+      "n": 7,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": []
+    },
+    {
+      "n": 8,
+      "severity": "blocking",
+      "status": "fail",
+      "evidence": [
+        "label 'Approved: DEC-999' for REQ-001",
+        "REQ-001 is missing",
+        "AC whose primary item is not Approved/Decided/Explicit lacks '(draft)'"
+      ]
+    },
+    {
+      "n": 9,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": []
+    },
+    {
+      "n": 15,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": []
+    }
+  ],
+  "blocking_failures": [
+    1,
+    6,
+    8
+  ],
+  "warning_failures": [],
+  "passed": false
+}

@@ -1,0 +1,17 @@
+- banner:
+  - navigation "Main":
+    - link "Packages":
+      - /url: index.html
+    - link "Reports":
+      - /url: reports.html
+- main:
+  - heading "PKG-105 Roof repair" [level=1]
+  - term: Supplier
+  - definition: Top Roofing
+  - term: Value
+  - definition: £8,950
+  - term: Status
+  - definition: Awarded on 2 Oct 2026
+  - button "Award Package" [disabled]
+  - link "Back to packages":
+    - /url: index.html

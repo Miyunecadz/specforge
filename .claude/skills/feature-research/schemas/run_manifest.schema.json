@@ -182,6 +182,15 @@
               "string",
               "null"
             ]
+          },
+          "events_mark": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of .hook_events.jsonl lines when the stage started; subagent checks use only later lines (clock-independent)."
+          },
+          "completion_mark": {
+            "type": "integer",
+            "minimum": 0
           }
         }
       }
@@ -245,6 +254,36 @@
         "null"
       ],
       "description": "Checkpoint whose answers may be recorded (set by await-user, cleared when the checkpoint stage completes)."
+    },
+    "revisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "last_at"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "events_mark": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "post15_13r": {
+      "type": "boolean"
+    },
+    "post15_13r_done": {
+      "type": "boolean"
     }
   }
 }

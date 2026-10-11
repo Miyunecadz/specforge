@@ -1,0 +1,6 @@
+Mode: final
+Run ID: 20261011-103154-ac03d1
+Run directory: runs/20261011-103154-ac03d1 (relative to your current working directory; use the absolute form of that path)
+Template path: template/spec-template.md
+Run summary: runs/20261011-103154-ac03d1/run_summary.json
+Write: runs/20261011-103154-ac03d1/spec.md (section 1 only)

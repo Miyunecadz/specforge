@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "gap_id": "GAP-004",
+  "findings": [
+    {"id": "F-GAP-004-01", "gap_id": "GAP-004", "claim": "When a notification about a confirmed award cannot be delivered, the failure should be shown to staff so they can retry or contact the supplier another way.",
+     "source_id": "SRC-b6836a9a", "snippet": "If a notification cannot be delivered, show the failure to staff so they can retry or contact the supplier another way.",
+     "how_source_supports": "The snippet directly states that a failed notification must be surfaced to staff with retry or alternative contact options, which addresses presenting a failed follow-on step.",
+     "recommendation": {"text": "After Award Package succeeds, if the supplier email fails, show the package as awarded together with a distinct visible warning to the package manager that the email was not delivered, and offer a retry or a way to contact the supplier another way.", "rationale": "The source says delivery failure should be shown to staff with retry or alternatives; applying it to the award flow keeps the award outcome (irreversible per DEC-002) separate from the email outcome."},
+     "source_type": "official_documentation", "publication_date": null,
+     "confidence": {"level": "low", "explanation": "The only source is a test fixture page that states it is not real documentation, and it is a single short statement."},
+     "limitations": ["Source is a fixture, not real documentation", "No publication date", "Does not describe wording, placement or accessibility of the failure message"],
+     "needs_confirmation": true, "provenance": "research_evidence", "kind": "recommendation"},
+    {"id": "F-GAP-004-02", "gap_id": "GAP-004", "claim": "Guidance for award notifications is to notify the winning supplier when the award is confirmed and to record whether delivery succeeded.",
+     "source_id": "SRC-b6836a9a", "snippet": "Notify the winning supplier when the award is confirmed, and record whether delivery succeeded.",
+     "how_source_supports": "The snippet ties the notification to the confirmed award and says the delivery outcome should be recorded, which separates the email result from the award result.",
+     "recommendation": null,
+     "source_type": "official_documentation", "publication_date": null,
+     "confidence": {"level": "low", "explanation": "Single fixture source that states it is not real documentation."},
+     "limitations": ["Source is a fixture, not real documentation", "No publication date", "Does not say where the delivery result should be displayed"],
+     "needs_confirmation": false, "provenance": "research_evidence", "kind": "finding"}
+  ],
+  "unanswered_questions": [
+    {"question": "What are established patterns for communicating success and failure of an irreversible, server-confirmed action in procurement or approval workflows?", "why_unanswered": "Search ran in fixture mode and returned no source on success and failure feedback, loading states or page behaviour after an irreversible action. The fetched confirmation-patterns page covers confirmation before the action (relevant to GAP-005), not the outcome."}
+  ],
+  "disagreements": [],
+  "proposed_status_changes": []
+}

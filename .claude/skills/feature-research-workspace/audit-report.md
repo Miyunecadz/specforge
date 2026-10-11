@@ -74,3 +74,13 @@ against status_rules.py (feasibility mapping, Q- ids, stale_approved), run_state
 Stage 12 checks). Test prompts: full run through Checkpoint 3 (e2e eval 9, 14/15; the one failure is the
 recorded base64 provenance rejection, handled) PASS; ambiguous Checkpoint 2 answer → clarification, nothing
 recorded (iteration 15) PASS; 13R path (unit tests: reconfirm, supersede, leave open; gates) PASS.
+
+## Phase 5 re-audit (§21.1): feature-research APPROVED
+
+Changed: stages 14–16 available; references stage-14/15/16 (ASM-W registration before checks, revision loop with
+record-revision, post-review 13R once, report, final Document Status pass, end); "not built" handling reduced to
+a safety note; build label Phase 5. check_skill.py: 0 FAIL; WARNs are library modules and agents-src (accepted).
+Consistency checked against check_spec.py (code items, --final), run_state.py (record-revision, report, stage 15/16
+rules, post-15 13R), status_rules.py (register spec.md). Test prompts: complete pipeline (e2e eval 10, 19/19: all
+16 stages, one revision round after the reviewer failed round 1, final check passed, run ended, eval_only) PASS;
+earlier behaviours unchanged.

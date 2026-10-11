@@ -17,7 +17,7 @@ for d in sorted(it.glob("eval-*")):
     def a(text, ok, evidence): A.append({"text": text, "passed": bool(ok), "evidence": str(evidence)[:400]})
     tools = sorted({c["tool"] for c in calls if not c["subagent"]})
     a("Orchestrator used only Read, Bash and Agent", set(tools) <= {"Read", "Bash", "Agent"}, tools)
-    if "eval-8" not in d.name and "eval-9" not in d.name:  # research evals may hit the search budget
+    if not any(f"eval-{n}-" in d.name for n in (8, 9, 10)):  # research evals may hit the search budget
         a("No hook blocks (no disallowed call attempted)", not blocks, [b["reason"] for b in blocks])
     name = d.name
     single_turn_checkpoint = any(f"eval-{n}-" in name for n in (1, 2, 5, 6))  # Phase 2: these stop at Checkpoint 1
@@ -33,7 +33,7 @@ for d in sorted(it.glob("eval-*")):
         a("Asks for the requirements", "requirement" in final.lower(), final[:200])
     else:
         a("Exactly one run created", len(rs) == 1, [p.name for p in rs])
-        if not single_turn_checkpoint:
+        if not single_turn_checkpoint and "eval-10" not in name:
             a("Run aborted with a reason", man.get("status") == "aborted" and man.get("abort_reason"), man.get("abort_reason"))
         a("Stage 1 completed", st.get("1", {}).get("status") == "completed", st.get("1", {}).get("status"))
         a("Final report gives the run ID", rs and rs[0].name in final, "")
@@ -112,6 +112,26 @@ for d in sorted(it.glob("eval-*")):
         a("No provenance rejections", not [e for e in ev if e["event"] == "provenance_rejection"], [e["reason"] for e in ev if e["event"] == "provenance_rejection"])
         a("Only budget blocks, if any", all(e["hook"] == "H3" for e in ev if e["event"] == "block"), [(e["hook"], e["reason"][:80]) for e in ev if e["event"] == "block"])
         a("Abort reason says stage 14 not built", "14" in (man.get("abort_reason") or "") and "not built" in (man.get("abort_reason") or ""), man.get("abort_reason"))
+    if "eval-10" in name:
+        import unicodedata
+        norm = lambda t: " ".join(unicodedata.normalize("NFC", t).split())
+        a("All 16 stages completed (8-10, 13R may be skipped/absent)", all(st.get(k, {}).get("status") in ("completed", "skipped") for k in [str(i) for i in range(1, 17)]), {k: v["status"] for k, v in st.items()})
+        a("Run ended cleanly", man.get("status") == "completed" and not (sb / root / ".active_run").exists(), man.get("status"))
+        a("Publication status eval_only", man.get("publication_status") == "eval_only", man.get("publication_status"))
+        a("spec.md written and run_summary.json produced", (rs[0] / "spec.md").exists() and (rs[0] / "run_summary.json").exists(), "")
+        val = json.loads((rs[0] / "validation.json").read_text()) if (rs[0] / "validation.json").exists() else {}
+        a("Final Document Status check passed", val.get("mode") == "final" and val.get("passed"), (val.get("mode"), val.get("passed")))
+        hist = sorted((rs[0] / "history").glob("spec-round-*.md")) if (rs[0] / "history").exists() else []
+        last_full = sorted((rs[0] / "history").glob("validation-round-*.json"))
+        a("Spec versions preserved in history/", len(hist) >= 2, [h.name for h in hist])
+        a("doc-writer and doc-reviewer invoked", {"doc-writer", "doc-reviewer"} <= set(subs), subs)
+        decs = json.loads((rs[0] / "decisions.json").read_text())["decisions"]
+        typed = [norm(t["prompt"]) for t in json.loads((out / "turns.json").read_text())[1:]]
+        a("Every DEC verbatim was typed by the user", all(any(norm(dd["verbatim"]) in t for t in typed) for dd in decs), [dd["verbatim"][:60] for dd in decs if not any(norm(dd["verbatim"]) in t for t in typed)])
+        a("Only budget blocks, if any", all(e["hook"] == "H3" for e in ev if e["event"] == "block"), [(e["hook"], e["reason"][:80]) for e in ev if e["event"] == "block"])
+        report_turn = next((t["final"] or "" for t in json.loads((out / "turns.json").read_text())
+                            if "publication status" in (t["final"] or "").lower()), "")
+        a("Final report states eval_only", "eval_only" in report_turn, report_turn[:200])
     if "eval-3" in name:
         a("No capture attempted", not (rs[0] / "capture").exists(), "")
         a("Report names blocked_address", "blocked_address" in final, final[:200])

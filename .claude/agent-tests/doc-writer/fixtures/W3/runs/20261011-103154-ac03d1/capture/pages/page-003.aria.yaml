@@ -1,0 +1,21 @@
+- banner:
+  - navigation "Main":
+    - link "Packages":
+      - /url: index.html
+    - link "Reports":
+      - /url: reports.html
+- main:
+  - heading "PKG-104 Kitchen refit" [level=1]
+  - term: Supplier
+  - definition: Acme Joinery
+  - term: Value
+  - definition: £12,400
+  - term: Status
+  - definition: Open
+  - heading "Quotes" [level=2]
+  - paragraph: No quotes attached yet.
+  - text: Award note
+  - textbox "Award note"
+  - button "Award Package"
+  - link "Back to packages":
+    - /url: index.html

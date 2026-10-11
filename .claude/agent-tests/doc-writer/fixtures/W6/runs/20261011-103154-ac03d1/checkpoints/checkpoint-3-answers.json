@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "checkpoint": "3",
+  "rounds": [
+    {
+      "at": "2026-10-11T10:48:28.934Z",
+      "source": "user",
+      "answers": [
+        {
+          "verbatim": "For each question that has a recommendation, take the recommended option.",
+          "interpretation": "Take the recommended option for Q-003 and Q-005.",
+          "presented": "rec",
+          "question_ids": [
+            "Q-003",
+            "Q-005"
+          ],
+          "affected_ids": [
+            "FEA-007",
+            "FEA-008"
+          ],
+          "actions": [
+            {
+              "type": "approve",
+              "item_id": "FEA-008"
+            },
+            {
+              "type": "approve",
+              "item_id": "FEA-007"
+            }
+          ]
+        },
+        {
+          "verbatim": "Suppliers are told by email as soon as the award is confirmed. Bidders who lose are not told.",
+          "interpretation": "Only the winner is emailed, at award.",
+          "presented": "Q-001",
+          "question_ids": [
+            "Q-001"
+          ],
+          "affected_ids": [
+            "REQ-003",
+            "FEA-006"
+          ],
+          "actions": []
+        },
+        {
+          "verbatim": "Award records are kept for seven years.",
+          "interpretation": "Award records are retained for seven years.",
+          "presented": "none",
+          "question_ids": [],
+          "affected_ids": [],
+          "actions": []
+        },
+        {
+          "verbatim": "Leave every other question open.",
+          "interpretation": "Q-002 and Q-004 stay open.",
+          "presented": "open",
+          "question_ids": [
+            "Q-002",
+            "Q-004"
+          ],
+          "affected_ids": [
+            "Q-002",
+            "Q-004"
+          ],
+          "actions": []
+        }
+      ],
+      "decision_ids": [
+        "DEC-008",
+        "DEC-009",
+        "DEC-010",
+        "DEC-011"
+      ]
+    }
+  ]
+}

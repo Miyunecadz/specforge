@@ -1,0 +1,540 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "items": {
+    "REQ-001": {
+      "id": "REQ-001",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-003",
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-001": {
+      "id": "GAP-001",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-002": {
+      "id": "GAP-002",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-003": {
+      "id": "GAP-003",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-004": {
+      "id": "GAP-004",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-006"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-005": {
+      "id": "GAP-005",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-006"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-006": {
+      "id": "GAP-006",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-007": {
+      "id": "GAP-007",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-008": {
+      "id": "GAP-008",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-009": {
+      "id": "GAP-009",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-010": {
+      "id": "GAP-010",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-011": {
+      "id": "GAP-011",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-012": {
+      "id": "GAP-012",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-013": {
+      "id": "GAP-013",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-014": {
+      "id": "GAP-014",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-015": {
+      "id": "GAP-015",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-016": {
+      "id": "GAP-016",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-017": {
+      "id": "GAP-017",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "rejected",
+      "issues": [],
+      "decision_ids": [
+        "DEC-007"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-001": {
+      "id": "ASM-G-001",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-002": {
+      "id": "ASM-G-002",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-003": {
+      "id": "ASM-G-003",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "F-GAP-004-01": {
+      "id": "F-GAP-004-01",
+      "kind": "recommendation",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-004.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "kept"
+    },
+    "F-GAP-004-02": {
+      "id": "F-GAP-004-02",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-004.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "dropped"
+    },
+    "F-GAP-005-01": {
+      "id": "F-GAP-005-01",
+      "kind": "recommendation",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-005.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "kept"
+    },
+    "F-GAP-005-02": {
+      "id": "F-GAP-005-02",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-005.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "kept"
+    },
+    "F-GAP-005-03": {
+      "id": "F-GAP-005-03",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-005.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "kept"
+    },
+    "F-GAP-005-04": {
+      "id": "F-GAP-005-04",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "findings/GAP-005.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null,
+      "verification": "dropped"
+    },
+    "FEA-001": {
+      "id": "FEA-001",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-002": {
+      "id": "FEA-002",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-003": {
+      "id": "FEA-003",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-004": {
+      "id": "FEA-004",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-005": {
+      "id": "FEA-005",
+      "kind": "finding",
+      "provenance": "customer_requirement",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-006": {
+      "id": "FEA-006",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-007": {
+      "id": "FEA-007",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "feasibility.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-008"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-008": {
+      "id": "FEA-008",
+      "kind": "finding",
+      "provenance": "research_evidence",
+      "source_artifact": "feasibility.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-008"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "FEA-009": {
+      "id": "FEA-009",
+      "kind": "finding",
+      "provenance": "inference",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-F-001": {
+      "id": "ASM-F-001",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "feasibility.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    }
+  },
+  "registered_artifacts": {
+    "requirements.json": "19513851fba10b879fe6278c24865e00f1f80eae4c8a76fa47971375301d8abd",
+    "gaps.json": "a2ca090337f893da5565b34d4351ddd6e7d24d8509f9d7fb70af3fecb1d17a7e",
+    "findings/GAP-004.json": "8bd6b173246ee28ef21afcd0c7577ef4e199918113b16fa1e7e62a6384c0b943",
+    "findings/GAP-005.json": "f15a02978fccbad7fb471bba67f6f2ad4459c62c2d585b02a49f6dec5b7639c3",
+    "feasibility.json": "37612234013ee5253987434600944cc7f752bb95422c6a354a77859d10d9bf8a"
+  }
+}

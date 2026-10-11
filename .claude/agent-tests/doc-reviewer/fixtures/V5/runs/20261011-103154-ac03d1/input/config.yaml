@@ -1,0 +1,64 @@
+# Feature Research Agent configuration (BUILD_SPEC §12).
+# Validated against schemas/config.schema.json before every run. Unknown keys are rejected,
+# so nothing here can disable validation, citation checks, URL safety, hooks, tamper
+# detection, decision provenance or honest reporting, enable fixture mode or
+# --non-interactive, or change the interpreter path. Every limit has a hard maximum in the
+# schema. The README lists which settings are safe to change.
+schema_version: 1
+
+capture:
+  supported_methods: [html, figma, image]
+  max_pages: 30
+  max_depth: 3
+  figma_max_frames: 25
+  page_timeout_s: 30
+  max_bytes_per_resource: 10485760      # 10 MiB
+  max_total_capture_bytes: 209715200    # 200 MiB
+  max_requests_per_page: 300
+  figma_max_retries: 3
+  figma_backoff_base_s: 2
+  image_content_types: [image/png, image/jpeg, image/gif, image/webp, image/svg+xml]
+
+network:
+  allowed_schemes: [http, https]
+  max_redirects: 5
+  connect_timeout_s: 10
+  read_timeout_s: 20
+  total_timeout_s: 60
+  blocked_hostnames: []
+
+sources:
+  allow_domains: []     # empty: no allow list; any public domain not denied
+  deny_domains: []
+
+research:
+  searches_per_gap: 4
+  fetches_per_gap: 6
+  findings_per_gap: 8
+  total_searches_per_run: 40
+  max_source_bytes: 5242880             # 5 MiB
+  source_content_types: [text/html, text/plain, application/xhtml+xml]
+  recency_years_by_category:
+    accessibility: 5
+    security: 3
+    regulation: 3
+    platform_documentation: 3
+    design_pattern: 6
+
+review:
+  revision_rounds: 2
+  stage_retries: 1
+  max_customer_questions: 10
+
+run:
+  active_run_timeout_minutes: 120
+  lock_stale_seconds: 30
+
+evals:
+  per_case_budget_usd: 10
+  per_run_budget_usd: 60
+  budget_margin_usd: 1
+  case_order: [case-06, case-07, case-08]   # run first; remaining cases follow in name order
+
+logging:
+  detail: normal

@@ -62,9 +62,13 @@ STAGES: dict[str, Stage] = {
                 {"checkpoints/checkpoint-3-answers.json": "checkpoint_file"}, available=True),
     "13R": Stage("13R", "Re-confirmation checkpoint", "checkpoint", ("checkpoints/checkpoint-13R-answers.json",),
                  {"checkpoints/checkpoint-13R-answers.json": "checkpoint_file"}, available=True),
-    "14": Stage("14", "Write specification", "agent", ("spec.md",), agent="doc-writer"),
-    "15": Stage("15", "Review and validate", "mixed", ("validation.json", "review.json"), agent="doc-reviewer"),
-    "16": Stage("16", "Report", "script", ("run_summary.json",)),
+    "14": Stage("14", "Write specification", "agent", ("spec.md", "warnings/doc-writer.json?"),
+                {"warnings/doc-writer.json": "warnings"}, agent="doc-writer", available=True),
+    "15": Stage("15", "Review and validate", "mixed", ("validation.json", "review.json", "warnings/doc-reviewer.json?"),
+                {"validation.json": "validation", "review.json": "review", "warnings/doc-reviewer.json": "warnings"},
+                agent="doc-reviewer", available=True),
+    "16": Stage("16", "Report", "script", ("run_summary.json", "warnings.json"),
+                {"run_summary.json": "run_summary", "warnings.json": "warnings"}, available=True),
 }
 
 CHECKPOINT_OF_STAGE = {"5": "1", "7": "2", "13": "3", "13R": "13R"}
@@ -222,6 +226,28 @@ def semantic_checks(run_dir: Path, stage: Stage, manifest: dict) -> list[str]:
                     problems.append(f"{q['id']} recommendation cites findings that are not kept: {', '.join(bad)}")
                 if q["recommendation"]["option"] not in [o["option"] for o in q["options"]]:
                     problems.append(f"{q['id']} recommends an option that is not listed")
+    if stage.key == "14":
+        if not _registered(run_dir, "spec.md"):
+            problems.append("spec.md (this version) is not registered: run 'status_rules.py register spec.md'")
+    if stage.key == "15":
+        import yaml
+        val = json.loads((run_dir / "validation.json").read_text(encoding="utf-8"))
+        rev = json.loads((run_dir / "review.json").read_text(encoding="utf-8"))
+        if val["mode"] != "full":
+            problems.append("validation.json is not a full check_spec.py run")
+        if val["round"] != rev["round"]:
+            problems.append(f"validation.json is round {val['round']} but review.json is round {rev['round']}")
+        failing = val["blocking_failures"] or not rev["passed"]
+        cfg_p = run_dir / "input/config.yaml"
+        rounds = yaml.safe_load(cfg_p.read_text(encoding="utf-8"))["review"]["revision_rounds"] if cfg_p.exists() else 2
+        done = (manifest.get("revisions") or {}).get("count", 0)
+        if failing and done < rounds:
+            problems.append(f"blocking checks fail and only {done} of {rounds} revision rounds were used: send the fixes "
+                            "to doc-writer, re-register, record-revision, and re-run check_spec.py and doc-reviewer")
+    if stage.key == "16":
+        val = json.loads((run_dir / "validation.json").read_text(encoding="utf-8"))
+        if val["mode"] != "final" or not val["passed"]:
+            problems.append("the final Document Status check (check_spec.py --final) has not passed")
     if stage.key in ("5", "7", "13", "13R"):
         if manifest.get("open_checkpoint") != CHECKPOINT_OF_STAGE[stage.key]:
             problems.append("the checkpoint was never opened with run_state.py await-user")

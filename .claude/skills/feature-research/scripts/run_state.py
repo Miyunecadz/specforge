@@ -4,8 +4,8 @@
 Owns <runs-root>/.active_run, run_manifest.json, log.jsonl, input/**, budget/active_gap.json,
 warnings.json, run_summary.json and integrity/run_state.json. Reads, never writes, .heartbeat.
 
-Subcommands: start, verify, stage, log, await-user, continue, resume, set-gap, end, abort.
-Later phases add: report (Phase 5).
+Subcommands: start, verify, stage, log, await-user, continue, resume, set-gap, record-revision, report,
+end, abort.
 Exit codes: 0 ok, 1 usage/validation error, 3 refused, 4 tamper detected.
 """
 
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _lib import attest, fsutil, hashing, modes, ownership, paths, runctx, schema, stages  # noqa: E402
 from _lib.runctx import RunError, now_iso  # noqa: E402
 
-WORKFLOW_VERSION = "0.4.0-phase4"
+WORKFLOW_VERSION = "0.5.0-phase5"
 MAX_REQUIREMENTS_BYTES = 1_000_000
 EXIT_OK, EXIT_ERROR, EXIT_REFUSED, EXIT_TAMPER = 0, 1, 3, 4
 
@@ -412,6 +412,14 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
     if args.action == "start":
         if key == "13R" and not stages.stale_approved(ctx.run_dir):
             raise RunError("checkpoint 13R runs only when approved items are stale; there are none")
+        post15 = key == "13R" and m["stages"].get("15", {}).get("status") == "completed"
+        if post15:
+            if m.get("post15_13r_done"):
+                raise RunError("the post-review re-confirmation already ran once; remaining stale items stay Stale "
+                               "(publication status at best validated_with_warnings)")
+            m["post15_13r"] = True
+            if st:
+                st = dict(st, status="stale")
         if key == "14" and stages.stale_approved(ctx.run_dir) and m["stages"].get("13R", {}).get("status") != "completed":
             raise RunError("approved items are stale: run checkpoint 13R before writing the specification")
         missing = _prior_stages_done(m, key)
@@ -425,7 +433,8 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
             raise RunError("another stage is still running; complete or fail it first")
         attempts = (st["attempts"] + 1) if st else 1
         m["stages"][key] = {"status": "running", "started_at": now, "completed_at": None,
-                            "attempts": attempts, "outputs": {}, "note": None}
+                            "attempts": attempts, "outputs": {}, "note": None,
+                            "events_mark": len(hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl"))}
         m["current_stage"] = key
         if attempts > 1:
             _log(ctx, ctx.run_id, "stage_retry", key, attempt=attempts)
@@ -470,7 +479,7 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
     if not errors:
         errors += stages.semantic_checks(ctx.run_dir, stage, m)
     if stage.kind in ("agent", "mixed") and stage.agent and not errors and (found or key != "8"):
-        if not _subagent_seen(ctx, stage.agent, st["started_at"]):
+        if not _subagent_seen(ctx, stage.agent, st.get("events_mark", st["started_at"])):
             errors.append(
                 f"no {stage.agent} subagent invocation was recorded in .hook_events.jsonl after stage "
                 f"{key} started; agent outputs must be written by that subagent"
@@ -480,22 +489,42 @@ def cmd_stage(args, repo: Path, env: Mapping[str, str], argv) -> int:
         _out({"ok": False, "stage": key, "errors": errors})
         return EXIT_ERROR
     st.update(status="completed", completed_at=now, outputs={rel: hashing.sha256_file(p) for rel, p in found.items()})
+    if key == "14":
+        st["completion_mark"] = len(hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl"))
+    if key == "14":
+        hp = ctx.run_dir / "history" / "spec-round-00.md"
+        fsutil.atomic_write_bytes(hp, (ctx.run_dir / "spec.md").read_bytes())
+        runctx.record_integrity(ctx.run_dir, "run_state.py", "history/spec-round-00.md")
     if stage.kind == "checkpoint":
         m["open_checkpoint"] = None
+    if key == "13R" and m.get("post15_13r") and not m.get("post15_13r_done"):
+        m["post15_13r_done"] = True
+        for k in ("14", "15", "16"):
+            if m["stages"].get(k, {}).get("status") in ("completed", "running"):
+                m["stages"][k]["status"] = "stale"
+                m["stages"][k]["note"] = "re-run once after the post-review re-confirmation (13R)"
     _log(ctx, ctx.run_id, "stage_completed", key, outputs=st["outputs"], attempts=st["attempts"])
     _write_manifest(ctx.run_dir, m)
     _out({"ok": True, "stage": key, "status": "completed", "outputs": sorted(st["outputs"])})
     return EXIT_OK
 
 
-def _subagent_seen(ctx: runctx.RunContext, agent: str, since: str) -> bool:
-    since_dt = runctx.parse_iso(since)
+def _subagent_seen(ctx: runctx.RunContext, agent: str, since: str | int | None) -> bool:
+    """True if the hooks recorded that subagent after `since`.
+
+    `since` is preferably an event-log position (int): the hook-event log is append-only and
+    hash-chained, so its order is reliable, while wall clocks can step backwards (WSL2).
+    A timestamp string is accepted for runs started before event marks existed.
+    """
     names = ownership.RESEARCHER_VARIANTS if agent == "web-researcher" else (agent,)
-    for ev in hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl"):
-        if (ev.get("event") == "subagent_start" and ev.get("run_id") == ctx.run_id
-                and ev.get("agent_type") in names and runctx.parse_iso(ev["ts"]) >= since_dt):
-            return True
-    return False
+    events = hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl")
+    if isinstance(since, int):
+        candidates = events[since:]
+    else:
+        since_dt = runctx.parse_iso(since) if since else None
+        candidates = [e for e in events if since_dt is None or runctx.parse_iso(e["ts"]) >= since_dt]
+    return any(e.get("event") == "subagent_start" and e.get("run_id") == ctx.run_id and e.get("agent_type") in names
+               for e in candidates)
 
 
 def cmd_await_user(args, repo: Path, env: Mapping[str, str], argv) -> int:
@@ -645,6 +674,153 @@ def cmd_set_gap(args, repo: Path, env: Mapping[str, str], argv) -> int:
     return EXIT_OK
 
 
+REVISABLE = ("spec.md", "validation.json", "review.json", "warnings/doc-writer.json", "warnings/doc-reviewer.json")
+
+
+def cmd_record_revision(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    """Record a Stage 15 revision round or the Stage 16 final pass (§5: revisions re-record hashes).
+
+    Only spec.md, validation.json, review.json and the two writers' warnings may have changed since the
+    last record, spec.md only after a doc-writer invocation; every other file is verified as usual.
+    The previous and new spec versions are kept under history/.
+    """
+    ctx = runctx.require_active_run(repo, args.run, env)
+    m = ctx.manifest
+    running = [k for k in ("15", "16") if m["stages"].get(k, {}).get("status") == "running"]
+    if not running:
+        raise RunError("record-revision is used during stage 15 (revision rounds) or stage 16 (final pass)")
+    _sync_hook_events(ctx)
+    problems = [p for p in verify_run(ctx) if not any(p["file"].endswith("/" + r) for r in REVISABLE)]
+    if problems:
+        _log(ctx, ctx.run_id, "tamper_report", running[0], problems=problems)
+        _out({"ok": False, "tamper": problems})
+        return EXIT_TAMPER
+    rev = m.setdefault("revisions", {"count": 0, "last_at": None})
+    spec = ctx.run_dir / "spec.md"
+    s14 = m["stages"]["14"]
+    changed = s14["outputs"].get("spec.md") != hashing.sha256_file(spec)
+    since = rev.get("events_mark", s14.get("completion_mark", s14["completed_at"]))
+    if changed and not _subagent_seen(ctx, "doc-writer", since):
+        raise RunError("spec.md changed but no doc-writer invocation was recorded since the last revision")
+    rev["count"] += 1
+    rev["last_at"] = now_iso()
+    rev["events_mark"] = len(hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl"))
+    hist = ctx.run_dir / "history"
+    fsutil.atomic_write_bytes(hist / f"spec-round-{rev['count']:02d}.md", spec.read_bytes())
+    for rel in ("validation.json", "review.json"):
+        if (ctx.run_dir / rel).exists():
+            fsutil.atomic_write_bytes(hist / f"{Path(rel).stem}-round-{rev['count']:02d}.json", (ctx.run_dir / rel).read_bytes())
+    for key in ("14", "15"):
+        st = m["stages"].get(key)
+        if st and st["status"] == "completed":
+            for rel in list(st["outputs"]):
+                if rel in REVISABLE and (ctx.run_dir / rel).exists():
+                    st["outputs"][rel] = hashing.sha256_file(ctx.run_dir / rel)
+    for hp in sorted(hist.glob("*")):
+        runctx.record_integrity(ctx.run_dir, "run_state.py", hp.relative_to(ctx.run_dir).as_posix())
+    _log(ctx, ctx.run_id, "artifact_recorded", running[0], revision=rev["count"], spec_changed=changed,
+         final=bool(args.final))
+    _write_manifest(ctx.run_dir, m)
+    _out({"ok": True, "revision": rev["count"], "spec_changed": changed})
+    return EXIT_OK
+
+
+def _publication_status(ctx: runctx.RunContext) -> tuple[str, list[str]]:
+    rd, m = ctx.run_dir, ctx.manifest
+    reasons: list[str] = []
+    val = json.loads((rd / "validation.json").read_text(encoding="utf-8")) if (rd / "validation.json").exists() else None
+    rev = json.loads((rd / "review.json").read_text(encoding="utf-8")) if (rd / "review.json").exists() else None
+    if m["stages"].get("14", {}).get("status") != "completed" or not (rd / "spec.md").exists():
+        status_ = "blocked"
+        reasons.append("no completed specification")
+    elif m["stages"].get("15", {}).get("status") != "completed" or val is None or rev is None:
+        status_ = "not_fully_validated"
+        reasons.append("review and validation did not complete")
+    else:
+        if val["blocking_failures"]:
+            reasons.append(f"check_spec.py blocking failures: items {val['blocking_failures']}")
+        bad_review = [i["n"] for i in rev["items"] if i["severity"] == "blocking" and i["status"] == "fail"]
+        if bad_review or not rev["passed"]:
+            reasons.append(f"doc-reviewer blocking failures: items {bad_review}")
+        if reasons:
+            status_ = "not_fully_validated"
+        else:
+            warn = [i["n"] for i in rev["items"] if i["severity"] == "warning" and i["status"] == "fail"]
+            stale = stages.stale_approved(rd)
+            cap = json.loads((rd / "capture/manifest.json").read_text(encoding="utf-8")).get("status") \
+                if (rd / "capture/manifest.json").exists() else None
+            if warn:
+                reasons.append(f"review warnings: items {warn}")
+            if stale:
+                reasons.append(f"stale items left open: {', '.join(stale)}")
+            if cap == "partial":
+                reasons.append("the mockup capture was partial")
+            status_ = "validated_with_warnings" if reasons else "validated"
+    if ctx.mode.mode == modes.FIXTURE:
+        reasons.insert(0, f"fixture mode: always eval_only (checks would give {status_})")
+        status_ = "eval_only"
+    return status_, reasons
+
+
+def cmd_report(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    """Stage 16: merge warnings, compute the publication status, write run_summary.json (§7 Stage 16, §9.14)."""
+    ctx = runctx.require_active_run(repo, args.run, env)
+    m, rd = ctx.manifest, ctx.run_dir
+    st = m["stages"].get("16")
+    if not st or st["status"] != "running":
+        raise RunError("report runs during stage 16")
+    _sync_hook_events(ctx)
+    merged = []
+    for wp in sorted((rd / "warnings").glob("*.json")) if (rd / "warnings").exists() else []:
+        doc = json.loads(wp.read_text(encoding="utf-8"))
+        merged += [{**w, "agent": doc["agent"]} for w in doc["warnings"]]
+    wdoc = {"schema_version": 1, "agent": "merged", "warnings": merged}
+    schema.check("warnings", wdoc, what="warnings.json")
+    fsutil.atomic_write_json(rd / "warnings.json", wdoc)
+    status_, reasons = _publication_status(ctx)
+    reg = json.loads((rd / "status_registry.json").read_text(encoding="utf-8"))["items"] if (rd / "status_registry.json").exists() else {}
+    labels = json.loads((rd / "status_labels.json").read_text(encoding="utf-8"))["items"] if (rd / "status_labels.json").exists() else {}
+    from collections import Counter
+    count = lambda pred, key: dict(Counter(key(i, it) for i, it in reg.items() if pred(i, it)))
+    qs = json.loads((rd / "questions.json").read_text(encoding="utf-8"))["questions"] if (rd / "questions.json").exists() else []
+    decs = json.loads((rd / "decisions.json").read_text(encoding="utf-8"))["decisions"] if (rd / "decisions.json").exists() else []
+    answered = {q for d in decs for q in d.get("question_ids", []) if d["actions"] and any(a["type"] != "leave_open" for a in d["actions"])}
+    cap = json.loads((rd / "capture/manifest.json").read_text(encoding="utf-8")) if (rd / "capture/manifest.json").exists() else {}
+    fl = hashing.read_jsonl(rd / "fetch_log.jsonl")
+    hev = [e for e in hashing.read_jsonl(ctx.runs_root / ".hook_events.jsonl") if e.get("run_id") == ctx.run_id]
+    log = hashing.read_jsonl(rd / "log.jsonl")
+    rev = json.loads((rd / "review.json").read_text(encoding="utf-8")) if (rd / "review.json").exists() else {}
+    summary = {
+        "schema_version": 1, "run_id": ctx.run_id, "mode": ctx.mode.mode, "publication_status": status_,
+        "status_reasons": reasons, "spec_path": "spec.md" if (rd / "spec.md").exists() else None, "generated_at": now_iso(),
+        "counts": {
+            "requirements_by_label": dict(Counter(labels.get(i, {}).get("label", "?").split(":")[0] for i in reg if i.startswith("REQ-"))),
+            "gaps_by_approval": count(lambda i, it: i.startswith("GAP-"), lambda i, it: it["approval"]),
+            "findings_by_verification": count(lambda i, it: "verification" in it, lambda i, it: it["verification"]),
+            "questions_answered": len([q for q in qs if q["id"] in answered]), "questions_open": len([q for q in qs if q["id"] not in answered]),
+            "decisions": len(decs)},
+        "capture": {"status": cap.get("status"), "method": cap.get("method"), "limitations": cap.get("limitations", [])},
+        "research": {"fetches": dict(Counter(e["outcome"] for e in fl)),
+                     "searches": len(hashing.read_jsonl(rd / "budget/searches.jsonl"))},
+        "budget": {"fetches_by_gap": {p.stem.removeprefix("fetches-"): json.loads(p.read_text(encoding="utf-8"))["count"]
+                                      for p in sorted((rd / "budget").glob("fetches-*.json"))} if (rd / "budget").exists() else {}},
+        "hooks": {"blocks": len([e for e in hev if e["event"] == "block"]),
+                  "provenance_rejections": len([e for e in hev if e["event"] == "provenance_rejection"]),
+                  "search_stubs": len([e for e in hev if e["event"] == "search_stub"])},
+        "tamper_reports": len([e for e in log if e["event"] == "tamper_report"]),
+        "review": {"round": rev.get("round"), "passed": rev.get("passed"), "unresolved_issues": rev.get("unresolved_issues", [])},
+        "outstanding_decisions": sorted(q["id"] for q in qs if q["id"] not in answered),
+        "stale_items": stages.stale_approved(rd), "warnings": merged}
+    schema.check("run_summary", summary, what="run_summary.json")
+    fsutil.atomic_write_json(rd / "run_summary.json", summary)
+    m["publication_status"] = status_
+    _log(ctx, ctx.run_id, "publication_status", "16", publication_status=status_, reasons=reasons)
+    _write_manifest(rd, m)
+    _out({"ok": True, "publication_status": status_, "reasons": reasons,
+          "next": "ask doc-writer for the final Document Status pass, then check_spec.py --final and record-revision --final"})
+    return EXIT_OK
+
+
 def cmd_log(args, repo: Path, env, argv) -> int:
     ctx = runctx.require_active_run(repo, args.run, env)
     _log(ctx, ctx.run_id, "note", args.stage, message=args.message)
@@ -762,7 +938,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--clear", action="store_true")
     p.set_defaults(func=cmd_set_gap)
 
-    for name, phase in (("report", "Phase 5"),):
+    p = sub.add_parser("record-revision")
+    p.add_argument("--run", required=True)
+    p.add_argument("--final", action="store_true")
+    p.set_defaults(func=cmd_record_revision)
+
+    p = sub.add_parser("report")
+    p.add_argument("--run", required=True)
+    p.set_defaults(func=cmd_report)
+
+    for name, phase in ():
         p = sub.add_parser(name)
         p.add_argument("rest", nargs="*")
         p.add_argument("--run")

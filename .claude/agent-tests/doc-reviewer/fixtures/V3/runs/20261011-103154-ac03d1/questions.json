@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "questions": [
+    {"id": "Q-001",
+     "question": "When a package is awarded, should only the winning supplier be emailed, or should every supplier who quoted be emailed (with a different message for those who were not chosen)? And what must the email say?",
+     "why_it_matters": "You said 'Suppliers are notified by email when the award is made', which could mean only the winner or every quoting supplier. The email is the supplier's only signal about the outcome, and the wrong audience or missing details has commercial consequences. The specification cannot define the notification until this is settled.",
+     "affected_ids": ["REQ-003", "FEA-005", "FEA-006"],
+     "topic_keywords": ["email", "notify", "suppliers", "recipients"],
+     "options": [
+       {"option": "Email only the winning supplier", "trade_offs": "Simplest and matches the stated must-have 'suppliers must be notified when they win'. Unsuccessful suppliers get no word from the system and must be told another way."},
+       {"option": "Email the winner and also every other quoting supplier", "trade_offs": "Everyone who quoted learns the outcome, but two email versions must be written and approved, and you must decide how much to reveal to losing suppliers."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "How does the package manager choose which supplier receives the award, and what should happen if a package has no quotes attached?",
+     "why_it_matters": "The award form in the mockup has only a note field and an Award Package button, with no way to pick a supplier. The package page can also show 'No quotes attached yet' while the button is still enabled. Awards cannot be undone, so awarding the wrong supplier, or one with no quote, cannot be corrected.",
+     "affected_ids": ["REQ-001", "FEA-002"],
+     "topic_keywords": ["supplier", "choose", "quotes", "award"],
+     "options": [
+       {"option": "Package manager picks one supplier from those with a quote attached; Award Package is unavailable when no quotes are attached", "trade_offs": "Follows your rule that the supplier comes from the attached quotes and prevents an award with no eligible supplier. Needs a supplier-choice control and a visible reason when the button is unavailable."},
+       {"option": "Package manager picks one supplier from those with a quote attached; award with no quotes is allowed", "trade_offs": "More flexible, but conflicts with your rule about attached quotes and permits an irreversible award with no supporting quote."},
+       {"option": "The supplier is already fixed on the package and the award just confirms it", "trade_offs": "No new control needed, but it does not match the rule that the supplier is chosen from quotes, and it is unclear how the supplier gets set."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "Should pressing Award Package first show a confirmation step, and what should it display?",
+     "why_it_matters": "Awards cannot be undone by anyone, so one accidental press locks the package for everyone and notifies suppliers. The mockup shows no confirmation.",
+     "affected_ids": ["GAP-005", "FEA-008"],
+     "topic_keywords": ["confirm", "confirmation", "irreversible", "award"],
+     "options": [
+       {"option": "Confirmation naming the package and the supplier being awarded", "trade_offs": "Reduces accidental awards at the cost of one extra click. Sources reviewed are low-confidence test fixtures."},
+       {"option": "Confirmation naming the package, supplier, value and award note", "trade_offs": "Gives the manager a fuller final check but makes the step heavier. No reviewed source covers value or note."},
+       {"option": "No confirmation; award immediately", "trade_offs": "Fastest, but a single mistaken press is permanent."}
+     ],
+     "recommendation": {"option": "Confirmation naming the package and the supplier being awarded", "finding_ids": ["F-GAP-005-01"], "rationale": "The kept finding recommends confirming irreversible actions and naming the package and recipient of the award. It is low confidence and needs your confirmation, and it does not cover value or note."},
+     "blocking": false, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "After the package manager presses Award Package, what should they see while it is processing, when it succeeds, and when the award itself fails?",
+     "why_it_matters": "Awards are final, so users must know for certain whether an award went through. Otherwise they may retry an award they think failed, or believe a package is awarded when it is not. The mockup does not show this.",
+     "affected_ids": ["GAP-004", "FEA-009", "ASM-F-001"],
+     "topic_keywords": ["award", "success", "failure", "outcome"],
+     "options": [
+       {"option": "Show the package page in its Awarded state (with award date) and a success message; on failure, stay on the page, keep it open and show an error", "trade_offs": "Matches the Awarded page in the mockup and keeps the package clearly open after a failed award. Needs a clear rule that a failed award leaves nothing half-done."},
+       {"option": "Go to the package list with a success message; on failure, show the error on the list", "trade_offs": "Quicker return to work, but the manager does not see the final awarded record and a failed award is harder to retry."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005",
+     "question": "If the award is made but the supplier email cannot be delivered, what should the package manager see?",
+     "why_it_matters": "The award stays final regardless, so a silent email failure could leave the winner unaware with no visible signal to staff.",
+     "affected_ids": ["GAP-004", "FEA-007", "REQ-003"],
+     "topic_keywords": ["email", "failure", "delivery", "retry"],
+     "options": [
+       {"option": "Show the package as awarded with a visible warning that the email was not delivered, and offer retry or another way to contact the supplier", "trade_offs": "Keeps the award result separate from the email result and lets staff act. Needs a way to detect failure and a retry action."},
+       {"option": "Say nothing; log the failure internally only", "trade_offs": "Simplest to build, but staff may never know the supplier was not told."}
+     ],
+     "recommendation": {"option": "Show the package as awarded with a visible warning that the email was not delivered, and offer retry or another way to contact the supplier", "finding_ids": ["F-GAP-004-01"], "rationale": "The kept finding says delivery failures should be shown to staff so they can retry or contact the supplier another way. It is a low-confidence source that needs your confirmation."},
+     "blocking": false, "priority": "important"}
+  ],
+  "implementation_details": [
+    {"item": "Label the confirm button with the action (for example 'Award package') rather than a generic OK", "related_ids": ["F-GAP-005-02", "GAP-005"]}
+  ]
+}

@@ -33,6 +33,7 @@ RUN_RULES: list[tuple[str, str, str]] = [
     ("run_summary.json", "run_state.py", SCRIPT),
     ("budget/active_gap.json", "run_state.py", SCRIPT),
     ("integrity/run_state.json", "run_state.py", SCRIPT),
+    ("history/**", "run_state.py", SCRIPT),
     ("capture/**", "capture_mockup.py", SCRIPT),
     ("checkpoints/**", "status_rules.py", SCRIPT),
     ("decisions.json", "status_rules.py", SCRIPT),

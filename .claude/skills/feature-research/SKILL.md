@@ -109,9 +109,9 @@ Stages run in this order. Each has the reference file named in the table (for ex
 | 12 | Customer questions | `question-generator` | `stage-12.md` | available |
 | 13 | Checkpoint 3: product decisions | you + `status_rules.py decide` | `stage-13.md` | available |
 | 13R | Re-confirmation (only when approved items are stale) | you + `status_rules.py decide` | `stage-13r.md` | available |
-| 14 | Write specification | `doc-writer` | `stage-14.md` | Phase 5 |
-| 15 | Review and validate | `check_spec.py`, `doc-reviewer` | `stage-15.md` | Phase 5 |
-| 16 | Report | `run_state.py report` | `stage-16.md` | Phase 5 |
+| 14 | Write specification | `doc-writer` | `stage-14.md` | available |
+| 15 | Review and validate | `check_spec.py`, `doc-reviewer` | `stage-15.md` | available |
+| 16 | Report | `run_state.py report` | `stage-16.md` | available |
 
 For every stage (Stage 1 has no run to verify yet and is started by `run_state.py start`
 itself, so skip steps 1 and 2 there):
@@ -134,9 +134,8 @@ itself, so skip steps 1 and 2 there):
 
 Never continue downstream on invalid, incomplete or tampered artifacts.
 
-**When you reach a stage this build does not implement yet**, do not improvise it. Run
-`run_state.py abort --run <run-id> --reason 'stages <N>-16 are not built yet (current build: Phase 4)'`
-so the session is released, then give the stage report described below and stop.
+Every stage is built. If a stage reference ever says it is not built, do not improvise it:
+run `run_state.py abort --run <run-id> --reason 'stage <N> is not built'` and report.
 
 ## Subagents
 

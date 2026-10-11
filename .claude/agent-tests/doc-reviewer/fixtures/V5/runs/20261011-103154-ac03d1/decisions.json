@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "CQ-001",
+      "verbatim": "The supplier is chosen from the quotes attached to the package.",
+      "interpretation": "Only suppliers are eligible.",
+      "affected_ids": [
+        "CQ-001"
+      ],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:36:31.004Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "CQ-001"
+      ]
+    },
+    {
+      "id": "DEC-002",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "CQ-002",
+      "verbatim": "the award is final; it cannot be undone by anyone",
+      "interpretation": "Awards are irreversible.",
+      "affected_ids": [
+        "CQ-002"
+      ],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:36:31.004Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "CQ-002"
+      ]
+    },
+    {
+      "id": "DEC-003",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "CQ-003",
+      "verbatim": "read-only for everyone and all fields are locked",
+      "interpretation": "Awarded packages are fully locked for all users.",
+      "affected_ids": [
+        "CQ-003",
+        "REQ-002"
+      ],
+      "actions": [
+        {
+          "type": "clear_issue",
+          "item_id": "REQ-002",
+          "issue": "unknown"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:36:31.004Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "CQ-003"
+      ]
+    },
+    {
+      "id": "DEC-004",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "CQ-004",
+      "verbatim": "Suppliers are notified by email when the award is made.",
+      "interpretation": "Winning supplier is emailed when the award is made.",
+      "affected_ids": [
+        "CQ-004",
+        "REQ-003"
+      ],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:36:31.004Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "CQ-004"
+      ]
+    },
+    {
+      "id": "DEC-005",
+      "checkpoint": "1",
+      "source": "user",
+      "presented": "all",
+      "verbatim": "Everything else is approved as written.",
+      "interpretation": "Approve REQ-001 to REQ-003.",
+      "affected_ids": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003"
+      ],
+      "actions": [
+        {
+          "type": "approve",
+          "item_id": "REQ-001"
+        },
+        {
+          "type": "approve",
+          "item_id": "REQ-002"
+        },
+        {
+          "type": "approve",
+          "item_id": "REQ-003"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:36:31.004Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-006",
+      "checkpoint": "2",
+      "source": "user",
+      "presented": "gaps",
+      "verbatim": "Approve for research only the first two gaps in your table that are routed to research or both, in the order you listed them.",
+      "interpretation": "Approve GAP-004 and GAP-005.",
+      "affected_ids": [
+        "GAP-004",
+        "GAP-005"
+      ],
+      "actions": [
+        {
+          "type": "approve",
+          "item_id": "GAP-004"
+        },
+        {
+          "type": "approve",
+          "item_id": "GAP-005"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:41:20.245Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-007",
+      "checkpoint": "2",
+      "source": "user",
+      "presented": "gaps",
+      "verbatim": "Reject every other gap.",
+      "interpretation": "Reject all other gaps.",
+      "affected_ids": [
+        "GAP-001",
+        "GAP-002",
+        "GAP-003",
+        "GAP-006",
+        "GAP-007",
+        "GAP-008",
+        "GAP-009",
+        "GAP-010",
+        "GAP-011",
+        "GAP-012",
+        "GAP-013",
+        "GAP-014",
+        "GAP-015",
+        "GAP-016",
+        "GAP-017"
+      ],
+      "actions": [
+        {
+          "type": "reject",
+          "item_id": "GAP-001"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-002"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-003"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-006"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-007"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-008"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-009"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-010"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-011"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-012"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-013"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-014"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-015"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-016"
+        },
+        {
+          "type": "reject",
+          "item_id": "GAP-017"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:41:20.245Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-008",
+      "checkpoint": "3",
+      "source": "user",
+      "presented": "rec",
+      "verbatim": "For each question that has a recommendation, take the recommended option.",
+      "interpretation": "Take the recommended option for Q-003 and Q-005.",
+      "affected_ids": [
+        "FEA-007",
+        "FEA-008"
+      ],
+      "actions": [
+        {
+          "type": "approve",
+          "item_id": "FEA-008"
+        },
+        {
+          "type": "approve",
+          "item_id": "FEA-007"
+        }
+      ],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:48:28.934Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "Q-003",
+        "Q-005"
+      ]
+    },
+    {
+      "id": "DEC-009",
+      "checkpoint": "3",
+      "source": "user",
+      "presented": "Q-001",
+      "verbatim": "Suppliers are told by email as soon as the award is confirmed. Bidders who lose are not told.",
+      "interpretation": "Only the winner is emailed, at award.",
+      "affected_ids": [
+        "REQ-003",
+        "FEA-006"
+      ],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:48:28.934Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "Q-001"
+      ]
+    },
+    {
+      "id": "DEC-010",
+      "checkpoint": "3",
+      "source": "user",
+      "presented": "none",
+      "verbatim": "Award records are kept for seven years.",
+      "interpretation": "Award records are retained for seven years.",
+      "affected_ids": [],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:48:28.934Z",
+      "supersedes": null,
+      "superseded_by": null
+    },
+    {
+      "id": "DEC-011",
+      "checkpoint": "3",
+      "source": "user",
+      "presented": "open",
+      "verbatim": "Leave every other question open.",
+      "interpretation": "Q-002 and Q-004 stay open.",
+      "affected_ids": [
+        "Q-002",
+        "Q-004"
+      ],
+      "actions": [],
+      "created_items": [],
+      "timestamp": "2026-10-11T10:48:28.934Z",
+      "supersedes": null,
+      "superseded_by": null,
+      "question_ids": [
+        "Q-002",
+        "Q-004"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Mode: draft
+Run ID: 20261011-103154-ac03d1
+Run directory: runs/20261011-103154-ac03d1 (relative to your current working directory)
+Template path: template/spec-template.md
+Instead of writing, review the existing specification against the run artifacts and write runs/20261011-103154-ac03d1/review.json with pass/fail for each rubric item.

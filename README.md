@@ -7,12 +7,12 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 4.** Stages 1–13R work: intake, capture (HTML, images, Figma),
-> inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within budget, citation
-> check, semantic verification, feasibility, customer questions, Checkpoint 3 and the 13R
-> re-confirmation checkpoint, with the status registry, decision provenance, `--resume` and
-> `--abort`. When a run reaches Stage 14 the orchestrator aborts it with the reason "stages
-> 14–16 are not built yet", so the session is released. and
+> **Build status: Phase 5.** The full pipeline works, Stages 1–16: intake, capture (HTML,
+> images, Figma), inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within
+> budget, citation check, semantic verification, feasibility, customer questions,
+> Checkpoint 3, re-confirmation (13R), specification writing, mechanical and independent
+> review with up to two revision rounds, and the final report with an honest publication
+> status. Phase 6 adds the evaluation runner, the full case set and change-impact analysis. and
 > citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
 > (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
 > exists now.
@@ -40,7 +40,10 @@ silently making product decisions.
   ├─ Stage 11 feasibility-analyst                 → feasibility.json (registered, §9.9 mapping)
   ├─ Stage 12 question-generator                  → questions.json (≤ max_customer_questions)
   ├─ Stage 13 Checkpoint 3 (you answer)           → decisions.json
-  └─ Stage 13R re-confirmation (only if approved items went stale) → decisions.json
+  ├─ Stage 13R re-confirmation (only if approved items went stale) → decisions.json
+  ├─ Stage 14 doc-writer                          → spec.md (+ ASM-W registered)
+  ├─ Stage 15 check_spec.py + doc-reviewer        → validation.json, review.json (≤ 2 revisions)
+  └─ Stage 16 run_state.py report + final pass    → run_summary.json, publication status
 ```
 
 - **Scripts** do everything deterministic: run state, URL validation, capture, schema
@@ -212,6 +215,36 @@ Rejected, Deferred, …), its placement, and which approved gaps may be research
   it open; left-open items stay labelled Stale. Stage 14 refuses to start while approved items
   are stale and 13R has not run.
 
+## Specification, review and publication status
+
+- **Line format** (parsed by `check_spec.py`): every requirement, business rule, recommendation and
+  acceptance criterion is one bullet, `- **FR-001** <statement> [<Source>: <ITEM-ID> · <label>] …`.
+  The first tag names the primary item with the label `status_rules.py labels` derived for it;
+  `(draft)` marks acceptance criteria whose primary item is not Approved, Decided or Explicit.
+  State-transition tables carry the same tags in their Provenance column. The template
+  (`templates/spec-template.md`) opens with this format and defines the 18 sections.
+- **Placement**: rejected items appear only under Out of Scope / Rejected, deferred only under
+  Deferred, superseded only in the Decisions Log, dropped and citation-failed findings only
+  under Sources › Limitations, pending findings nowhere. Record tables (traceability, gaps,
+  decisions, open questions, sources) list every item.
+- **New assumptions** the writer makes are `ASM-W-nnn`, listed in a ```` ```json asm-w ```` block at
+  the end of the spec and registered (`status_rules.py register spec.md`) before any check.
+- **Review**: `check_spec.py` checks rubric items 1, 2, 4, 6, 7, 8, 9 and 15 mechanically; the
+  doc-reviewer (Opus) judges the rest against the artifacts, never the writer's claims. Blocking
+  failures go back to the writer at most twice (`review.revision_rounds`); every version is kept
+  in `history/` and `run_state.py record-revision` re-records hashes (refusing if the spec changed
+  without a doc-writer invocation). Failed checks stay failed.
+- **Publication status** (`run_state.py report`, shown in the spec's Document Status by a final
+  writer pass that may change nothing else, checked by `check_spec.py --final`):
+  `validated` (all blocking checks pass, no warnings, nothing stale), `validated_with_warnings`
+  (review warnings, open stale items or a partial capture listed), `not_fully_validated` (a
+  blocking check failed or did not run), `blocked` (no completed specification), `eval_only`
+  (fixture mode, always; the checks' result is reported separately). These describe workflow
+  validation, not a guarantee that the product is correct or compliant.
+- **Re-confirmation after review**: if approved items become stale during Stages 14–15, Checkpoint
+  13R runs once more and Stages 14–15 are re-run once; anything stale after that stays Stale and
+  the status is at best `validated_with_warnings`.
+
 ## Run directory
 
 Normal runs live in `runs/`; fixture-mode runs live in `evals/runs/`. Both are gitignored
@@ -237,6 +270,10 @@ runs/
     verified_findings.json  source-verifier
     feasibility.json    feasibility-analyst
     questions.json      question-generator
+    spec.md             doc-writer (the specification)
+    validation.json     check_spec.py; review.json doc-reviewer
+    history/            every spec / validation / review version (run_state.py)
+    warnings.json, run_summary.json   run_state.py report
     checkpoints/        checkpoint-<N>-answers.json, every decide round (status_rules.py)
     decisions.json      DECs (status_rules.py)
     status_registry.json, status_history.jsonl, status_labels.json   (status_rules.py)

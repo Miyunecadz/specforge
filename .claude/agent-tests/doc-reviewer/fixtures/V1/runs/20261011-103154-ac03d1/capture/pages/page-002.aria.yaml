@@ -1,0 +1,9 @@
+- banner:
+  - navigation "Main":
+    - link "Packages":
+      - /url: index.html
+    - link "Reports":
+      - /url: reports.html
+- main:
+  - heading "Reports" [level=1]
+  - paragraph: Coming soon.

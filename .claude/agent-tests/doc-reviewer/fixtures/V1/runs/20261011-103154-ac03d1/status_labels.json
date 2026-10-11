@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "items": {
+    "ASM-F-001": {
+      "label": "Assumption",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "ASM-G-001": {
+      "label": "Assumption",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "ASM-G-002": {
+      "label": "Assumption",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "ASM-G-003": {
+      "label": "Assumption",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "F-GAP-004-01": {
+      "label": "Recommended (awaiting approval)",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "F-GAP-004-02": {
+      "label": "Dropped",
+      "placement": "sources_limitations",
+      "decision_id": null
+    },
+    "F-GAP-005-01": {
+      "label": "Recommended (awaiting approval)",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "F-GAP-005-02": {
+      "label": "Research-supported",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "F-GAP-005-03": {
+      "label": "Research-supported",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "F-GAP-005-04": {
+      "label": "Dropped",
+      "placement": "sources_limitations",
+      "decision_id": null
+    },
+    "FEA-001": {
+      "label": "Explicit",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-002": {
+      "label": "Explicit",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-003": {
+      "label": "Explicit",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-004": {
+      "label": "Explicit",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-005": {
+      "label": "Explicit",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-006": {
+      "label": "Unknown",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "FEA-007": {
+      "label": "Approved: DEC-008",
+      "placement": "main_body",
+      "decision_id": "DEC-008"
+    },
+    "FEA-008": {
+      "label": "Approved: DEC-008",
+      "placement": "main_body",
+      "decision_id": "DEC-008"
+    },
+    "FEA-009": {
+      "label": "Unknown",
+      "placement": "main_body",
+      "decision_id": null
+    },
+    "GAP-001": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-002": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-003": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-004": {
+      "label": "Approved: DEC-006",
+      "placement": "main_body",
+      "decision_id": "DEC-006"
+    },
+    "GAP-005": {
+      "label": "Approved: DEC-006",
+      "placement": "main_body",
+      "decision_id": "DEC-006"
+    },
+    "GAP-006": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-007": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-008": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-009": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-010": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-011": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-012": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-013": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-014": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-015": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-016": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "GAP-017": {
+      "label": "Rejected: DEC-007",
+      "placement": "out_of_scope_rejected",
+      "decision_id": "DEC-007"
+    },
+    "REQ-001": {
+      "label": "Unknown",
+      "placement": "main_body",
+      "decision_id": "DEC-005"
+    },
+    "REQ-002": {
+      "label": "Approved: DEC-005",
+      "placement": "main_body",
+      "decision_id": "DEC-005"
+    },
+    "REQ-003": {
+      "label": "Unknown",
+      "placement": "main_body",
+      "decision_id": "DEC-005"
+    }
+  },
+  "gap_routing": {
+    "GAP-001": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-002": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-003": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-004": {
+      "approval": "approved",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What are established patterns for communicating success and failure of an irreversible, server-confirmed action in procurement or approval workflows?",
+        "How should partial failure be presented when a record update succeeds but a follow-on step (such as sending an email) fails?"
+      ],
+      "research_allowed": true
+    },
+    "GAP-005": {
+      "approval": "approved",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What do usability guidelines (for example GOV.UK Design System or Nielsen Norman Group) recommend for confirming irreversible actions that cannot be undone?",
+        "What information should a confirmation for committing a contract award to a supplier display?"
+      ],
+      "research_allowed": true
+    },
+    "GAP-006": {
+      "approval": "rejected",
+      "resolution_path": "research",
+      "priority": "critical",
+      "research_questions": [
+        "What are established techniques for making a one-time state transition (such as awarding) idempotent and safe against double submission?",
+        "How do web applications typically detect and report that a record was changed by another user while a stale view was open?"
+      ],
+      "research_allowed": false
+    },
+    "GAP-007": {
+      "approval": "rejected",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What information do award notification emails in supplier procurement typically contain for winning and unsuccessful bidders?",
+        "Are there common regulatory expectations (for example UK Procurement Act 2023 or EU public procurement directives) for notifying unsuccessful bidders, and do they apply to private-sector supplier packages?"
+      ],
+      "research_allowed": false
+    },
+    "GAP-008": {
+      "approval": "rejected",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What are common practices for detecting, retrying and surfacing failed or bounced transactional emails?"
+      ],
+      "research_allowed": false
+    },
+    "GAP-009": {
+      "approval": "rejected",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What fields do procurement audit trails typically record for a contract award decision?"
+      ],
+      "research_allowed": false
+    },
+    "GAP-010": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-011": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-012": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-013": {
+      "approval": "rejected",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "What does WCAG 2.2 AA (including SC 4.1.3 Status Messages) require for announcing the result of a form submission?",
+        "What are accessible practices for disabled buttons, including explaining why an action is unavailable?"
+      ],
+      "research_allowed": false
+    },
+    "GAP-014": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-015": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-016": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "research_allowed": false
+    },
+    "GAP-017": {
+      "approval": "rejected",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "research_allowed": false
+    }
+  },
+  "stale_approved": []
+}

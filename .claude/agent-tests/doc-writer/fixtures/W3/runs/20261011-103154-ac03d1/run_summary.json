@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "mode": "fixture",
+  "publication_status": "eval_only",
+  "status_reasons": [
+    "fixture mode: always eval_only (checks would give validated_with_warnings)",
+    "review warnings: items [16]"
+  ],
+  "spec_path": "spec.md",
+  "generated_at": "2026-10-11T12:30:00.000Z",
+  "counts": {},
+  "capture": {
+    "status": "complete",
+    "limitations": []
+  },
+  "research": {},
+  "budget": {},
+  "hooks": {},
+  "tamper_reports": 0,
+  "review": {
+    "round": 1,
+    "passed": true,
+    "unresolved_issues": []
+  },
+  "outstanding_decisions": [
+    "Q-004",
+    "Q-006"
+  ],
+  "stale_items": [],
+  "warnings": []
+}

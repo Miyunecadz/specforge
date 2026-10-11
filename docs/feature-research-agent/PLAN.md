@@ -201,6 +201,33 @@ e2e through Checkpoint 3 14/15 with the one provenance rejection handled; re-aud
    Stage 14 while approved items are stale and 13R has not completed. `labels` now lists
    `stale_approved`. Stale flags are produced by `status_rules.py apply` (change-impact
    analysis, Phase 6); Phase 4 tests create them through the owning script's own write path.
+
+## Phase 5 implementation notes (2026-10-11)
+
+**Phase 5 gate: approved by the user on 2026-10-11** (665 passed; doc-writer 8/8, doc-reviewer 7/7; complete-pipeline
+e2e 19/19 at US$12.08 per case; re-audit APPROVED).
+
+1. **Single writer for spec.md**: the doc-writer has three modes (draft, revise, final). The final
+   pass rewrites only Document Status from `run_summary.json`; `check_spec.py --final` proves the
+   status is shown exactly and nothing outside section 1 changed.
+2. **Revision hashes** (§5): `run_state.py record-revision` re-records the hashes of `spec.md`,
+   `validation.json` and `review.json` after each revision round and the final pass, keeps every
+   version under `history/` (new run_state-owned path), and refuses if the spec changed without a
+   doc-writer invocation since the last record. Every other file is still tamper-checked.
+3. **Clock-independent agent checks**: subagent-invocation checks use the position in the
+   hash-chained hook-event log (`events_mark`) rather than timestamps, after a test showed WSL2's
+   clock stepping backwards by milliseconds.
+4. **check_spec.py zones**: main body = Goals/In Scope, sections 8–14 and 17; scope subsections and
+   Sources › Limitations are placement zones; record tables are neutral. Research source is allowed
+   for `research_evidence` items (findings and evidence-backed feasibility items); the kept-finding
+   check applies to `F-GAP-` tags. Status comparison in the final check is exact.
+5. **Stage 15 completion** refuses while blocking checks fail and revision rounds remain; with rounds
+   exhausted it completes and the status is `not_fully_validated`.
+6. **Post-15 13R**: allowed once after Stage 15; completing it marks Stages 14–16 stale for one re-run;
+   a second attempt is refused and remaining stale items stay Stale.
+7. **Stage 13 guidance**: answers that set a rule, number, channel, retention or policy create a
+   requirement (found when the doc-writer could not tag a decision with no item).
+8. **Schemas**: validation, review, run_summary; manifest gains revisions, events marks, post-15 flags.
 ---
 
 ## 1. Current-state findings

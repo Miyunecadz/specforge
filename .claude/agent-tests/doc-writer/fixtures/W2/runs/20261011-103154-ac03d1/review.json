@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "round": 1,
+  "passed": false,
+  "items": [
+    {
+      "n": 5,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [
+        "ok"
+      ]
+    }
+  ],
+  "fixes": [
+    {
+      "location": "FR-001",
+      "problem": "label 'Approved: DEC-999' for REQ-001",
+      "required_change": "use the derived label 'Unknown'",
+      "item": 8
+    },
+    {
+      "location": "6. Requirements Traceability",
+      "problem": "REQ-001 is missing",
+      "required_change": "add a row for REQ-001 with its treatment and label",
+      "item": 1
+    },
+    {
+      "location": "AC-012",
+      "problem": "AC whose primary item is not Approved/Decided/Explicit lacks '(draft)'",
+      "required_change": "restore '(draft)' after the line id",
+      "item": 6
+    }
+  ],
+  "unresolved_issues": []
+}

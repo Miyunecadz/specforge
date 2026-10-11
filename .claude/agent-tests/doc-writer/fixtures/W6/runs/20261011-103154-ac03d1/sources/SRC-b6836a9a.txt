@@ -1,0 +1,5 @@
+Notifying suppliers of award outcomes (fixture guidance)
+Notify the winning supplier when the award is confirmed, and record whether delivery succeeded.
+If a notification cannot be delivered, show the failure to staff so they can retry or contact the supplier another way.
+Whether unsuccessful bidders are notified is a business policy decision.
+This page is a test fixture for the Feature Research Agent and is not real documentation.

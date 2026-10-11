@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "mode": "fixture",
+  "fixture_dir": "evals/fixtures/case-01-award-packages",
+  "started_at": "2026-10-11T10:31:54.484Z",
+  "mockup_url": "index.html",
+  "declared_input_type": "html",
+  "requirements": {
+    "source": "text",
+    "original_path": null,
+    "copy_path": "input/requirements.md",
+    "sha256": "32f4f68f18e8b75771d3388a8c33a421e789b14c1eba9b547cf3301e5e705060",
+    "bytes": 154
+  },
+  "prior_decisions": null,
+  "non_interactive_case": null
+}

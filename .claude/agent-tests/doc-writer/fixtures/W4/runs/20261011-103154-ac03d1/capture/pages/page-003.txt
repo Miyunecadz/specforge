@@ -1,0 +1,14 @@
+Packages Reports
+PKG-104 Kitchen refit
+Supplier
+Acme Joinery
+Value
+£12,400
+Status
+Open
+Quotes
+
+No quotes attached yet.
+
+Award note  Award Package
+Back to packages

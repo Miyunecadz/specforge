@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/review.schema.json",
+  "title": "review.json, written only by doc-reviewer (§9.13).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "round",
+    "passed",
+    "items",
+    "fixes",
+    "unresolved_issues"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/run_id"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "true only when every blocking item the reviewer judged passes."
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "n",
+          "severity",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 21
+          },
+          "severity": {
+            "enum": [
+              "blocking",
+              "warning"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "not_applicable"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "location",
+          "problem",
+          "required_change",
+          "item"
+        ],
+        "properties": {
+          "location": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "problem": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "required_change": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "item": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 21
+          }
+        }
+      }
+    },
+    "unresolved_issues": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/nonempty_string"
+      }
+    }
+  }
+}

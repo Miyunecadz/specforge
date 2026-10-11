@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "checked_at": "2026-10-11T10:42:42.184Z",
+  "normalisation": "Unicode NFC; curly single/double quotes and primes mapped to ' and \"; all whitespace runs collapsed to one space; case folded. Nothing else.",
+  "results": [
+    {
+      "finding_id": "F-GAP-004-01",
+      "gap_id": "GAP-004",
+      "source_id": "SRC-b6836a9a",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    },
+    {
+      "finding_id": "F-GAP-004-02",
+      "gap_id": "GAP-004",
+      "source_id": "SRC-b6836a9a",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    },
+    {
+      "finding_id": "F-GAP-005-01",
+      "gap_id": "GAP-005",
+      "source_id": "SRC-c52222b5",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    },
+    {
+      "finding_id": "F-GAP-005-02",
+      "gap_id": "GAP-005",
+      "source_id": "SRC-c52222b5",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    },
+    {
+      "finding_id": "F-GAP-005-03",
+      "gap_id": "GAP-005",
+      "source_id": "SRC-c52222b5",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    },
+    {
+      "finding_id": "F-GAP-005-04",
+      "gap_id": "GAP-005",
+      "source_id": "SRC-254f3248",
+      "passed": true,
+      "reasons": [],
+      "detail": ""
+    }
+  ],
+  "summary": {
+    "checked": 6,
+    "passed": 6,
+    "failed": 0
+  }
+}

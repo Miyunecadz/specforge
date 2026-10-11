@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "kept": [
+    {
+      "finding_id": "F-GAP-004-01",
+      "notes": "The claim restates sources/SRC-b6836a9a.txt line 3 ('If a notification cannot be delivered, show the failure to staff so they can retry or contact the supplier another way.') at the same strength ('should be shown'). It answers GAP-004 research question 2 (a record update succeeds but a follow-on email fails). The recommendation keeps the package awarded. That comes from DEC-002 ('the award is final; it cannot be undone by anyone'), not from the source. The source only supports showing the failure to staff with retry or another way to contact the supplier.",
+      "limitations": [
+        "The source page says it 'is a test fixture for the Feature Research Agent and is not real documentation' (SRC-b6836a9a line 5). The spec must treat this as low-confidence guidance, not an established standard.",
+        "No publication date or version is available (metadata publication_date null).",
+        "The source says 'staff'. Naming the package manager as the person who sees the failure is the recommendation's own inference, and who may act on awards is unresolved (GAP-003 was rejected, not answered).",
+        "The source does not cover the wording, placement, persistence or accessibility of the failure message, or how retries are limited.",
+        "The recommendation is marked needs_confirmation and is not a confirmed requirement."
+      ]
+    },
+    {
+      "finding_id": "F-GAP-005-01",
+      "notes": "The claim matches sources/SRC-c52222b5.txt line 2 word for word. It answers both GAP-005 research questions: confirm before an irreversible action, and state the consequence, naming the package and the recipient. The recommendation (a confirmation step that names the package and the supplier) follows directly from the source, given DEC-002, and correctly says the source does not cover value or other details.",
+      "limitations": [
+        "The source page says it 'is a test fixture ... and is not real documentation' (SRC-c52222b5 line 5). It is not GOV.UK Design System or Nielsen Norman Group guidance, so the research question about those organisations remains unanswered.",
+        "No publication date or version is available.",
+        "The source names only the package and the recipient. It does not support adding value, award note or quote reference to the confirmation.",
+        "The recommendation is marked needs_confirmation and is not a confirmed requirement. Which supplier is awarded is itself unresolved (GAP-002 was rejected, not answered)."
+      ]
+    },
+    {
+      "finding_id": "F-GAP-005-02",
+      "notes": "The claim matches sources/SRC-c52222b5.txt line 3 ('Label the confirm button with the action itself, such as Award package, rather than a generic OK.'). It bears directly on what a confirmation for an award should show (GAP-005 research question 2). No recommendation or added scope.",
+      "limitations": [
+        "The source page says it is a test fixture and not real documentation (SRC-c52222b5 line 5).",
+        "No publication date or version is available.",
+        "This is advisory labelling guidance, not a requirement. The exact label text is not set by the customer."
+      ]
+    },
+    {
+      "finding_id": "F-GAP-005-03",
+      "notes": "The claim matches sources/SRC-c52222b5.txt line 4 ('Do not ask for confirmation of actions that can be undone easily; offer undo instead.'). It is relevant to GAP-005 because it separates actions that need undo from actions that need confirmation. Under DEC-002 awards cannot be undone, so the confirmation guidance in line 2 applies rather than undo. That application is an inference from DEC-002 and is labelled as such in how_source_supports.",
+      "limitations": [
+        "The source page says it is a test fixture and not real documentation (SRC-c52222b5 line 5).",
+        "No publication date or version is available.",
+        "The finding supports confirmation only indirectly, by excluding undo for this product. It does not add a requirement by itself."
+      ]
+    }
+  ],
+  "dropped": [
+    {
+      "finding_id": "F-GAP-004-02",
+      "reasons": [
+        {
+          "code": "missing_context",
+          "explanation": "The claim 'Guidance for award notifications is to notify the winning supplier when the award is confirmed' leaves out the next line of the same source: 'Whether unsuccessful bidders are notified is a business policy decision.' (SRC-b6836a9a line 4). Without that line the claim reads as guidance to notify only the winning supplier. DEC-004 verbatim says 'Suppliers are notified by email when the award is made', and who receives the email is an open customer question (gaps.json GAP-007, proposed request_user_input on REQ-003)."
+        },
+        {
+          "code": "not_relevant_to_gap",
+          "explanation": "GAP-004 asks how success and failure of the award are communicated, and how partial failure is presented when the record update succeeds but the email fails. This finding is mainly about who is notified and when, which is the subject of GAP-007, and GAP-007 was rejected (DEC-007). It does not say how the delivery result should be shown (the finding itself lists 'Does not say where the delivery result should be displayed'). So it answers neither GAP-004 research question."
+        }
+      ]
+    },
+    {
+      "finding_id": "F-GAP-005-04",
+      "reasons": [
+        {
+          "code": "missing_context",
+          "explanation": "The claim summarises focus handling as 'returning it to the opening control on close'. It leaves out the condition in SRC-254f3248 line 4: 'if that control no longer exists, move focus to a logical place such as the page heading'. In this product the opening control (Award Package) is disabled once a package is awarded (SCR-015 on PKG-105). So the omitted fallback is exactly the case that applies after a successful award, and leaving it out changes what the spec would require."
+        },
+        {
+          "code": "not_relevant_to_gap",
+          "explanation": "GAP-005's research questions ask what guidelines recommend for confirming irreversible actions and what the award confirmation should display. Keyboard focus management in modal dialogs answers neither question. It is accessibility implementation detail, which falls under GAP-013 (accessibility), and GAP-013 was rejected (DEC-007). The claim is also conditional on a modal ('If the award confirmation is a modal dialog'), a form no decision has chosen."
+        }
+      ]
+    }
+  ],
+  "contradictions": [],
+  "proposed_status_changes": []
+}

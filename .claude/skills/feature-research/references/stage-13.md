@@ -23,8 +23,9 @@ drafting continues. §9.11, §7 Checkpoints.
 --answers-b64 <base64>`, same answer format and verbatim rules as Stage 5, with
 `question_ids` set to the `Q-` ids answered. Actions here: `approve`, `reject`, `defer` on the
 affected `FEA-`, `F-GAP-`, `REQ-`, `GAP-` or `ASM-` items; `clear_issue` (`unknown` or
-`conflicting`) when the answer settles it; `create_requirement` when the answer states a new
-requirement; `leave_open` for questions the user leaves open. Research-supported items are not
+`conflicting`) when the answer settles it; `create_requirement` whenever the answer sets a rule,
+number, channel, retention period, permission or policy (for example "records are kept for
+seven years" becomes a requirement with that statement), so the specification can cite it; `leave_open` for questions the user leaves open. Research-supported items are not
 approved unless the user approves them.
 
 Then `status_rules.py labels --run <run-id>` and `run_state.py stage 13 --run <run-id> --complete`.

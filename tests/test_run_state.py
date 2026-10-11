@@ -159,11 +159,12 @@ def test_manifest_mode_tampering_is_refused(repo):
     assert rc == 3 and "mode mismatch" in out["refused"]
 
 
-def test_later_phase_subcommands_are_refused(repo):
+def test_report_and_record_revision_only_in_their_stages(repo):
     run_id = start_run(repo)
-    for cmd in ("report",):
-        rc, out = rs(repo, cmd, "--run", run_id)
-        assert rc == 3 and "Phase" in out["refused"]
+    rc, out = rs(repo, "report", "--run", run_id)
+    assert rc == 3 and "stage 16" in out["refused"]
+    rc, out = rs(repo, "record-revision", "--run", run_id)
+    assert rc == 3 and "stage 15" in out["refused"]
 
 
 # --------------------------------------------------------------------------- stages

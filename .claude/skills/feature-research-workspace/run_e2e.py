@@ -57,7 +57,7 @@ def main():
         last = str(result.get("result") or "")
         pick = next((i for i, r in enumerate(rules) if uses[i] < r.get("max_uses", 1)
                      and re.search(r["match"], last, re.I | re.S)), None)
-        ended = re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended)\b", last, re.I)
+        ended = re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended|run is (complete|closed)|complete and closed|session is released|run `?[0-9-]+`? is closed)\b", last, re.I)
         if not sid or pick is None or ended:
             break
         uses[pick] += 1
@@ -116,7 +116,7 @@ def continue_run(a, out):
             pick, first = 0, False
         else:
             pick = next((i for i, r in enumerate(rules) if uses[i] < r.get("max_uses", 1) and re.search(r["match"], last, re.I | re.S)), None)
-        if pick is None or re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended)\b", last, re.I):
+        if pick is None or re.search(r"\b(aborted|stopped (after|at) stage|run (has )?ended|run is (complete|closed)|complete and closed|session is released|run `?[0-9-]+`? is closed)\b", last, re.I):
             break
         uses[pick] += 1
         cmd = list(base); cmd[2] = rules[pick]["reply"]; cmd += ["--resume", result["session_id"]]

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-103154-ac03d1",
+  "checked_at": "2026-10-11T13:00:00.000Z",
+  "round": 1,
+  "mode": "full",
+  "items": [
+    {
+      "n": 1,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "REQ traceability"
+    },
+    {
+      "n": 2,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "approved gaps addressed or open"
+    },
+    {
+      "n": 4,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "research tags are kept findings"
+    },
+    {
+      "n": 6,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "line format"
+    },
+    {
+      "n": 7,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "ids exist, line ids unique"
+    },
+    {
+      "n": 8,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "labels and placement"
+    },
+    {
+      "n": 9,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "ASM ids and stale items listed"
+    },
+    {
+      "n": 15,
+      "severity": "blocking",
+      "status": "pass",
+      "evidence": [],
+      "title": "template sections present"
+    }
+  ],
+  "blocking_failures": [],
+  "warning_failures": [],
+  "passed": true
+}

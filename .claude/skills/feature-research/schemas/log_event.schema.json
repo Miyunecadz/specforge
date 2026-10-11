@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/log_event.schema.json",
+  "title": "One line of log.jsonl (BUILD_SPEC §11.6). Hash-chained. Written only by run_state.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ts", "run_id", "event", "stage", "detail", "prev_hash", "line_hash"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "ts": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "event": {
+      "enum": [
+        "run_started", "run_resumed", "run_aborted", "run_ended", "manifest_written",
+        "stage_started", "stage_completed", "stage_failed", "stage_retry", "validation_failed",
+        "await_user", "continued", "hook_event", "tamper_report", "verify_passed",
+        "checkpoint_decision", "artifact_recorded", "review_result", "publication_status", "note"
+      ]
+    },
+    "stage": { "type": ["string", "null"] },
+    "detail": { "type": "object" },
+    "prev_hash": { "$ref": "common.schema.json#/$defs/sha256" },
+    "line_hash": { "$ref": "common.schema.json#/$defs/sha256" }
+  }
+}

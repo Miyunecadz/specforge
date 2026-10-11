@@ -1,0 +1,6 @@
+- heading "PKG-104 Kitchen refit" [level=1]
+- term: Supplier
+- definition: Acme Joinery
+- textbox "Notes"
+- button "Award Package" [disabled]
+- link "Back to packages"

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/config.schema.json",
+  "title": "config.yaml (BUILD_SPEC §12)",
+  "description": "Every object is closed (additionalProperties: false), so keys that try to disable safety controls, enable fixture mode or --non-interactive, or set the interpreter are rejected. Limits have hard maxima.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capture", "network", "sources", "research", "review", "run", "evals", "logging"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported_methods", "max_pages", "max_depth", "figma_max_frames", "page_timeout_s",
+        "max_bytes_per_resource", "max_total_capture_bytes", "max_requests_per_page",
+        "figma_max_retries", "figma_backoff_base_s", "image_content_types"
+      ],
+      "properties": {
+        "supported_methods": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "enum": ["html", "figma", "image"] }
+        },
+        "max_pages": { "type": "integer", "minimum": 1, "maximum": 200 },
+        "max_depth": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "figma_max_frames": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "page_timeout_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 300 },
+        "max_bytes_per_resource": { "type": "integer", "minimum": 1024, "maximum": 104857600 },
+        "max_total_capture_bytes": { "type": "integer", "minimum": 1024, "maximum": 2147483648 },
+        "max_requests_per_page": { "type": "integer", "minimum": 1, "maximum": 2000 },
+        "figma_max_retries": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "figma_backoff_base_s": { "type": "number", "minimum": 0, "maximum": 60 },
+        "image_content_types": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^image/[a-z0-9.+-]+$" }
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_schemes", "max_redirects", "connect_timeout_s", "read_timeout_s",
+        "total_timeout_s", "blocked_hostnames"
+      ],
+      "properties": {
+        "allowed_schemes": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "enum": ["http", "https"] },
+          "description": "May only narrow http/https; no other scheme can be enabled."
+        },
+        "max_redirects": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "connect_timeout_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 },
+        "read_timeout_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 120 },
+        "total_timeout_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 600 },
+        "blocked_hostnames": {
+          "type": "array", "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Extra hostnames always rejected, in addition to the built-in internal ranges, which cannot be removed."
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allow_domains", "deny_domains"],
+      "properties": {
+        "allow_domains": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/domain" } },
+        "deny_domains": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/domain" } }
+      }
+    },
+    "research": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "searches_per_gap", "fetches_per_gap", "findings_per_gap", "total_searches_per_run",
+        "max_source_bytes", "source_content_types", "recency_years_by_category"
+      ],
+      "properties": {
+        "searches_per_gap": { "type": "integer", "minimum": 0, "maximum": 20 },
+        "fetches_per_gap": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "findings_per_gap": { "type": "integer", "minimum": 1, "maximum": 30 },
+        "total_searches_per_run": { "type": "integer", "minimum": 0, "maximum": 200 },
+        "max_source_bytes": { "type": "integer", "minimum": 1024, "maximum": 52428800 },
+        "source_content_types": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z]+/[a-z0-9.+-]+$" }
+        },
+        "recency_years_by_category": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 1, "maximum": 50 }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision_rounds", "stage_retries", "max_customer_questions"],
+      "properties": {
+        "revision_rounds": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "stage_retries": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "max_customer_questions": { "type": "integer", "minimum": 1, "maximum": 30 }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active_run_timeout_minutes", "lock_stale_seconds"],
+      "properties": {
+        "active_run_timeout_minutes": { "type": "integer", "minimum": 5, "maximum": 1440 },
+        "lock_stale_seconds": { "type": "integer", "minimum": 5, "maximum": 600 }
+      }
+    },
+    "evals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["per_case_budget_usd", "per_run_budget_usd", "budget_margin_usd", "case_order"],
+      "properties": {
+        "per_case_budget_usd": { "type": "number", "exclusiveMinimum": 0, "maximum": 10 },
+        "per_run_budget_usd": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 },
+        "budget_margin_usd": { "type": "number", "minimum": 0, "maximum": 10 },
+        "case_order": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detail"],
+      "properties": { "detail": { "enum": ["normal", "verbose"] } }
+    }
+  },
+  "$defs": {
+    "domain": {
+      "type": "string",
+      "pattern": "^(\\*\\.)?([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$"
+    }
+  }
+}

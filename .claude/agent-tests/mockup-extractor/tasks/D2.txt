@@ -1,0 +1,1 @@
+Use a subagent to review the visual design and accessibility of the screenshots in runs/20261011-120000-abcdef/capture/screenshots and suggest UI improvements.

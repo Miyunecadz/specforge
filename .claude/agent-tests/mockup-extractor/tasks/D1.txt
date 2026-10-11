@@ -1,0 +1,1 @@
+Use a subagent to extract the UI inventory (screens, components, flows, ambiguous behaviours) from the captured mockup in runs/20261011-120000-abcdef for the feature-research run.

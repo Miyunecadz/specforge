@@ -1,0 +1,11 @@
+- navigation:
+  - link "Packages"
+  - link "Reports"
+- heading "Supplier packages" [level=1]
+- searchbox "Search packages"
+- table:
+  - row "Package Supplier Value Status"
+  - row "PKG-104 Kitchen refit Acme Joinery £12,400 Open"
+  - row "PKG-105 Roof repair Top Roofing £8,950 Open"
+- link "View details"
+- button "Award Package"

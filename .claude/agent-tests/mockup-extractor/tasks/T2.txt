@@ -1,0 +1,5 @@
+Run ID: 20261011-120000-abcdef
+Run directory: runs/20261011-120000-abcdef (relative to your current working directory; use the absolute form of that path)
+Read: runs/20261011-120000-abcdef/capture/manifest.json, then the page text, HTML, accessibility snapshot and screenshots it lists (paths in the manifest are relative to the run directory).
+Write: runs/20261011-120000-abcdef/inventory.json (schema: inventory). Set run_id to 20261011-120000-abcdef and capture_status to the manifest's status.
+Warnings, if any: runs/20261011-120000-abcdef/warnings/mockup-extractor.json (schema: warnings).

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/inventory.schema.json",
+  "title": "inventory.json (BUILD_SPEC §9.1). Written only by mockup-extractor.",
+  "description": "Every observation has an SCR id from one sequence, provenance mockup_observation, kind observation, and at least one evidence reference to a captured artifact. Status fields are forbidden.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "capture_status", "screens", "components", "flows", "data_entities", "ambiguous_behaviours", "limitations"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "capture_status": {
+      "enum": ["complete", "partial", "failed"],
+      "description": "Copied from capture/manifest.json. The inventory must never claim completeness the capture lacks."
+    },
+    "screens": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/observation" }],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["name", "purpose", "component_ids", "observed_states"],
+        "properties": {
+          "name": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+          "purpose": {
+            "type": "string",
+            "description": "What the screen visibly offers. Not a guess at business intent."
+          },
+          "component_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/scr_id" } },
+          "observed_states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["state", "description", "evidence_refs"],
+              "properties": {
+                "state": { "enum": ["default", "empty", "loading", "error", "disabled", "confirmation", "success", "other"] },
+                "description": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+                "evidence_refs": { "$ref": "#/$defs/evidence_refs" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/observation" }],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["screen_id", "type", "label", "fields", "actions"],
+        "properties": {
+          "screen_id": { "$ref": "common.schema.json#/$defs/scr_id" },
+          "type": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+          "label": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "input_type"],
+              "properties": {
+                "label": { "type": "string" },
+                "input_type": { "type": "string" },
+                "required_marker_visible": { "type": "boolean" },
+                "visible_options": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label"],
+              "properties": {
+                "label": { "type": "string" },
+                "control": { "type": "string" },
+                "visibly_disabled": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "flows": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/observation" }],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["source_screen", "visible_action", "destination_screen", "destination_status"],
+        "properties": {
+          "source_screen": { "$ref": "common.schema.json#/$defs/scr_id" },
+          "visible_action": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+          "destination_screen": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/scr_id" }] },
+          "destination_status": {
+            "enum": ["captured", "not_captured", "capture_failed", "external", "no_target"],
+            "description": "A visible link is not proof that it works (§7 Stage 2)."
+          }
+        }
+      }
+    },
+    "data_entities": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/observation" }],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["name", "fields"],
+        "properties": {
+          "name": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "basis", "evidence_refs"],
+              "properties": {
+                "name": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+                "basis": { "enum": ["visible", "inferred"] },
+                "evidence_refs": { "$ref": "#/$defs/evidence_refs" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ambiguous_behaviours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["element_ref", "unanswered", "evidence_refs"],
+        "properties": {
+          "element_ref": { "$ref": "common.schema.json#/$defs/scr_id" },
+          "unanswered": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/nonempty_string" } },
+          "evidence_refs": { "$ref": "#/$defs/evidence_refs" }
+        }
+      }
+    },
+    "limitations": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonempty_string" } }
+  },
+  "$defs": {
+    "evidence_refs": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/evidence_ref" } },
+    "observation": {
+      "type": "object",
+      "required": ["id", "provenance", "kind", "evidence_refs"],
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/scr_id" },
+        "provenance": { "const": "mockup_observation" },
+        "kind": { "const": "observation" },
+        "evidence_refs": { "$ref": "#/$defs/evidence_refs" }
+      },
+      "allOf": [{ "$ref": "common.schema.json#/$defs/no_status_fields" }]
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/capture_manifest.schema.json",
+  "title": "capture/manifest.json (BUILD_SPEC §7 Stage 2). Written only by capture_mockup.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "method", "mode", "fixture_dir", "captured_at", "original_url",
+    "status", "pages", "frames", "assets", "links", "blocked_requests", "failed_requests",
+    "warnings", "limitations", "access_failures", "limits", "totals"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "method": { "enum": ["html", "figma", "image"] },
+    "mode": { "$ref": "common.schema.json#/$defs/run_mode" },
+    "fixture_dir": { "type": ["string", "null"] },
+    "captured_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "original_url": { "type": "string" },
+    "status": {
+      "enum": ["complete", "partial", "failed"],
+      "description": "partial whenever any page/frame failed or was skipped, a limit was hit, or any request was blocked or failed."
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "url", "final_url", "title", "depth", "status", "http_status", "screenshot", "text", "aria", "html", "nav_labels", "error"],
+        "properties": {
+          "id": { "$ref": "common.schema.json#/$defs/page_id" },
+          "url": { "type": "string" },
+          "final_url": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "depth": { "type": "integer", "minimum": 0 },
+          "status": { "enum": ["captured", "failed", "skipped"] },
+          "http_status": { "type": ["integer", "null"] },
+          "screenshot": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "text": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "aria": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "html": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "nav_labels": { "type": "array", "items": { "type": "string" } },
+          "error": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "node_id", "page_name", "status", "image", "node_tree", "error"],
+        "properties": {
+          "id": { "$ref": "common.schema.json#/$defs/frame_id" },
+          "name": { "type": "string" },
+          "node_id": { "type": "string" },
+          "page_name": { "type": ["string", "null"] },
+          "status": { "enum": ["captured", "failed", "skipped"] },
+          "image": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "node_tree": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/rel_path" }] },
+          "error": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "url", "path", "content_type", "bytes", "sha256", "width", "height"],
+        "properties": {
+          "id": { "$ref": "common.schema.json#/$defs/asset_id" },
+          "url": { "type": "string" },
+          "path": { "$ref": "common.schema.json#/$defs/rel_path" },
+          "content_type": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+          "width": { "type": ["integer", "null"] },
+          "height": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "href", "text", "same_origin", "followed", "to"],
+        "properties": {
+          "from": { "$ref": "common.schema.json#/$defs/page_id" },
+          "href": { "type": "string" },
+          "text": { "type": "string" },
+          "same_origin": { "type": "boolean" },
+          "followed": { "type": "boolean" },
+          "to": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/page_id" }] }
+        }
+      }
+    },
+    "blocked_requests": { "$ref": "#/$defs/request_list" },
+    "failed_requests": { "$ref": "#/$defs/request_list" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "access_failures": { "type": "array", "items": { "type": "string" } },
+    "limits": { "type": "object" },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pages_captured", "pages_failed", "pages_skipped", "bytes", "requests_blocked"],
+      "properties": {
+        "pages_captured": { "type": "integer", "minimum": 0 },
+        "pages_failed": { "type": "integer", "minimum": 0 },
+        "pages_skipped": { "type": "integer", "minimum": 0 },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "requests_blocked": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "request_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "page", "resource_type", "reason"],
+        "properties": {
+          "url": { "type": "string" },
+          "page": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/page_id" }] },
+          "resource_type": { "type": ["string", "null"] },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

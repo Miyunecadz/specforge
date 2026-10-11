@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/integrity.schema.json",
+  "title": "integrity/<script>.json: hashes of continuously updated files, written only by that script (plan addition, §5 Tamper detection).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "owner", "files"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "owner": { "enum": ["run_state.py", "status_rules.py", "fetch_source.py"] },
+    "files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sha256", "written_at"],
+        "properties": {
+          "sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+          "written_at": { "$ref": "common.schema.json#/$defs/timestamp" }
+        }
+      }
+    }
+  }
+}

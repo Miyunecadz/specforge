@@ -1,0 +1,1 @@
+Extract the screens and components from the captured mockup in runs/20261011-120000-abcdef into inventory.json.

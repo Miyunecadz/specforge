@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "run_id": "20261011-120000-abcdef",
+  "method": "html",
+  "mode": "normal",
+  "fixture_dir": null,
+  "captured_at": "2026-10-11T12:00:05.000Z",
+  "original_url": "https://proto.example.com/packages",
+  "status": "complete",
+  "pages": [
+    {
+      "id": "PAGE-001",
+      "url": "https://proto.example.com/packages",
+      "final_url": "https://proto.example.com/packages",
+      "title": "Supplier packages",
+      "depth": 0,
+      "status": "captured",
+      "http_status": 200,
+      "screenshot": "capture/screenshots/page-001.png",
+      "text": "capture/pages/page-001.txt",
+      "aria": "capture/pages/page-001.aria.yaml",
+      "html": "capture/pages/page-001.html",
+      "nav_labels": [
+        "Packages",
+        "Reports"
+      ],
+      "error": null
+    },
+    {
+      "id": "PAGE-002",
+      "url": "https://proto.example.com/packages/104",
+      "final_url": "https://proto.example.com/packages/104",
+      "title": "PKG-104",
+      "depth": 1,
+      "status": "captured",
+      "http_status": 200,
+      "screenshot": "capture/screenshots/page-002.png",
+      "text": "capture/pages/page-002.txt",
+      "aria": "capture/pages/page-002.aria.yaml",
+      "html": "capture/pages/page-002.html",
+      "nav_labels": [
+        "Packages",
+        "Reports"
+      ],
+      "error": null
+    }
+  ],
+  "frames": [],
+  "assets": [],
+  "links": [
+    {
+      "from": "PAGE-001",
+      "href": "https://proto.example.com/packages/104",
+      "text": "View details",
+      "same_origin": true,
+      "followed": true,
+      "to": "PAGE-002"
+    },
+    {
+      "from": "PAGE-001",
+      "href": "https://proto.example.com/reports",
+      "text": "Reports",
+      "same_origin": true,
+      "followed": false,
+      "to": null
+    },
+    {
+      "from": "PAGE-002",
+      "href": "https://proto.example.com/packages",
+      "text": "Back to packages",
+      "same_origin": true,
+      "followed": true,
+      "to": "PAGE-001"
+    }
+  ],
+  "blocked_requests": [],
+  "failed_requests": [],
+  "warnings": [],
+  "limitations": [],
+  "access_failures": [],
+  "limits": {
+    "max_pages": 30
+  },
+  "totals": {
+    "pages_captured": 2,
+    "pages_failed": 0,
+    "pages_skipped": 0,
+    "bytes": 12000,
+    "requests_blocked": 0
+  }
+}

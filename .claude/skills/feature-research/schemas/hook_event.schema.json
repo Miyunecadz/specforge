@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/hook_event.schema.json",
+  "title": "One line of <runs-root>/.hook_events.jsonl (BUILD_SPEC §11.3, §11.6). Hash-chained.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ts", "event", "hook", "session_id", "run_id", "agent_type", "agent_id", "tool_name", "reason", "detail", "prev_hash", "line_hash"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "ts": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "event": { "enum": ["block", "provenance_rejection", "subagent_start", "hook_error"] },
+    "hook": { "enum": ["H1", "H2", "H3", "H4", "H5", "recorder", "dispatcher"] },
+    "session_id": { "type": ["string", "null"] },
+    "run_id": { "anyOf": [{ "type": "null" }, { "$ref": "common.schema.json#/$defs/run_id" }] },
+    "agent_type": { "type": ["string", "null"] },
+    "agent_id": { "type": ["string", "null"] },
+    "tool_name": { "type": ["string", "null"] },
+    "reason": { "type": ["string", "null"] },
+    "detail": { "type": "object" },
+    "prev_hash": { "$ref": "common.schema.json#/$defs/sha256" },
+    "line_hash": { "$ref": "common.schema.json#/$defs/sha256" }
+  }
+}

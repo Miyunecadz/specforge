@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/heartbeat.schema.json",
+  "title": "<runs-root>/.heartbeat (BUILD_SPEC §11.3). Written only by the hooks through one shared helper.",
+  "description": "sessions: last guarded call per session. attest: the most recent run_state.py start/resume/continue call the hook saw, so run_state.py can prove hooks are active and bound to its session.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sessions", "attest"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "sessions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["updated_at", "last_tool"],
+        "properties": {
+          "updated_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+          "last_tool": { "type": "string" }
+        }
+      }
+    },
+    "attest": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["session_id", "argv_sha256", "at"],
+          "properties": {
+            "session_id": { "type": "string", "minLength": 1 },
+            "argv_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+            "at": { "$ref": "common.schema.json#/$defs/timestamp" }
+          }
+        }
+      ]
+    }
+  }
+}

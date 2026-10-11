@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/setup.schema.json",
+  "title": ".claude/feature-research.local.json, written only by install_agents.py (plan addition).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "python", "repo_root", "skill_dir", "hook_mode", "session_ids", "preload_rules", "researcher_variant", "workflow_agents", "installed_agents", "rules_sha256", "agents_src_sha256", "claude_version", "installed_at"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "python": { "type": "string", "pattern": "^/" },
+    "repo_root": { "type": "string", "pattern": "^/" },
+    "skill_dir": { "type": "string", "pattern": "^/" },
+    "hook_mode": { "enum": ["identified", "fallback"] },
+    "session_ids": { "type": "boolean" },
+    "preload_rules": { "type": "boolean" },
+    "researcher_variant": { "enum": ["web-researcher", "web-researcher-fallback"] },
+    "workflow_agents": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/agent_name" } },
+    "installed_agents": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/agent_name" } },
+    "rules_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+    "agents_src_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+    "claude_version": { "type": ["string", "null"] },
+    "installed_at": { "$ref": "common.schema.json#/$defs/timestamp" }
+  }
+}

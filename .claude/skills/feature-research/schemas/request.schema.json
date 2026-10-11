@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/request.schema.json",
+  "title": "input/request.json (BUILD_SPEC §4, Input preservation). Written only by run_state.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "mode", "fixture_dir", "started_at", "mockup_url", "declared_input_type",
+    "requirements", "prior_decisions", "non_interactive_case"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schema_version" },
+    "run_id": { "$ref": "common.schema.json#/$defs/run_id" },
+    "mode": { "$ref": "common.schema.json#/$defs/run_mode" },
+    "fixture_dir": { "type": ["string", "null"] },
+    "started_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "mockup_url": { "$ref": "common.schema.json#/$defs/nonempty_string" },
+    "declared_input_type": {
+      "enum": ["html", "figma", "image", "unknown"],
+      "description": "Classification from the URL alone at intake; check_url.py and capture_mockup.py determine the real type."
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "original_path", "copy_path", "sha256", "bytes"],
+      "properties": {
+        "source": { "enum": ["text", "file"] },
+        "original_path": { "type": ["string", "null"] },
+        "copy_path": { "const": "input/requirements.md" },
+        "sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "prior_decisions": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["original_path", "copy_path", "sha256"],
+          "properties": {
+            "original_path": { "type": "string" },
+            "copy_path": { "const": "input/prior_decisions.json" },
+            "sha256": { "$ref": "common.schema.json#/$defs/sha256" }
+          }
+        }
+      ]
+    },
+    "non_interactive_case": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "type": "string", "pattern": "^evals/cases/" },
+            "sha256": { "$ref": "common.schema.json#/$defs/sha256" }
+          }
+        }
+      ]
+    }
+  }
+}

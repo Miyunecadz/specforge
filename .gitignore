@@ -2,6 +2,11 @@
 /runs/
 /evals/runs/
 
+# Eval result summaries (evals/results/*.json) stay tracked; per-run grader
+# stream logs and temp files do not.
+/evals/results/*/
+*.tmp
+
 # Local environment
 /.venv/
 __pycache__/

@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-030323-1996f1",
+  "questions": [
+    {"id": "Q-001",
+     "question": "When an owner deletes a document, is it gone for good or can it be restored, and for how long? What should colleagues who had access to it see afterwards?",
+     "why_it_matters": "Delete is one of the four actions you confirmed, and the trash icon sits next to Share, so a mis-click is plausible. Colleagues the owner shared with could lose work without warning. The answer also decides whether delete needs a confirmation step or an undo.",
+     "affected_ids": ["GAP-001", "FEA-006", "FEA-005", "REQ-001"],
+     "topic_keywords": ["delete", "restore", "permanent", "trash"],
+     "options": [
+       {"option": "Permanent delete with a confirmation naming the document", "trade_offs": "Simplest to build and no storage kept. A mis-click cannot be undone, and colleagues lose the document immediately. The confirmation click may count towards the two-click limit."},
+       {"option": "Recoverable delete (trash for a set period) with an undo control and no confirmation", "trade_offs": "Protects against mis-clicks and fits the two-click limit. Needs a retention period, a restore action, and a decision on whether shares come back on restore. Deleted documents keep using storage."},
+       {"option": "Recoverable delete that also asks for confirmation when the document is shared with others", "trade_offs": "Extra protection for shared documents, which others rely on. More states to build, and shared deletes take an extra click."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "What may a colleague do with a document shared as viewer, and what may one shared as editor do?",
+     "why_it_matters": "You asked for viewer and editor roles like Google Drive but not what each role can do. Without this, we cannot say whether an editor may rename, delete or re-share the owner's document, which affects your requirement that only people the owner chooses can open it. It also decides whether shared documents appear in the Documents list.",
+     "affected_ids": ["REQ-004", "GAP-003", "FEA-001", "ASM-G-002"],
+     "topic_keywords": ["viewer", "editor", "rights", "permissions"],
+     "options": [
+       {"option": "Viewer can open and download; editor can also change content but cannot rename, delete or re-share", "trade_offs": "Keeps the owner fully in control, matching the 'only the owner manages' rule. Editors cannot tidy or reorganise the document."},
+       {"option": "Editor can also rename and upload new versions, but only the owner can delete or re-share", "trade_offs": "More useful for teamwork. Names and versions can change without the owner knowing."},
+       {"option": "Editor can do everything except change who has access, including delete", "trade_offs": "Closest to full collaboration, but a colleague can remove a document the owner relies on. This conflicts with the owner-only rule for managing documents."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "When an owner shares or revokes access, what should they see, and how can they check who currently has access?",
+     "why_it_matters": "Sharing and revoking are the only way your security rule is applied, yet the captured screens show only a Share button. Owners need to choose the right colleague and be sure that revoked access has really been removed.",
+     "affected_ids": ["GAP-002", "FEA-009", "FEA-003", "REQ-004"],
+     "topic_keywords": ["share", "revoke", "feedback", "access"],
+     "options": [
+       {"option": "A share window listing current colleagues with their role, a remove control, and a confirmation message after each change", "trade_offs": "Owners can see and correct access at any time and know a revoke worked. More screens and messages to design and test."},
+       {"option": "A share window only for adding colleagues, with revoke available elsewhere and a brief message", "trade_offs": "Less to build, but owners cannot easily see who has access, so a wrong share may go unnoticed."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "How do employees sign in today, and where should the list of colleagues that owners share with come from?",
+     "why_it_matters": "The feature is for signed-in employees and owners choose named colleagues, but no sign-in or employee directory has been identified. This also fixes whether sharing is limited to employees of your organisation.",
+     "affected_ids": ["FEA-010", "FEA-002", "FEA-003", "ASM-F-001"],
+     "topic_keywords": ["sign-in", "directory", "colleagues", "employees"],
+     "options": [
+       {"option": "Use an existing company sign-in and employee directory (please name it)", "trade_offs": "Employees keep one login and the colleague list stays current. Depends on access to that system and its rules."},
+       {"option": "Build a new user list for this feature", "trade_offs": "Independent of other systems. Someone must maintain the list, and it can drift from who actually works for you."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-005",
+     "question": "When an employee leaves or their account is deactivated, what should happen to their documents and the access they granted? Can ownership be transferred?",
+     "why_it_matters": "Only the owner can manage a document and who can open it. If the owner leaves, shared documents could be orphaned, stay accessible to no one, or be kept forever.",
+     "affected_ids": ["GAP-011", "FEA-008", "ASM-G-001"],
+     "topic_keywords": ["leaver", "ownership", "transfer", "deactivated"],
+     "options": [
+       {"option": "Transfer ownership to another named employee, such as a manager", "trade_offs": "Shared work stays available. Needs a transfer step and someone to decide the new owner."},
+       {"option": "Delete the leaver's documents and remove all shares", "trade_offs": "Simple and nothing is kept indefinitely. Colleagues lose documents they depend on."},
+       {"option": "Keep documents and shares as they are, read-only, until someone deletes them", "trade_offs": "Nothing is lost immediately. No one can manage access, and documents may be retained indefinitely."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "For the 'at most two clicks' rule, where does counting start, and do steps like choosing a colleague, choosing viewer or editor, or confirming a delete count as clicks?",
+     "why_it_matters": "Sharing needs a colleague and a role, and delete may need a confirmation. Depending on how clicks are counted these may not fit in two clicks, and the rule cannot be tested without a counting rule.",
+     "affected_ids": ["GAP-008", "FEA-007", "REQ-001"],
+     "topic_keywords": ["clicks", "easy", "usability", "count"],
+     "options": [
+       {"option": "Count from the document row, and count every click including choices and confirmations", "trade_offs": "Strictest reading and easiest to test. Sharing probably cannot fit in two clicks, so the rule may need to be relaxed for it."},
+       {"option": "Count only the clicks that start and complete the action; choosing a colleague or role by typing or selection does not count", "trade_offs": "Realistic for sharing. Less strict, so the test needs a clear written definition."},
+       {"option": "Apply two clicks to upload, rename and delete only; sharing gets its own target", "trade_offs": "Honest about the extra steps sharing needs. Changes your original wording for sharing."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"}
+  ],
+  "implementation_details": [
+    {"item": "Rename rules: validation, duplicate names and file extension, and where the rename control appears", "related_ids": ["GAP-004", "REQ-001"]},
+    {"item": "Upload rules: allowed types, size limit, multiple files, duplicate names, progress and failure messages", "related_ids": ["GAP-005", "REQ-001"]},
+    {"item": "Document list at 1,000 items: default sort, paging and search, and how the two-second target is measured", "related_ids": ["GAP-006", "FEA-004", "REQ-005"]},
+    {"item": "Empty, loading, success and error states and how they are announced", "related_ids": ["GAP-007"]},
+    {"item": "Accessible names for the icon-only delete button and unlabeled actions column", "related_ids": ["GAP-009"]},
+    {"item": "Notices to colleagues when access is granted or revoked", "related_ids": ["GAP-010"]},
+    {"item": "What a colleague sees if access is revoked or the document is deleted while it is open", "related_ids": ["GAP-012", "FEA-002"]},
+    {"item": "Optional history of share, revoke and delete actions", "related_ids": ["FEA-011"]},
+    {"item": "Optional monitoring of page load times against the two-second target", "related_ids": ["FEA-012"]}
+  ]
+}

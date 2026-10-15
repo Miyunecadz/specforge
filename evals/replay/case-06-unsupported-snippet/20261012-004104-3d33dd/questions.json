@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-004104-3d33dd",
+  "questions": [
+    {"id": "Q-001",
+     "question": "You said managers approve claims from their own direct reports only. What should happen in the awkward cases: a manager's own claim, a claim from someone with no manager, a manager who is away, or a reporting line that changes while a claim is waiting?",
+     "why_it_matters": "This decides who can release money for whom, and whether claims can be approved by the wrong person or get stuck with nobody able to act.",
+     "affected_ids": ["GAP-004", "FEA-002", "REQ-001"],
+     "topic_keywords": ["manager", "self-approval", "delegation", "absent"],
+     "options": [
+       {"option": "No self-approval; claims from managers and top-level staff go to the next manager up; no delegation", "trade_offs": "Simple and hard to abuse, but claims wait if the approver is away and there is no cover."},
+       {"option": "As above, plus a named delegate or deputy who can act while a manager is away", "trade_offs": "Claims keep moving, but delegation needs setting up, adds permission rules and must be shown in the audit log."},
+       {"option": "As above, plus an administrator or finance override for stuck claims", "trade_offs": "Resolves orphaned claims, but creates a powerful role that must itself be controlled and logged."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "Who is allowed to view the audit log, and should a manager see every entry or only those for their own team? Can anyone other than finance staff export it?",
+     "why_it_matters": "The log shows employee names, claim amounts and decisions. The mockup links to it from the managers' approvals screen, but that does not confirm managers may see it.",
+     "affected_ids": ["REQ-002", "REQ-003", "GAP-006"],
+     "topic_keywords": ["audit", "view", "access", "export", "roles"],
+     "options": [
+       {"option": "Finance staff only can view and export the whole log", "trade_offs": "Most private, but managers cannot check their own decisions and the link on their screen would be removed."},
+       {"option": "Finance can view and export everything; managers view only entries for their own team", "trade_offs": "Managers keep visibility of their decisions; needs team-scoped filtering to be built and tested."},
+       {"option": "Finance can view and export everything; managers view the whole log but cannot export", "trade_offs": "Simpler to build, but managers see other teams' pay-related data."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "Should audit log entries be permanent, so nobody can edit or delete them through the product, or may some role correct or remove an entry?",
+     "why_it_matters": "The audit log is the only must-have requirement and may be relied on in financial audits and disputes. Whether it can be changed decides how far it counts as evidence.",
+     "affected_ids": ["FEA-011", "REQ-002", "GAP-002"],
+     "topic_keywords": ["audit", "append-only", "edit", "delete"],
+     "options": [
+       {"option": "Append-only: no one can edit or delete entries through the product", "trade_offs": "Strongest as evidence; mistakes can only be corrected by adding a new entry, and removing data on legal request needs a separate process."},
+       {"option": "A named administrator role can correct or remove entries, with each change itself logged", "trade_offs": "Allows fixing errors, but weakens the log as evidence and adds a role to secure."}
+     ],
+     "recommendation": {"option": "Append-only: no one can edit or delete entries through the product", "finding_ids": ["F-GAP-002-02"], "rationale": "The kept finding states audit records should be append-only so later edits cannot rewrite history. Its source is a single low-confidence test fixture, so treat this as support, not proof."},
+     "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "Besides who acted, what they decided and when, what else must each audit entry record: the claim amount, the employee, the rejection reason, and the claim's state before and after?",
+     "why_it_matters": "The captured log shows only When, Who and Action. What is recorded decides whether finance can use the log in an audit, and what the CSV export contains.",
+     "affected_ids": ["REQ-002", "FEA-010", "GAP-002", "GAP-001"],
+     "topic_keywords": ["audit", "entry", "fields", "reason", "amount"],
+     "options": [
+       {"option": "Who, what was decided, when, plus claim reference, employee, amount, rejection reason, and state before and after", "trade_offs": "Complete record for audits and disputes, but stores more personal and financial data and makes the log larger."},
+       {"option": "Who, what was decided, when, plus claim reference and rejection reason only", "trade_offs": "Lighter and holds less personal data, but amounts and employee must be looked up elsewhere, which is harder if the claim later changes."},
+       {"option": "Only who, what was decided and when, as in the mockup", "trade_offs": "Smallest, but rejections would not show their mandatory reason in the log."}
+     ],
+     "recommendation": {"option": "Who, what was decided, when, plus claim reference, employee, amount, rejection reason, and state before and after", "finding_ids": ["F-GAP-002-01"], "rationale": "The kept finding says an approval audit record should capture who, what, when and the state before and after. It does not cover amount, employee or reason, so those parts are our inference. Its source is a low-confidence test fixture."},
+     "blocking": false, "priority": "important"},
+    {"id": "Q-005",
+     "question": "How long must audit log entries be kept, and under which country's record-keeping rules?",
+     "why_it_matters": "Retention is an organisational policy that the product cannot decide. Too short may breach your obligations, and too long may breach data-protection rules.",
+     "affected_ids": ["FEA-012", "REQ-002", "GAP-002"],
+     "topic_keywords": ["retention", "keep", "years", "policy"],
+     "options": [
+       {"option": "Keep for a fixed number of years that you specify (please state the number and jurisdiction)", "trade_offs": "Clear and testable, but needs an automated clean-up and agreement with your compliance or legal team."},
+       {"option": "Keep indefinitely until a policy is decided", "trade_offs": "No risk of early loss, but the log grows without limit and may conflict with data-protection rules."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "Where is each employee's manager recorded today (for example an HR system or a company directory), and how quickly must changes to reporting lines be reflected?",
+     "why_it_matters": "The direct-reports rule cannot be enforced without a trustworthy source of who reports to whom. No supplied document identifies one.",
+     "affected_ids": ["FEA-004", "FEA-003", "REQ-001"],
+     "topic_keywords": ["reporting", "manager", "hr", "directory"],
+     "options": [
+       {"option": "Use an existing HR or directory system as the source, read at the time of each decision", "trade_offs": "Always current and one source of truth, but needs an integration and fails if that system is unavailable."},
+       {"option": "Keep a copy of reporting lines in this product, updated regularly", "trade_offs": "Independent of the other system, but can go out of date and needs someone to maintain it."},
+       {"option": "Managers' reports are entered and maintained by an administrator in this product", "trade_offs": "No integration needed, but manual upkeep and a risk of errors when people move."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007",
+     "question": "Should the employee be told when their claim is approved or rejected (including the reason), by what channel, and does approval start a payment or another process?",
+     "why_it_matters": "The mandatory rejection reason only helps if it reaches the employee. A payment link adds integration scope and makes reversing a wrong approval harder.",
+     "affected_ids": ["GAP-013", "FEA-014", "REQ-001"],
+     "topic_keywords": ["notification", "employee", "email", "payment"],
+     "options": [
+       {"option": "Notify the employee of approval or rejection, including the reason, by email", "trade_offs": "Employees learn the outcome promptly; needs email delivery and a plan for failed delivery."},
+       {"option": "Show the outcome and reason to the employee in the product only, with no message sent", "trade_offs": "Less to build, but employees must check the product to find out."},
+       {"option": "No employee notification in this release; payment and messaging are handled elsewhere", "trade_offs": "Smallest scope, but rejected employees may never see the reason."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"}
+  ],
+  "implementation_details": [
+    {"item": "Where the rejection reason is entered (dialog or inline), length rules, and error wording when it is missing", "related_ids": ["GAP-001", "FEA-005", "FEA-007"]},
+    {"item": "Server-side refusal of a reject request that has no reason", "related_ids": ["FEA-006", "REQ-001"]},
+    {"item": "Check approval authority when a decision is submitted, not only through the list shown", "related_ids": ["FEA-003", "REQ-001"]},
+    {"item": "Empty, loading and error states for the approvals list and audit log", "related_ids": ["GAP-011"]},
+    {"item": "Sorting, paging and default order of the claims list and audit log", "related_ids": ["GAP-012"]},
+    {"item": "Navigation back from the Audit log to Expense approvals", "related_ids": ["GAP-015"]},
+    {"item": "Timestamp format and time zone shown and exported", "related_ids": ["GAP-014"]}
+  ]
+}

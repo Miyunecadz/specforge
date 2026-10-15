@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-005931-1dd77e",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Procurement staff register new suppliers with company name, VAT number and bank details.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Procurement staff register new suppliers with company name, VAT number and bank details.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Which bank detail fields are required (account number, sort code, IBAN, bank name) is not stated.",
+        "Validation rules for VAT number and company name are not stated.",
+        "Whether other roles may also register suppliers is not stated."
+      ],
+      "related_ids": ["CQ-004"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "A finance approver must approve a new supplier before it can be paid.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "A finance approver must approve a new supplier before it can be paid.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "What happens when the approver rejects a supplier is not stated.",
+        "Whether the approver may be the same person who registered the supplier is not stated.",
+        "Whether one or several approvers are needed is not stated.",
+        "How the system prevents payment of an unapproved supplier is not stated."
+      ],
+      "related_ids": ["CQ-001", "CQ-002", "CQ-005"]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Bank details must be verified before approval.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Bank details must be verified before approval.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "What counts as verified (format check, bank lookup, call-back, document) is not stated.",
+        "Who performs the verification is not stated.",
+        "What happens when verification fails is not stated."
+      ],
+      "related_ids": ["CQ-003", "REQ-002"]
+    }
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Can the finance approver be the same person who registered the supplier?",
+      "why_it_matters": "Determines segregation-of-duties rules and permissions for approval.",
+      "blocking": true,
+      "related_ids": ["REQ-001", "REQ-002"],
+      "consequence_if_unanswered": "Approval permissions cannot be specified; fraud-control expectations may be missed.",
+      "topic": "permissions"
+    },
+    {
+      "id": "CQ-002",
+      "question": "What should happen when a finance approver rejects a new supplier, and can it be resubmitted?",
+      "why_it_matters": "Defines the supplier states and the rejection flow.",
+      "blocking": false,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "Rejection behaviour stays undefined and may be built inconsistently.",
+      "topic": "approval"
+    },
+    {
+      "id": "CQ-003",
+      "question": "What does 'verified' mean for bank details, who does the verification, and what happens if it fails?",
+      "why_it_matters": "Verification method affects process, integrations, roles and payment risk.",
+      "blocking": true,
+      "related_ids": ["REQ-003"],
+      "consequence_if_unanswered": "REQ-003 cannot be specified or tested.",
+      "topic": "verification"
+    },
+    {
+      "id": "CQ-004",
+      "question": "Which bank detail fields are required, and how should VAT number and bank details be validated?",
+      "why_it_matters": "Defines the data captured and validation rules, and varies by country.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Registration form fields and validation remain undefined.",
+      "topic": "data"
+    },
+    {
+      "id": "CQ-005",
+      "question": "Is paying suppliers part of this feature, or should this only prevent payment of unapproved suppliers elsewhere?",
+      "why_it_matters": "Sets the scope boundary with the payment process.",
+      "blocking": false,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "Scope of the 'before it can be paid' control is unclear.",
+      "topic": "scope"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {
+      "type": "add_issue",
+      "item_id": "REQ-003",
+      "issue": "unknown",
+      "reason": "Meaning of 'verified', who verifies and failure handling are not stated.",
+      "related_ids": ["CQ-003"]
+    },
+    {
+      "type": "add_issue",
+      "item_id": "REQ-002",
+      "issue": "unknown",
+      "reason": "Approver permissions, rejection handling and payment-blocking scope are not stated.",
+      "related_ids": ["CQ-001", "CQ-002", "CQ-005"]
+    }
+  ]
+}

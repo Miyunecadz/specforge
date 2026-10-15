@@ -1,0 +1,5 @@
+Supplier notifications (fixture guidance)
+
+Suppliers may be notified by email when a package is awarded.
+
+Some organisations also notify unsuccessful bidders; whether to do so is a policy decision.

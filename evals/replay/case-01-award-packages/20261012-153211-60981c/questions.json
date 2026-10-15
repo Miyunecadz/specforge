@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-153211-60981c",
+  "questions": [
+    {
+      "id": "Q-001",
+      "question": "When a Procurement user awards a package, how is the winning supplier chosen? Is it the supplier already shown on the package, or does the user pick one on the award form? And can a package with no quotes attached be awarded?",
+      "why_it_matters": "The award is final and the winning supplier is emailed straight away, so a wrong choice cannot be corrected. The award form in the mockup has only a note and an Award Package button, with no way to choose a supplier, so the award cannot be specified until this is settled.",
+      "affected_ids": ["REQ-001", "GAP-001", "FEA-005", "ASM-G-001", "CQ-001"],
+      "topic_keywords": ["supplier", "eligible", "award", "quotes"],
+      "options": [
+        {"option": "The award goes to the supplier already shown on the package; no choice on the form", "trade_offs": "Simplest form and fewest chances for error, but the Supplier value must already be reliable before the award. The rules for packages with no quotes still need an answer."},
+        {"option": "The user picks the supplier on the award form, from suppliers who submitted a quote or were invited", "trade_offs": "Prevents awards to suppliers who took no part, but needs a supplier selector and a list of quotes or invitations that the mockup does not show."},
+        {"option": "The user picks any supplier on the award form", "trade_offs": "Most flexible, but the user could award to a supplier who never took part, and the award cannot be undone."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-002",
+      "question": "Should the user be asked to confirm before an award is made, for example in a pop-up saying which package is awarded, to whom, and that the award is final?",
+      "why_it_matters": "An award cannot be undone by anyone, and it immediately emails the supplier. The mockup shows no confirmation step, so one accidental click would be permanent.",
+      "affected_ids": ["GAP-002", "FEA-007", "REQ-001", "REQ-002"],
+      "topic_keywords": ["confirmation", "irreversible", "award", "warning"],
+      "options": [
+        {"option": "Add a confirmation step that names the package and supplier and says the award is final", "trade_offs": "Protects against accidental awards, at the cost of one extra click. The supplier can be named only once Q-001 is answered."},
+        {"option": "No confirmation; the Award Package button awards immediately", "trade_offs": "Fastest for users, but a misclick leads to a permanent award and an email to the supplier."}
+      ],
+      "recommendation": {
+        "option": "Add a confirmation step that names the package and supplier and says the award is final",
+        "finding_ids": ["F-GAP-002-01"],
+        "rationale": "A kept finding says to ask for confirmation before an action that cannot be undone and to state the consequence. The source is low confidence because it is a test fixture, not an established design system."
+      },
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-003",
+      "question": "If two Procurement users try to award the same package at nearly the same time, or one tries after the other has already awarded it, what should happen to the second user?",
+      "why_it_matters": "Any Procurement member can award any package, a package can have only one award, and awards cannot be undone. Without a rule, two awards or two supplier emails could result and neither could be reversed.",
+      "affected_ids": ["GAP-003", "FEA-009", "FEA-008", "REQ-001", "DEC-001"],
+      "topic_keywords": ["concurrent", "double", "award", "second"],
+      "options": [
+        {"option": "Only the first award counts. The second user is told the package was already awarded and sees the existing result", "trade_offs": "Keeps exactly one award and one email, and the second user knows why nothing happened. Needs the product to check the package's current state when the award is submitted."},
+        {"option": "Only the first award counts. The second user sees a generic error", "trade_offs": "Equally safe, but the second user may not understand what happened or whether the award went through."},
+        {"option": "Warn the user as soon as the package changes while they are viewing it, as well as blocking the second award", "trade_offs": "Clearest for users, but needs live updates of the page and more build effort."}
+      ],
+      "recommendation": {
+        "option": "Only the first award counts. The second user is told the package was already awarded and sees the existing result",
+        "finding_ids": ["F-GAP-003-03"],
+        "rationale": "A kept finding says a second attempt after a successful first one should report the existing result and not repeat the action. The source is low confidence (a test fixture), and no kept finding covers two different users acting at once."
+      },
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-004",
+      "question": "Can anyone outside the Procurement team (other staff, suppliers) see the package list or package details? If so, what can they see, and what do they see in place of the award form?",
+      "why_it_matters": "Package suppliers and values are commercially sensitive, and only Procurement may award. The mockup shows an enabled Award Package button with no sign of who is viewing.",
+      "affected_ids": ["GAP-007", "FEA-002", "FEA-001", "REQ-001"],
+      "topic_keywords": ["visibility", "permissions", "procurement", "viewers"],
+      "options": [
+        {"option": "Only the Procurement team can open packages", "trade_offs": "Safest for commercial data and simplest to build, but nobody else can look up a package."},
+        {"option": "Other staff can view packages but not award; the award form is hidden or disabled for them", "trade_offs": "Wider visibility for colleagues, but supplier and value data is exposed to them and a read-only view must be designed."},
+        {"option": "Other staff can view packages without supplier and value details", "trade_offs": "Balances sharing and sensitivity, but needs a separate reduced view and rules on which fields are hidden."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-005",
+      "question": "Is the award note required? Does it have a maximum length? And who can read it after the award: internal staff only, or the supplier too?",
+      "why_it_matters": "The note is the only input on the award form. Once the package is awarded and locked it cannot be corrected, and the agreed supplier email names only the package and award date.",
+      "affected_ids": ["GAP-008", "FEA-006", "REQ-001", "REQ-003", "DEC-003"],
+      "topic_keywords": ["note", "required", "validation", "visibility"],
+      "options": [
+        {"option": "Note is required, has a length limit, and is visible to internal staff only", "trade_offs": "Ensures every award has a recorded reason and keeps it private, but adds a validation rule and slows users who have nothing to add."},
+        {"option": "Note is optional, has a length limit, and is visible to internal staff only", "trade_offs": "Flexible for users, but some awards will have no recorded reason."},
+        {"option": "Note is optional and also included in the supplier's email", "trade_offs": "Gives the supplier context, but changes the agreed email content and risks exposing internal remarks."}
+      ],
+      "recommendation": null,
+      "blocking": false,
+      "priority": "important"
+    },
+    {
+      "id": "Q-006",
+      "question": "When you said awarded packages are locked for everyone, did you mean that the award note and the quotes are locked too, and that no administrator role can edit an awarded package?",
+      "why_it_matters": "The answer decides whether any edit or override path is specified for awarded packages, and whether the award note can ever be corrected.",
+      "affected_ids": ["ASM-G-002", "ASM-F-001", "FEA-004", "FEA-003", "DEC-003"],
+      "topic_keywords": ["locked", "read-only", "administrator", "note"],
+      "options": [
+        {"option": "Yes: everything is locked, including the note and quotes, for every role including administrators", "trade_offs": "Matches the 'final, cannot be changed by anyone' wording and is simple to build, but mistakes cannot be fixed inside the product."},
+        {"option": "Locked for everyone except an administrator who can edit certain fields", "trade_offs": "Allows corrections, but conflicts with the agreed rule that nobody can change an award and needs its own permissions and audit rules."}
+      ],
+      "recommendation": null,
+      "blocking": false,
+      "priority": "optional"
+    }
+  ],
+  "implementation_details": [
+    {"item": "Session expiry or loss of the Procurement role while the award form is open (re-check permission when the award is submitted, keep the typed note)", "related_ids": ["GAP-010"]},
+    {"item": "Package list search fields, empty-result message, sorting and the full set of package statuses", "related_ids": ["GAP-011"]},
+    {"item": "Time zone and format of the award date shown in the product and in the supplier email", "related_ids": ["GAP-012"]},
+    {"item": "Wording of the award success and failure messages and how they reach screen-reader users", "related_ids": ["GAP-004", "GAP-009"]}
+  ]
+}

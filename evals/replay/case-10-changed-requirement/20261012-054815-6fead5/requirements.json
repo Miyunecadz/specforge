@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-054815-6fead5",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Staff can book a meeting room for up to 4 hours.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Staff can book a meeting room for up to 4 hours.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as 'staff' is not defined", "Whether 4 hours is per booking, per day or per person is not defined", "How far ahead bookings can be made and how conflicts between bookings are handled is not defined"],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Bookings can be cancelled by the person who made them.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Bookings can be cancelled by the person who made them.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Whether anyone else (for example room admins) can cancel is not defined", "Cutoff time for cancelling and whether attendees are notified is not defined"],
+     "related_ids": ["CQ-003"]},
+    {"id": "REQ-003", "statement": "Room admins can block rooms for maintenance.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Room admins can block rooms for maintenance.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["How room admins are designated is not defined", "What happens to existing bookings in a room that is blocked is not defined", "Whether a block has a start and end time or recurs is not defined"],
+     "related_ids": ["CQ-004", "CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who counts as staff, and can anyone else (visitors, contractors) book rooms?", "why_it_matters": "Determines who has booking permission.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Booking permissions cannot be specified.", "topic": "roles"},
+    {"id": "CQ-002", "question": "Is the 4-hour limit per booking, per person per day, or something else?", "why_it_matters": "Changes the validation rule and the data kept.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The limit rule stays ambiguous and may be implemented wrongly.", "topic": "booking limits"},
+    {"id": "CQ-003", "question": "Can anyone other than the person who made a booking (for example a room admin) cancel it?", "why_it_matters": "Affects cancellation permissions.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Cancellation permissions cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-004", "question": "What should happen to existing bookings when a room is blocked for maintenance?", "why_it_matters": "Blocking may affect bookings people already made; this is hard to reverse once people are notified or bookings are removed.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Behaviour for conflicting bookings is undefined.", "topic": "blocking"},
+    {"id": "CQ-005", "question": "How are room admins designated, and can a block have a start and end time or repeat?", "why_it_matters": "Determines the admin role and block data.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Admin role and block details cannot be specified.", "topic": "roles"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Definition of staff and scope of the 4-hour limit are missing."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Whether others can cancel bookings is missing."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Admin designation and handling of existing bookings are missing."}
+  ]
+}

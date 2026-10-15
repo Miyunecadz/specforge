@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "case_id": "case-03-ambiguous-requirements",
+  "description": "Ambiguous customer requirements.",
+  "fixture_dir": "evals/fixtures/case-03-ambiguous-requirements",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-03-ambiguous-requirements/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "fast"
+                ]
+              },
+              {
+                "keywords": [
+                  "performance"
+                ]
+              },
+              {
+                "keywords": [
+                  "response time"
+                ]
+              },
+              {
+                "keywords": [
+                  "speed"
+                ]
+              },
+              {
+                "keywords": [
+                  "load"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "secur",
+              "shar",
+              "manage"
+            ]
+          },
+          "verbatim": "Pages must load within two seconds for a library of up to 1,000 documents.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            },
+            {
+              "type": "create_requirement",
+              "statement": "Pages load within two seconds for a library of up to 1,000 documents.",
+              "req_type": "non_functional",
+              "priority": "must"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "secur"
+                ]
+              },
+              {
+                "keywords": [
+                  "encrypt"
+                ]
+              },
+              {
+                "keywords": [
+                  "access"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "shar",
+              "fast"
+            ]
+          },
+          "verbatim": "Secure means only people the owner shares a document with can open it; no extra encryption or compliance rules apply.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "shar"
+                ]
+              },
+              {
+                "keywords": [
+                  "other tools"
+                ]
+              },
+              {
+                "keywords": [
+                  "revok"
+                ]
+              }
+            ]
+          },
+          "verbatim": "Owners share a document with named colleagues as viewer or editor, like Google Drive, and can revoke access at any time; no public links.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "manage"
+                ]
+              },
+              {
+                "keywords": [
+                  "easil"
+                ]
+              },
+              {
+                "keywords": [
+                  "easy"
+                ]
+              },
+              {
+                "keywords": [
+                  "role"
+                ]
+              },
+              {
+                "keywords": [
+                  "who"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "shar",
+              "secur",
+              "fast",
+              "performance"
+            ]
+          },
+          "verbatim": "Managing means upload, rename, delete and share, for every signed-in employee on their own documents; easily means each takes at most two clicks.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

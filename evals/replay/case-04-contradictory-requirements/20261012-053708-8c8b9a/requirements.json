@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-053708-8c8b9a",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Only finance administrators can delete invoices.", "type": "functional", "priority": "unspecified", "source_quote": "Only finance administrators can delete invoices.", "source_location": "line 1", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined what a finance administrator is or how the role is assigned", "Not defined whether this applies to invoices in every state"], "related_ids": ["REQ-002", "CQ-001"]},
+    {"id": "REQ-002", "statement": "Any user can delete invoices they created.", "type": "functional", "priority": "unspecified", "source_quote": "Any user can delete invoices they created.", "source_location": "line 2", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined whether this applies to invoices in every state", "Not defined whether it overrides the finance-administrator-only rule"], "related_ids": ["REQ-001", "CQ-001"]},
+    {"id": "REQ-003", "statement": "Invoices must be exported as PDF only.", "type": "functional", "priority": "must", "source_quote": "Invoices must be exported as PDF only.", "source_location": "line 3", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined who may export or whether export is single or bulk"], "related_ids": ["REQ-004", "CQ-002"]},
+    {"id": "REQ-004", "statement": "Users must be able to export invoices to Excel.", "type": "functional", "priority": "must", "source_quote": "Users must be able to export invoices to Excel.", "source_location": "line 4", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined which users, or which invoice data and columns", "Not defined whether single or bulk export"], "related_ids": ["REQ-003", "CQ-002"]},
+    {"id": "REQ-005", "statement": "Deleted invoices are removed permanently.", "type": "functional", "priority": "unspecified", "source_quote": "Deleted invoices are removed permanently.", "source_location": "line 5", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined whether permanent removal is immediate or after a delay", "Not defined whether audit or legal retention applies"], "related_ids": ["REQ-006", "CQ-003"]},
+    {"id": "REQ-006", "statement": "Deleted invoices must be recoverable for 30 days.", "type": "functional", "priority": "must", "source_quote": "Deleted invoices must be recoverable for 30 days.", "source_location": "line 6", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined who can recover or how", "Not defined what happens after 30 days"], "related_ids": ["REQ-005", "CQ-003", "CQ-004"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Can a non-finance-administrator user delete an invoice they created, or is deletion restricted to finance administrators only?", "why_it_matters": "The two statements define opposite permission rules for deletion.", "blocking": true, "related_ids": ["REQ-001", "REQ-002"], "consequence_if_unanswered": "Deletion permissions cannot be specified and the wrong users may be able to delete invoices.", "topic": "permissions"},
+    {"id": "CQ-002", "question": "Should invoices be exportable as PDF only, or also to Excel?", "why_it_matters": "The statements disagree on the supported export formats.", "blocking": true, "related_ids": ["REQ-003", "REQ-004"], "consequence_if_unanswered": "The export scope cannot be specified.", "topic": "export"},
+    {"id": "CQ-003", "question": "Are deleted invoices removed permanently, or kept and recoverable for 30 days (and then removed)?", "why_it_matters": "Permanent removal and 30-day recoverability contradict each other, and deletion is irreversible if permanent.", "blocking": true, "related_ids": ["REQ-005", "REQ-006"], "consequence_if_unanswered": "Data could be destroyed that the customer expected to recover, or kept longer than intended.", "topic": "deletion"},
+    {"id": "CQ-004", "question": "If deleted invoices are recoverable, who can recover them and how, and what happens when 30 days pass?", "why_it_matters": "Recovery permissions and expiry behaviour are not described.", "blocking": false, "related_ids": ["REQ-006"], "consequence_if_unanswered": "Recovery cannot be specified beyond the 30-day period.", "topic": "recovery"}
+  ],
+  "conflicts": [
+    {"ids": ["REQ-001", "REQ-002"], "description": "REQ-001 restricts deletion to finance administrators only; REQ-002 lets any user delete invoices they created."},
+    {"ids": ["REQ-003", "REQ-004"], "description": "REQ-003 says invoices are exported as PDF only; REQ-004 requires export to Excel."},
+    {"ids": ["REQ-005", "REQ-006"], "description": "REQ-005 says deleted invoices are removed permanently; REQ-006 says they must be recoverable for 30 days."}
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "conflicting", "reason": "Contradicts REQ-002 on who may delete invoices.", "related_ids": ["REQ-002"]},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "conflicting", "reason": "Contradicts REQ-001 on who may delete invoices.", "related_ids": ["REQ-001"]},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "conflicting", "reason": "Contradicts REQ-004 on export formats.", "related_ids": ["REQ-004"]},
+    {"type": "add_issue", "item_id": "REQ-004", "issue": "conflicting", "reason": "Contradicts REQ-003 on export formats.", "related_ids": ["REQ-003"]},
+    {"type": "add_issue", "item_id": "REQ-005", "issue": "conflicting", "reason": "Contradicts REQ-006 on permanent removal versus recovery.", "related_ids": ["REQ-006"]},
+    {"type": "add_issue", "item_id": "REQ-006", "issue": "conflicting", "reason": "Contradicts REQ-005 on permanent removal versus recovery.", "related_ids": ["REQ-005"]},
+    {"type": "add_issue", "item_id": "REQ-006", "issue": "unknown", "reason": "Who can recover deleted invoices, how, and what happens after 30 days is not stated."}
+  ]
+}

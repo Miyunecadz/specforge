@@ -329,6 +329,25 @@ def test_unrecorded_spec_change_is_tamper(s14):
     assert rc == 4 and any(t["file"].endswith("spec.md") for t in out["tamper"])
 
 
+def test_revise_warning_first_written_during_revision_is_recorded(s14):
+    """A warning doc-writer raises only while revising (not present when stage 14 completed) must be
+    folded into stage 14's outputs by record-revision, not read as a tamper in a completed stage's area."""
+    repo = s14[0]
+    run_id, rd = to_stage15(repo, s14)
+    s14_outputs = json.loads((rd / "run_manifest.json").read_text())["stages"]["14"]["outputs"]
+    assert "warnings/doc-writer.json" not in s14_outputs
+    (rd / "warnings").mkdir(exist_ok=True)
+    (rd / "warnings/doc-writer.json").write_text(json.dumps({"schema_version": 1, "agent": "doc-writer",
+        "warnings": [{"code": "limitation", "message": "a conflict found while applying review fixes", "evidence_refs": []}]}))
+    rc, out = rs(repo, "verify", "--run", run_id)  # unrecorded file in stage 14's area is a tamper until recorded
+    assert rc == 4 and any(t["file"].endswith("warnings/doc-writer.json") for t in out["tamper"])
+    add_subagent_event(repo, run_id, "doc-writer")
+    assert rs(repo, "record-revision", "--run", run_id)[0] == 0
+    man = json.loads((rd / "run_manifest.json").read_text())
+    assert "warnings/doc-writer.json" in man["stages"]["14"]["outputs"]
+    assert rs(repo, "verify", "--run", run_id)[0] == 0
+
+
 def test_final_pass_may_only_change_document_status(s14):
     repo = s14[0]
     run_id, rd = to_stage15(repo, s14)

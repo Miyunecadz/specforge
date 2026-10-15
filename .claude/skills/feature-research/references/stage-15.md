@@ -32,7 +32,9 @@ revision rounds. Failed checks stay failed. §9.13, §7 Stage 15.
    revision rounds remain. When both rounds are used and failures remain, it completes: the
    publication status will be `not_fully_validated` and the failures are listed. Never weaken a
    check, edit `validation.json` or `review.json`, or describe a failed review as passed.
-6. If change-impact analysis has made approved items stale during Stages 14–15
+6. Unless the post-review Checkpoint 13R already ran in this run: if change-impact analysis
+   has made approved items stale after Stage 13 (including a
+   `change_after_checkpoint_3` in a `--non-interactive` run)
    (`status_rules.py labels` → `stale_approved`), run Checkpoint 13R now (allowed once after
    review); it marks Stages 14–16 for one re-run, which you then perform (Stages 14 and 15
    again). Items going stale after that stay Stale.

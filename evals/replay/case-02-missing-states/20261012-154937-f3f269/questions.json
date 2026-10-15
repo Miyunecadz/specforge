@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-154937-f3f269",
+  "questions": [
+    {"id": "Q-001", "question": "When a line manager is away, how do we know, and can the manager and their own manager both decide the same request?",
+     "why_it_matters": "You decided that a manager's own manager can step in when the manager is away. Without a clear rule, requests could be stuck with nobody able to decide, or two managers could decide the same request differently.",
+     "affected_ids": ["GAP-008", "FEA-001", "FEA-014", "REQ-002"], "topic_keywords": ["manager", "away", "stand-in", "approver"],
+     "options": [
+       {"option": "The manager marks themselves away, and only then can their manager decide", "trade_offs": "Clear and auditable, but requests wait if the manager forgets to mark themselves away."},
+       {"option": "The manager's own manager can decide at any time, alongside the manager", "trade_offs": "Requests never get stuck, but two people may both act, so the first decision must win and the second person is told."},
+       {"option": "The manager's own manager can decide only after a request has waited a set number of days", "trade_offs": "No manual step, but needs an agreed waiting time and delays urgent requests."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002", "question": "What should a manager see and do when reviewing a loan request, and how do they find requests waiting for them?",
+     "why_it_matters": "Approving and declining is the step that turns a request into a loan, but the mockup shows no manager screen at all, so this part of the feature cannot be specified yet.",
+     "affected_ids": ["GAP-001", "REQ-002"], "topic_keywords": ["manager", "approve", "decline", "queue"],
+     "options": [
+       {"option": "A list of requests waiting for the manager, with approve and decline on each request", "trade_offs": "Simple and quick for managers; needs a new manager screen."},
+       {"option": "Managers act only from the email they receive", "trade_offs": "Least new screen design, but harder to see everything waiting and relies on email delivery."},
+       {"option": "Both a waiting list and links from the email", "trade_offs": "Most convenient, with more to design and build."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003", "question": "Who may see a staff member's loan requests and decline reasons, and can someone request equipment for another person?",
+     "why_it_matters": "Loan records and decline reasons are about individual people, so showing them to the wrong person could expose personal information.",
+     "affected_ids": ["GAP-014", "FEA-004", "REQ-003", "REQ-001"], "topic_keywords": ["visibility", "privacy", "own", "behalf"],
+     "options": [
+       {"option": "Staff see only their own requests; managers also see their direct reports' requests", "trade_offs": "Matches the approval rule and keeps data limited; stand-in managers need access to the reports they cover."},
+       {"option": "Staff see only their own requests; managers see only requests waiting for their decision", "trade_offs": "Smallest exposure of personal data, but managers cannot look back at past decisions."},
+       {"option": "Anyone in the company can see all loans", "trade_offs": "Easy to see what equipment is out, but exposes individuals' decline reasons unless they are hidden."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004", "question": "Who can cancel a request and until when, who records that an item has been returned, and what happens if an item is not returned by its end date?",
+     "why_it_matters": "Each status (pending, approved, declined, cancelled, returned) needs a person or event that sets it. Otherwise statuses appear that nobody can set, and cancelled or returned items may never become free for others.",
+     "affected_ids": ["GAP-005", "FEA-009", "REQ-003", "REQ-002"], "topic_keywords": ["cancel", "return", "status", "overdue"],
+     "options": [
+       {"option": "Staff can cancel until approved; a manager records the return", "trade_offs": "Clear roles, with managers doing extra work and cancelling after approval needing a manager."},
+       {"option": "Staff can cancel any time before the loan starts; a designated equipment owner records the return", "trade_offs": "Flexible for staff, but needs someone named as equipment owner."},
+       {"option": "Either staff or their manager can cancel; the manager records the return and overdue items are flagged to the manager", "trade_offs": "Covers overdue items, but adds a flag or email that needs designing."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005", "question": "Where does the information about each person's line manager, and that manager's manager, come from?",
+     "why_it_matters": "Who may approve a request and who is emailed on submission both depend on this, and nothing supplied says where it is held or how changes are reflected.",
+     "affected_ids": ["FEA-013", "REQ-002", "ASM-F-001"], "topic_keywords": ["reporting", "line", "manager", "directory"],
+     "options": [
+       {"option": "Use an existing company system such as an HR system or staff directory", "trade_offs": "Always up to date, but needs access to that system and its owner's agreement."},
+       {"option": "Keep the reporting lines inside this feature, maintained by an administrator", "trade_offs": "Self-contained, but someone must keep it current as people move."},
+       {"option": "Upload a staff and manager list periodically", "trade_offs": "Simple to build, but can be out of date between uploads."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006", "question": "Do staff request a specific item (for example Laptop L-221) or any item of a type, can one request cover several items, and who maintains the list of items?",
+     "why_it_matters": "The rule that an item cannot be loaned twice for overlapping dates cannot be built until we know what is being booked and who keeps the list correct.",
+     "affected_ids": ["GAP-009", "FEA-010", "REQ-001", "ASM-G-001"], "topic_keywords": ["item", "catalogue", "asset", "equipment"],
+     "options": [
+       {"option": "Specific individual items, one per request, maintained by an administrator", "trade_offs": "Precise tracking of who has what; staff must pick a particular item and an administrator keeps the list."},
+       {"option": "Item types (for example Laptop), with the system assigning a free item", "trade_offs": "Easier for staff, but needs a way to assign and track the individual item."},
+       {"option": "Item types or items, with several items allowed in one request", "trade_offs": "Convenient for bundles, but approval and availability become more complex."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007", "question": "Must a manager give a reason when declining a request, and where do they enter it?",
+     "why_it_matters": "You said staff see any decline reason. This decides whether declined staff always get an explanation.",
+     "affected_ids": ["GAP-007", "FEA-012", "REQ-002", "REQ-003", "ASM-G-002"], "topic_keywords": ["decline", "reason", "required"],
+     "options": [
+       {"option": "A reason is required", "trade_offs": "Staff always get an explanation, but declining takes slightly longer."},
+       {"option": "A reason is optional", "trade_offs": "Quicker for managers, but some declined staff see no explanation."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008", "question": "The mockup shows the status 'Requested', but your status list says 'pending'. Which wording should staff see for a request awaiting a decision?",
+     "why_it_matters": "Staff read this label to know where their request stands, and it should match across the list, emails and specification.",
+     "affected_ids": ["GAP-006", "FEA-008", "REQ-003", "ASM-G-003"], "topic_keywords": ["requested", "pending", "label", "status"],
+     "options": [
+       {"option": "Use 'Pending' and update the mockup", "trade_offs": "Matches your decided statuses; the design changes."},
+       {"option": "Use 'Requested' as the displayed label for the pending state", "trade_offs": "Keeps the mockup as is, but the label differs from the decided status name."},
+       {"option": "They are two different states", "trade_offs": "Adds a sixth status that needs its own meaning and rules."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-009", "question": "After staff submit a request successfully, what should they see?",
+     "why_it_matters": "The mockup's Submit request button leads nowhere, and staff need to know their request was sent and where to find it.",
+     "affected_ids": ["GAP-002", "FEA-011", "REQ-001", "REQ-003"], "topic_keywords": ["submit", "confirmation", "success"],
+     "options": [
+       {"option": "A confirmation page that says the request was sent", "trade_offs": "Unmistakable, but one more screen and one more click to get back."},
+       {"option": "Return to the loans list with a message and the new request shown as pending", "trade_offs": "Faster, and shows the request in place; the message must be easy to notice."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-010", "question": "If a request cannot be submitted, what should staff see, and should the details they entered be kept?",
+     "why_it_matters": "Staff should not have to retype the item and dates if something goes wrong, and should understand what to fix.",
+     "affected_ids": ["GAP-002", "FEA-007", "FEA-011", "F-GAP-002-01", "REQ-001"], "topic_keywords": ["error", "validation", "failure", "entries"],
+     "options": [
+       {"option": "Keep entered values and show each message next to the field it concerns", "trade_offs": "Easiest to fix; non-validation failures such as a server error still need their own general message."},
+       {"option": "Clear the form and show one general message", "trade_offs": "Simplest to build, but staff must re-enter everything."}
+     ],
+     "recommendation": {"option": "Keep entered values and show each message next to the field it concerns", "finding_ids": ["F-GAP-002-01"], "rationale": "The kept finding says to keep entered data and show messages beside their fields when validation fails. It is low confidence and covers validation failure only."},
+     "blocking": false, "priority": "important"}
+  ],
+  "implementation_details": [
+    {"item": "Where staff and manager email addresses come from, for the agreed email notifications", "related_ids": ["ASM-F-002", "FEA-006"]},
+    {"item": "Enforcing at decision time that only the eligible approver can approve or decline, and that a second decision on a decided request is not applied", "related_ids": ["FEA-002", "FEA-014"]},
+    {"item": "How users sign in and are identified", "related_ids": ["ASM-F-001"]}
+  ]
+}

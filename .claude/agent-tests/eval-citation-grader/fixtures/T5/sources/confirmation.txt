@@ -1,0 +1,5 @@
+Confirming irreversible actions (fixture guidance)
+
+Authors should consider asking for confirmation before an action that cannot be undone, and state the consequence in the dialog text.
+
+Confirmation is unnecessary for actions that can be reversed with an undo control.

@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-054048-0988e2",
+  "gaps": [
+    {"id": "GAP-001", "title": "Reset password shown on a Team lead's row, contrary to the decided limits",
+     "description": "The captured Team members table shows an enabled Reset password button on Ben Okafor's row, whose role is Team lead. DEC-003/DEC-004 state that team leads can never reset passwords for other team leads, administrators or themselves through this feature. The capture does not show whether the button would be hidden, disabled or rejected for such rows, or whether the captured view belongs to a team lead at all.",
+     "category": "permissions",
+     "reason": "conflict",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-001", "SCR-002", "SCR-003"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-001 observed_states default"},
+       {"artifact": "inventory.json", "locator": "SCR-002 actions"},
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+       {"artifact": "decisions.json", "locator": "DEC-004 verbatim"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "Password reset changes access to another person's account; the customer explicitly excluded team leads, administrators and self from the reset scope, but the mockup presents the action on a Team lead row.",
+     "consequences_if_unresolved": "The specification may carry the mockup's unrestricted action, letting a team lead trigger resets on accounts the customer excluded, or the UI and the permission rules will disagree.",
+     "resolution_path": "customer", "priority": "critical",
+     "research_questions": [], "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-002", "title": "Change role and Delete user actions have no requirement behind them",
+     "description": "The mockup offers Change role and Delete user on every row, but no requirement covers changing roles or deleting users. Who may perform them, on whom, whether Delete user is a hard delete or deactivation, whether a confirmation or undo exists, and what happens to the user's data and sessions are all unanswered in the capture.",
+     "category": "scope",
+     "reason": "ambiguous_behaviour",
+     "related_req_ids": ["REQ-001", "REQ-002"], "related_scr_ids": ["SCR-002", "SCR-004", "SCR-005"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-002 actions"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002"},
+       {"artifact": "inventory.json", "locator": "SCR-004"},
+       {"artifact": "inventory.json", "locator": "SCR-005"},
+       {"artifact": "requirements.json", "locator": "requirements"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "Both actions are privileged and Delete user is potentially irreversible; they sit on the same screen as the confirmed team-lead view, so it is unclear whether team leads are meant to have them.",
+     "consequences_if_unresolved": "The feature may ship destructive or privilege-changing actions to team leads without agreed permissions, confirmation or recovery, or the spec may silently drop actions the customer expects.",
+     "resolution_path": "customer", "priority": "critical",
+     "research_questions": [], "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-003", "title": "Security properties of the emailed reset link are undefined",
+     "description": "DEC-003 decides that a reset emails the member a link. Link lifetime, single use, what happens to the member's existing password and active sessions when a reset is triggered or completed, and limits on how often a reset can be triggered are not stated.",
+     "category": "security",
+     "reason": "risk",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-003"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002 (reset behaviour, sessions)"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "A team lead can trigger an account-recovery email for any member of their team; the link is a credential, so its handling determines whether this feature can be used for account takeover or harassment.",
+     "consequences_if_unresolved": "The reset may be specified with weak or inconsistent link handling, exposing members' accounts, or members may be locked out without recourse.",
+     "resolution_path": "research", "priority": "critical",
+     "research_questions": [
+       "What do OWASP Forgot Password and Authentication Cheat Sheets and NIST SP 800-63B recommend for reset-link lifetime, single use and token handling?",
+       "Should an administrator- or manager-initiated reset invalidate the member's current password or sessions before the member completes the reset, according to established guidance?",
+       "What rate limits are recommended for reset emails triggered on behalf of another user?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-004", "title": "Decided member details are not shown in the members table",
+     "description": "DEC-001 decides team leads see name, email, job title and account status. The captured table shows only Name and Role; email, job title and account status are not shown in the capture, and Role is shown although it was not in the decided list.",
+     "category": "data visibility",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-001"], "related_scr_ids": ["SCR-001", "SCR-002", "SCR-006"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-006 fields"},
+       {"artifact": "inventory.json", "locator": "SCR-002 label"},
+       {"artifact": "decisions.json", "locator": "DEC-001 verbatim"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "The member view is the core of REQ-001 and the decided fields include personal data (email) and account status, which the mockup does not cover.",
+     "consequences_if_unresolved": "The view cannot be specified from the mockup; whether Role is also shown, and where the extra fields appear, is left open.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [], "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-005", "title": "No screen for changing one's own display name",
+     "description": "REQ-003 (approved; 2 to 50 characters, not unique per DEC-005) has no supporting screen, component or flow in the capture. Where the user changes it, and its success and error states, are not shown in the capture.",
+     "category": "flow",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-003"], "related_scr_ids": [],
+     "evidence_refs": [
+       {"artifact": "requirements.json", "locator": "REQ-003"},
+       {"artifact": "decisions.json", "locator": "DEC-005 verbatim"},
+       {"artifact": "inventory.json", "locator": "screens, limitations"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "A confirmed requirement has no mockup evidence, so its entry point and interaction must be specified without visual reference.",
+     "consequences_if_unresolved": "The display-name change is specified by guesswork or omitted from the build.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [], "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-006", "title": "Outcome of Reset password is not shown",
+     "description": "The Reset password button has no target, and no confirmation, success, failure or loading state is shown in the capture. Whether the team lead confirms before the email is sent and what feedback they get afterwards is unobserved.",
+     "category": "states",
+     "reason": "flow_issue",
+     "checklist_item": "Empty, loading, success and error states",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-001", "SCR-003"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-003 destination_status no_target"},
+       {"artifact": "inventory.json", "locator": "limitations"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "Reset password is the only action backed by a confirmed requirement on this screen, and it sends an email to another person; the lead needs to know whether it happened.",
+     "consequences_if_unresolved": "Accidental resets, repeated resets because of missing feedback, or silent failures.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "What confirmation and feedback patterns do established admin consoles (for example Google Workspace, Microsoft Entra ID, Okta) use when a manager triggers a password reset email for another user?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-007", "title": "Reset email delivery failure and missing email address",
+     "description": "DEC-003 decides the reset is delivered by email. What happens when the member's email is missing, invalid or bounces, whether the team lead learns of it, and who else is told about the reset, are not stated.",
+     "category": "notifications",
+     "reason": "checklist",
+     "checklist_item": "Notifications and delivery failure",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-003"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002 (who is notified, failure)"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "Email is the only delivery path decided for the reset; a member who cannot receive it cannot regain access through this feature.",
+     "consequences_if_unresolved": "Members may be locked out with no visible failure and no recovery route.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "How do identity platforms report and handle bounced or undeliverable password reset emails to the initiating administrator?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-008", "title": "Reset and visibility for members in non-active account states",
+     "description": "DEC-001 makes account status visible, implying members can be in states other than active. Which statuses exist, and whether a team lead may reset the password of, or see, a suspended, invited or deactivated member, are not stated.",
+     "category": "accounts",
+     "reason": "checklist",
+     "checklist_item": "Authentication and accounts",
+     "related_req_ids": ["REQ-001", "REQ-002"], "related_scr_ids": ["SCR-006"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001 verbatim"},
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Resetting the password of a suspended account could effectively reinstate access the organisation removed.",
+     "consequences_if_unresolved": "Reset rules may be inconsistent with account status, or the status column cannot be specified.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [], "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-009", "title": "Effect of HR changes to team lead or team membership",
+     "description": "DEC-002 defines the team lead and membership from HR records. How quickly changes in HR (a lead replaced, a member moving team) take effect in this feature, and what happens if a lead is mid-action when their lead status or the member's team changes, are not stated.",
+     "category": "permissions",
+     "reason": "checklist",
+     "checklist_item": "Session expiry and permission changes",
+     "related_req_ids": ["REQ-001", "REQ-002"], "related_scr_ids": ["SCR-001"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-002 verbatim"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "Both viewing personal data and triggering resets depend on HR-derived lead status; stale data would let a former lead see or act on members they no longer lead.",
+     "consequences_if_unresolved": "Permission scope is enforced against outdated data, exposing member details or allowing resets by the wrong person.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "What are established practices for propagating HR-system changes to application permissions (for example SCIM provisioning) and the acceptable delay before access is revoked?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-010", "title": "Accessibility of the per-row action buttons",
+     "description": "The actions column header is empty and each row repeats identically labelled buttons (Reset password, Change role, Delete user). Whether each button identifies which member it acts on for assistive technology, and how keyboard focus and status messages behave after an action, are not shown in the capture.",
+     "category": "accessibility",
+     "reason": "checklist",
+     "checklist_item": "Accessibility (WCAG 2.2 AA where relevant)",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-002"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-002 label (unlabeled actions column)"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002 (empty header)"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "A screen-reader user hearing repeated 'Reset password' buttons may trigger a reset for the wrong member.",
+     "consequences_if_unresolved": "The screen may fail WCAG 2.2 AA and cause actions on the wrong account.",
+     "resolution_path": "research", "priority": "important",
+     "research_questions": [
+       "Which WCAG 2.2 success criteria (for example 1.3.1, 2.4.6, 2.5.3, 4.1.3) apply to repeated row action buttons in data tables and an empty column header?",
+       "What do WAI-ARIA Authoring Practices recommend for accessible names of per-row actions in tables?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-011", "title": "Scope and access of the reset audit record",
+     "description": "DEC-003 decides every reset is logged with who and when. Whether the record also captures the affected member and outcome, who may view the log, and how long it is kept are not stated.",
+     "category": "audit",
+     "reason": "checklist",
+     "checklist_item": "Audit logging",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": [],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "The log is the customer's chosen safeguard for resets; without the target member it cannot show which account was affected.",
+     "consequences_if_unresolved": "The audit trail may be insufficient to investigate misuse, or retained without a defined policy.",
+     "resolution_path": "both", "priority": "optional",
+     "research_questions": [
+       "What fields do OWASP Logging Cheat Sheet and common security standards recommend recording for credential-reset events?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-012", "title": "Display name content rules beyond length",
+     "description": "DEC-005 sets 2 to 50 characters and no uniqueness. How length is counted, whether leading or trailing spaces are trimmed, which characters are allowed, and where the changed name appears (for example in the team lead's member view) are not stated.",
+     "category": "validation",
+     "reason": "checklist",
+     "checklist_item": "Form validation and messages",
+     "related_req_ids": ["REQ-003"], "related_scr_ids": [],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-005 verbatim"},
+       {"artifact": "requirements.json", "locator": "REQ-003 ambiguity_notes"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "Display names are not unique and are shown to others, so blank-looking or impersonating names could mislead team leads acting on members.",
+     "consequences_if_unresolved": "Inconsistent validation and names that confuse who is who in the member list.",
+     "resolution_path": "both", "priority": "optional",
+     "research_questions": [
+       "How should a 2-50 character limit be counted for Unicode names (code points versus grapheme clusters), and what do Unicode security guidelines (UTS #39) suggest for confusable or invisible characters in display names?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-013", "title": "Members list empty, loading and error states",
+     "description": "Only a two-row default state of the Team members table is captured. What a team lead sees when their team has no members, while the list loads, or when it fails to load is not shown in the capture.",
+     "category": "states",
+     "reason": "checklist",
+     "checklist_item": "Empty, loading, success and error states",
+     "related_req_ids": ["REQ-001"], "related_scr_ids": ["SCR-001"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-001 observed_states"},
+       {"artifact": "inventory.json", "locator": "limitations"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "The member list depends on HR data, so an empty or failed load is plausible and must be distinguishable from a team with no members.",
+     "consequences_if_unresolved": "Team leads may misread a load failure as an empty team.",
+     "resolution_path": "both", "priority": "optional",
+     "research_questions": [
+       "What established design-system guidance (for example GOV.UK Design System, Material) exists for distinguishing empty and error states in data tables?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-014", "title": "Repeated reset requests for the same member",
+     "description": "Whether double clicks, repeated presses or two people triggering a reset for the same member send several emails, and which link remains valid, is not stated.",
+     "category": "data integrity",
+     "reason": "checklist",
+     "checklist_item": "Duplicate submissions",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-003"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+       {"artifact": "inventory.json", "locator": "SCR-003"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Each reset emails the member and writes an audit record; duplicates confuse the member and clutter the log.",
+     "consequences_if_unresolved": "Multiple valid links in circulation and misleading audit entries.",
+     "resolution_path": "research", "priority": "optional",
+     "research_questions": [
+       "What is the recommended handling of previously issued reset tokens when a new reset is requested for the same account?"
+     ],
+     "provenance": "inference", "kind": "gap"}
+  ],
+  "assumptions": [
+    {"id": "ASM-G-001", "text": "The captured Team members page represents the view a team lead would use, since it is the only captured screen and REQ-001 concerns team leads viewing their team.",
+     "why": "The capture does not say which role is viewing the page.",
+     "impact": "If the page is an administrator view, GAP-001 and GAP-002 become questions about a separate admin screen rather than conflicts in the team-lead view.",
+     "to_confirm": "Which role the captured Team members page is designed for.",
+     "provenance": "assumption", "kind": "assumption", "related_ids": ["GAP-001", "GAP-002", "GAP-004"]}
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "conflicting", "reason": "The mockup shows an enabled Reset password action on a Team lead's row (SCR-002), while DEC-003/DEC-004 exclude team leads from reset by a team lead."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "No screen, component or flow in the capture supports changing one's own display name."}
+  ]
+}

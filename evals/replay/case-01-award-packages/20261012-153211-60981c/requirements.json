@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-153211-60981c",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Package managers must be able to award a supplier package to one supplier.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Package managers must be able to award a supplier package to one supplier.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Which suppliers can be chosen (for example only those who bid or were invited) is not stated.",
+        "Whether an award can be undone or changed is not stated.",
+        "Whether all package managers or only some (for example the package's own manager) may award is not stated."
+      ],
+      "related_ids": ["CQ-001", "CQ-002", "CQ-003"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Awarded packages should be read-only.",
+      "type": "functional",
+      "priority": "should",
+      "source_quote": "Awarded packages should be read-only.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Which users the read-only state applies to (package managers, suppliers, administrators) is not stated.",
+        "Which parts of the package are locked is not stated.",
+        "Whether there is any exception or way to reopen an awarded package is not stated."
+      ],
+      "related_ids": ["CQ-002", "CQ-004"]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Suppliers must be notified when they win.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Suppliers must be notified when they win.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "The notification channel (email, in-app, other) is not stated.",
+        "The notification content is not stated.",
+        "'When they win' is not defined as a moment: at the time of award or at some later step."
+      ],
+      "related_ids": ["CQ-005", "CQ-006", "ASM-P-001"]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM-P-001",
+      "text": "'Suppliers' who 'win' in the third statement means the single supplier to whom a package is awarded under the first statement.",
+      "why": "The text does not link the two statements explicitly, and 'win' is not defined.",
+      "impact": "Determines who receives the notification and the event that triggers it.",
+      "to_confirm": "Confirm that winning means being the supplier selected in the award action, and that only that supplier is notified.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["REQ-003", "CQ-006"]
+    }
+  ],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Which suppliers can a package be awarded to, for example only suppliers who submitted a bid or were invited?",
+      "why_it_matters": "Defines the data and the eligibility rules behind the award action.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Any supplier might be selectable, including ones who never took part.",
+      "topic": "award eligibility"
+    },
+    {
+      "id": "CQ-002",
+      "question": "Can an award be undone or changed after it is made, and if so by whom?",
+      "why_it_matters": "The award is possibly irreversible and interacts with the read-only rule.",
+      "blocking": true,
+      "related_ids": ["REQ-001", "REQ-002"],
+      "consequence_if_unanswered": "A wrong award could not be corrected, or reversal might be built without a rule for it.",
+      "topic": "reversibility"
+    },
+    {
+      "id": "CQ-003",
+      "question": "Which package managers may award a package: any of them, or only the manager responsible for that package?",
+      "why_it_matters": "Sets permissions for a significant action.",
+      "blocking": true,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Permissions cannot be specified and an unauthorised user might award a package.",
+      "topic": "permissions"
+    },
+    {
+      "id": "CQ-004",
+      "question": "Who is the read-only state for, and which parts of an awarded package does it lock?",
+      "why_it_matters": "Decides what editing is blocked and for which roles.",
+      "blocking": true,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "Behaviour of awarded packages cannot be specified, and the scope may be too wide or too narrow.",
+      "topic": "read-only scope"
+    },
+    {
+      "id": "CQ-005",
+      "question": "How should the winning supplier be notified (email, in-app, other) and what should the notification say?",
+      "why_it_matters": "Determines integration, content and any contact data needed.",
+      "blocking": false,
+      "related_ids": ["REQ-003"],
+      "consequence_if_unanswered": "The channel and content would have to be guessed.",
+      "topic": "notification"
+    },
+    {
+      "id": "CQ-006",
+      "question": "At what moment is the supplier notified, immediately when the award is made or at a later step, and should other suppliers be told anything?",
+      "why_it_matters": "Sets the trigger for the notification and its audience.",
+      "blocking": false,
+      "related_ids": ["REQ-003", "ASM-P-001"],
+      "consequence_if_unanswered": "The trigger may fire too early, for example before a reversible award is final.",
+      "topic": "notification trigger"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {
+      "type": "add_issue",
+      "item_id": "REQ-002",
+      "issue": "unknown",
+      "reason": "Who the read-only state applies to and what it covers is not stated.",
+      "related_ids": ["CQ-004"]
+    },
+    {
+      "type": "add_issue",
+      "item_id": "REQ-003",
+      "issue": "unknown",
+      "reason": "Notification channel, content and trigger are not stated.",
+      "related_ids": ["CQ-005", "CQ-006"]
+    }
+  ]
+}

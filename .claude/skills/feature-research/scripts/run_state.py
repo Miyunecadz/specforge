@@ -4,8 +4,8 @@
 Owns <runs-root>/.active_run, run_manifest.json, log.jsonl, input/**, budget/active_gap.json,
 warnings.json, run_summary.json and integrity/run_state.json. Reads, never writes, .heartbeat.
 
-Subcommands: start, verify, stage, log, await-user, continue, resume, set-gap, record-revision, report,
-end, abort.
+Subcommands: start, verify, stage, log, await-user, continue, resume, set-gap, change-inputs, record-revision,
+report, end, abort.
 Exit codes: 0 ok, 1 usage/validation error, 3 refused, 4 tamper detected.
 """
 
@@ -141,7 +141,7 @@ def _require_attestation(runs_root: Path, session_id: str | None, argv: Sequence
         raise RunError("hook attestation is stale")
 
 
-def _decode_requirements(args) -> tuple[bytes, str, str | None]:
+def _decode_requirements(args, repo: Path) -> tuple[bytes, str, str | None]:
     if args.requirements_b64 is not None:
         try:
             data = base64.b64decode(args.requirements_b64, validate=True)
@@ -150,6 +150,8 @@ def _decode_requirements(args) -> tuple[bytes, str, str | None]:
         source, original = "text", None
     else:
         p = Path(args.requirements_file).expanduser()
+        if not p.is_absolute():
+            p = repo / p  # relative paths are relative to the repository root, as for every other input
         if not p.is_file():
             raise RunError(f"requirements file not found: {args.requirements_file}")
         if p.stat().st_size > MAX_REQUIREMENTS_BYTES:
@@ -298,7 +300,7 @@ def cmd_start(args, repo: Path, env: Mapping[str, str], argv: Sequence[str]) -> 
             f"another run is active ({other.get('run_id')}); finish it, or use --abort {other.get('run_id')}"
         )
 
-    data, source, original = _decode_requirements(args)
+    data, source, original = _decode_requirements(args, repo)
     run_id = _new_run_id()
     run_dir = rr / run_id
     run_dir.mkdir(parents=False, exist_ok=False)
@@ -712,10 +714,17 @@ def cmd_record_revision(args, repo: Path, env: Mapping[str, str], argv) -> int:
             fsutil.atomic_write_bytes(hist / f"{Path(rel).stem}-round-{rev['count']:02d}.json", (ctx.run_dir / rel).read_bytes())
     for key in ("14", "15"):
         st = m["stages"].get(key)
-        if st and st["status"] == "completed":
-            for rel in list(st["outputs"]):
-                if rel in REVISABLE and (ctx.run_dir / rel).exists():
-                    st["outputs"][rel] = hashing.sha256_file(ctx.run_dir / rel)
+        if not (st and st["status"] == "completed"):
+            continue
+        stage = stages.STAGES.get(key)
+        declared = [p.rstrip("?") for p in stage.outputs] if stage else []
+        # Re-record already-recorded REVISABLE outputs, and also fold in a REVISABLE file the
+        # stage owns that was first written during a revision (e.g. a warning doc-writer only
+        # raised while applying review fixes): it must not read as an unrecorded file in a
+        # completed stage's output area.
+        for rel in set(st["outputs"]) | {d for d in declared if d in REVISABLE}:
+            if rel in REVISABLE and (ctx.run_dir / rel).exists():
+                st["outputs"][rel] = hashing.sha256_file(ctx.run_dir / rel)
     for hp in sorted(hist.glob("*")):
         runctx.record_integrity(ctx.run_dir, "run_state.py", hp.relative_to(ctx.run_dir).as_posix())
     _log(ctx, ctx.run_id, "artifact_recorded", running[0], revision=rev["count"], spec_changed=changed,
@@ -818,6 +827,80 @@ def cmd_report(args, repo: Path, env: Mapping[str, str], argv) -> int:
     _write_manifest(rd, m)
     _out({"ok": True, "publication_status": status_, "reasons": reasons,
           "next": "ask doc-writer for the final Document Status pass, then check_spec.py --final and record-revision --final"})
+    return EXIT_OK
+
+
+def _sentences(text: str) -> list[str]:
+    import re as _re
+    parts = _re.split(r"(?<=[.!?])\s+|\n+", text)
+    return [" ".join(p.split()) for p in parts if p.strip() and not p.strip().startswith("#")]
+
+
+def cmd_change_inputs(args, repo: Path, env: Mapping[str, str], argv) -> int:
+    """Change-impact analysis for changed requirements (§15): new input version + change file for status_rules apply."""
+    ctx = runctx.require_active_run(repo, args.run, env)
+    m, rd = ctx.manifest, ctx.run_dir
+    if any(st["status"] == "running" for st in m["stages"].values()):
+        raise RunError("run change-inputs between stages, not while a stage is running")
+    if m["stages"].get("4", {}).get("status") != "completed":
+        raise RunError("requirements have not been parsed yet; start a new run with the new requirements instead")
+    newp = Path(args.requirements_file).expanduser()
+    if not newp.is_absolute():
+        newp = repo / newp
+    if ctx.mode.mode == modes.FIXTURE and (repo / paths.CASES_REL).resolve() not in newp.resolve().parents:
+        raise RunError("in fixture mode changed requirements must come from evals/cases/")
+    if not newp.is_file() or newp.stat().st_size > MAX_REQUIREMENTS_BYTES:
+        raise RunError(f"requirements file not found or too large: {args.requirements_file}")
+    new = newp.read_bytes()
+    versions = sorted((rd / "input").glob("requirements-v*.md"))
+    current = versions[-1] if versions else rd / "input/requirements.md"
+    old = current.read_bytes()
+    if hashing.sha256_bytes(new) == hashing.sha256_bytes(old):
+        raise RunError("the new requirements are identical to the current version")
+    norm = lambda t: " ".join(t.split())
+    new_norm, old_norm = norm(new.decode("utf-8")), norm(old.decode("utf-8"))
+    reqs = json.loads((rd / "requirements.json").read_text(encoding="utf-8"))["requirements"]
+    changed = sorted(r["id"] for r in reqs if norm(r["source_quote"]) not in new_norm)
+    added = [snt for snt in _sentences(new.decode("utf-8")) if snt not in old_norm]
+    reg = json.loads((rd / "status_registry.json").read_text(encoding="utf-8"))["items"]
+    n = len(sorted((rd / "input").glob("change-*.json"))) + 1
+    reason = lambda rid: f"change {n}: the customer's requirements changed; {rid}'s source text is no longer present"
+    stale: dict[str, str] = {r: reason(r) for r in changed if r in reg}
+    load = lambda rel: json.loads((rd / rel).read_text(encoding="utf-8")) if (rd / rel).exists() else {}
+    for g in load("gaps.json").get("gaps", []):
+        hit = [r for r in g["related_req_ids"] if r in changed]
+        if hit and g["id"] in reg:
+            stale[g["id"]] = f"change {n}: depends on changed {', '.join(hit)}"
+            for f in [i for i in reg if i.startswith(f"F-{g['id']}-")]:
+                stale[f] = f"change {n}: research for {g['id']}, which depends on changed {', '.join(hit)}"
+    for doc_rel, key in (("feasibility.json", "items"),):
+        for it in load(doc_rel).get(key, []):
+            hit = [r for r in it["related_ids"] if r in stale]
+            if hit and it["id"] in reg:
+                stale[it["id"]] = f"change {n}: depends on {', '.join(hit)}"
+    for doc_rel in ("requirements.json", "gaps.json", "feasibility.json"):
+        for a in load(doc_rel).get("assumptions", []):
+            hit = [r for r in a.get("related_ids", []) if r in stale]
+            if hit and a["id"] in reg:
+                stale[a["id"]] = f"change {n}: depends on {', '.join(hit)}"
+    ver_rel = f"input/requirements-v{len(versions) + 2}.md"
+    fsutil.atomic_write_bytes(rd / ver_rel, new)
+    doc = {"schema_version": 1, "run_id": ctx.run_id, "change_id": n, "created_at": now_iso(), "input": "requirements",
+           "reason": args.reason, "old_sha256": hashing.sha256_bytes(old), "new_sha256": hashing.sha256_bytes(new),
+           "changed_req_ids": changed, "added_text": added,
+           "stale_items": [{"item_id": i, "stale_reason": r} for i, r in sorted(stale.items())]}
+    schema.check("change", doc, what=f"input/change-{n}.json")
+    fsutil.atomic_write_json(rd / f"input/change-{n}.json", doc)
+    for rel in (ver_rel, f"input/change-{n}.json"):
+        m["stages"]["1"]["outputs"][rel] = hashing.sha256_file(rd / rel)
+    deps = m.setdefault("dependencies", {})
+    deps[ver_rel] = ["input/requirements.md"]
+    _log(ctx, ctx.run_id, "artifact_recorded", None, change_id=n, changed_req_ids=changed, stale_items=sorted(stale),
+         reason=args.reason)
+    _write_manifest(rd, m)
+    _out({"ok": True, "change_id": n, "change_file": f"input/change-{n}.json", "new_version": ver_rel,
+          "changed_req_ids": changed, "added_text": added, "stale_items": sorted(stale),
+          "next": f"status_rules.py apply input/change-{n}.json, then labels; approved stale items go to Checkpoint 13R"})
     return EXIT_OK
 
 
@@ -942,6 +1025,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--run", required=True)
     p.add_argument("--final", action="store_true")
     p.set_defaults(func=cmd_record_revision)
+
+    p = sub.add_parser("change-inputs")
+    p.add_argument("--run", required=True)
+    p.add_argument("--requirements-file", required=True)
+    p.add_argument("--reason", required=True)
+    p.set_defaults(func=cmd_change_inputs)
 
     p = sub.add_parser("report")
     p.add_argument("--run", required=True)

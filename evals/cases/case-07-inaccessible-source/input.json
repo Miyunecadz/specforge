@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "case_id": "case-07-inaccessible-source",
+  "description": "An inaccessible source.",
+  "fixture_dir": "evals/fixtures/case-07-inaccessible-source",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-07-inaccessible-source/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "keywords": [
+              "verif"
+            ],
+            "exclude_keywords": [
+              "reject"
+            ]
+          },
+          "verbatim": "Verification means a finance approver phones the supplier on a number from an independent source and confirms the bank details; if they do not match, the supplier cannot be approved until the details are corrected.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "keywords": [
+              "approv"
+            ],
+            "exclude_keywords": [
+              "verif",
+              "reject",
+              "pay"
+            ]
+          },
+          "verbatim": "Any member of the Finance team can approve a new supplier. One approval is enough, but the approver must be a different person from whoever registered the supplier.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "keywords": [
+              "reject"
+            ]
+          },
+          "verbatim": "A rejected supplier goes back to the person who registered it, who can correct the details and resubmit it.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "field"
+                ]
+              },
+              {
+                "keywords": [
+                  "vat"
+                ]
+              },
+              {
+                "keywords": [
+                  "duplicat"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "verif",
+              "reject"
+            ]
+          },
+          "verbatim": "Bank details are account name, sort code and account number. The VAT number is checked for format only, and a supplier with the same VAT number as an existing one is blocked.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "paid"
+                ]
+              },
+              {
+                "keywords": [
+                  "paying"
+                ]
+              },
+              {
+                "keywords": [
+                  "payment"
+                ]
+              }
+            ]
+          },
+          "verbatim": "Paying suppliers is out of scope; this feature only has to mark a supplier as approved so the payment system can pay it.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

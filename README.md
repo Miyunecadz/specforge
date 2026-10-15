@@ -7,15 +7,14 @@ silently making product decisions.
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 5.** The full pipeline works, Stages 1–16: intake, capture (HTML,
+> **Build status: Phase 6.** The full pipeline works, Stages 1–16: intake, capture (HTML,
 > images, Figma), inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within
 > budget, citation check, semantic verification, feasibility, customer questions,
 > Checkpoint 3, re-confirmation (13R), specification writing, mechanical and independent
 > review with up to two revision rounds, and the final report with an honest publication
-> status. Phase 6 adds the evaluation runner, the full case set and change-impact analysis. and
-> citation checks (Phase 3), feasibility and decisions (Phase 4), spec writing and review
-> (Phase 5), and the evaluation runner (Phase 6) come later. This README describes only what
-> exists now.
+> status. Phase 6 adds change-impact analysis for changed requirements, the offline
+> evaluation runner (`run_evals.py`), the `eval-citation-grader` and the ten required eval
+> cases. This README describes only what exists now.
 
 ## How it works
 
@@ -211,9 +210,27 @@ Rejected, Deferred, …), its placement, and which approved gaps may be research
 - **Checkpoint 3** records your product decisions; questions you leave open stay open and
   appear in Open Questions.
 - **Checkpoint 13R** runs only when approved items became stale after Checkpoint 3 (stale
-  flags come from change-impact analysis, Phase 6). For each you re-confirm, supersede or leave
+  flags come from change-impact analysis, below). For each you re-confirm, supersede or leave
   it open; left-open items stay labelled Stale. Stage 14 refuses to start while approved items
   are stale and 13R has not run.
+
+### Changed requirements
+
+When the customer's requirements change while a run is open (after Stage 4), give the
+orchestrator the new file in the run's session; it follows `references/change-inputs.md`:
+
+1. `run_state.py change-inputs --run <id> --requirements-file <path> --reason <text>` saves
+   `input/requirements-v<n>.md` (the original stays), compares every requirement's source quote
+   with the new text and writes `input/change-<n>.json`: the changed REQs, the added text, and
+   every dependent gap, finding, feasibility item and assumption with a stale reason.
+2. `status_rules.py apply input/change-<n>.json --run <id>` applies it. Approved items stay
+   approved with `stale: true` (label **Stale**); unapproved ones become `superseded`, keeping
+   their history. Nothing is un-approved. `apply` accepts only files under the run's `input/`.
+3. The orchestrator reports the impact. If Checkpoint 3 has passed, stale approved items go to
+   Checkpoint 13R and Stages 14–16 are re-run; otherwise the next checkpoint presents them.
+   Text added in the new version becomes a requirement only through a checkpoint answer.
+
+Only requirement changes are detected automatically. A changed mockup needs a new run.
 
 ## Specification, review and publication status
 
@@ -395,9 +412,96 @@ static image), `evals/fixtures/case-09-partial-capture` (missing pages, external
 metadata requests) and `evals/fixtures/case-figma-01-award-packages` (recorded Figma REST
 responses, `award.figma.json`, replayed offline; regenerate with
 `.venv/bin/python tests/figma_fake.py <dir>`). Recordings follow
-`schemas/figma_recording.schema.json`. The evaluation runner (`run_evals.py`, headless `claude -p` with
-`--permission-mode dontAsk`, an explicit `--allowedTools` list, `--max-budget-usd`) is
-Phase 6.
+`schemas/figma_recording.schema.json`.
+
+### Eval cases
+
+`evals/cases/case-01` … `case-10` are the ten §16 cases: straightforward mockup, missing
+states, ambiguous requirements, contradictory requirements, permission edge case,
+unsupported snippet, inaccessible source, prompt injection, partial capture, changed
+requirement. Each has:
+
+- `input.json` (`schemas/eval_input.schema.json`): mockup URL, requirements file, optional
+  prior decisions, pre-written answers per checkpoint (keywords plus the affected REQ ID or
+  gap description, never Q-ids) and, for case-10, `change_after_checkpoint_3`.
+- `sources.json`: fixture URL map and recorded search results per topic.
+- `expected.json` (`schemas/eval_expected.schema.json`): requirements, gaps, conflicts and
+  questions that must be found (keywords, not wording), trap claims that must not be kept,
+  expected capture and publication status. The orchestrator is told never to read it.
+
+Sources shared between cases live in `evals/fixtures/shared-sources/`. Every eval run saves
+the generated requirements, gaps and questions to `evals/replay/<case>/<run-id>/`;
+`tests/test_evals.py` re-checks each case's answers against all of them, offline, and fails
+when a blocking question would be left open. To add a case, copy a
+case directory, add its fixture under `evals/fixtures/<case>/`, and run the tests:
+`tests/test_evals.py` validates every case file against its schema and checks that every
+referenced file exists inside the case or fixtures.
+
+### Non-interactive runs
+
+`/feature-research --non-interactive evals/cases/<case>/input.json` is refused unless
+fixture mode is active and the file is inside `evals/cases/`. At each checkpoint the
+orchestrator runs `await-user`, `continue` and `status_rules.py decide --from-case` in the
+same turn (`references/non-interactive.md`). `decide --from-case` matches the pre-written
+answers to the generated questions deterministically, on the question text and topic only:
+every `keywords` entry must appear, no `exclude_keywords` entry may, and with `any_of` at least
+one alternative must hold. An answer covers every question it matches; a question matched by
+no answer, or by more than one, is left unanswered and listed as `unmatched`, as is an answer
+that matches nothing. Questions are worded differently on every run, so write one complete
+answer per topic rather than one per expected question. Decisions record source `eval_case_file`,
+never a user answer. `decide --from-case` (and H1's provenance check) refuse it outside a
+fixture-mode non-interactive run; the script also refuses if the case file changed since the
+run started.
+A blocking question the case does not answer fails the stage; that is an eval result.
+
+### Running evals
+
+Run from a normal shell, **not** inside Claude Code. The grader is installed only on request,
+so install it first (a plain `install_agents.py` run removes it again):
+
+```bash
+.venv/bin/python .claude/skills/feature-research/scripts/install_agents.py --include-eval-agents
+.venv/bin/python .claude/skills/feature-research/scripts/run_evals.py --dry-run         # validate cases, print commands
+.venv/bin/python .claude/skills/feature-research/scripts/run_evals.py --cases case-06 case-07 case-08
+.venv/bin/python .claude/skills/feature-research/scripts/run_evals.py                   # all cases
+.venv/bin/python .claude/skills/feature-research/scripts/run_evals.py --until-stage 7  # smoke run, see below
+.venv/bin/python .claude/skills/feature-research/scripts/run_evals.py --calibrate       # grader agreement
+```
+
+Cases run one at a time in `evals.case_order` (cases 06–08 first), then by name. Each runs
+
+```
+claude -p "/feature-research --non-interactive evals/cases/<case>/input.json"
+  --permission-mode dontAsk --allowedTools Read Write Agent WebSearch "Bash(<py> <scripts>/*)"
+  --setting-sources project --max-budget-usd <min(per case, remaining) - margin>
+```
+
+with `FRA_EVAL_FIXTURES=evals/fixtures/<case>` set only in the child environment. Hooks
+H1–H5 stay active; no permission-skipping mode is used. A case that hits its budget is
+reported **blocked**, and a run left active is aborted with its artifacts kept. Results go
+to `evals/results/<timestamp>.json`.
+
+Every §16 metric is reported with its numerator, denominator and definition, never as one
+score; safety and traceability failures are listed separately. Findings that passed the
+mechanical citation check are then graded by `eval-citation-grader` (Opus, Read only,
+three-level rubric), reported separately. A case passes only when its case-specific checks
+(trap claim not kept, unavailable source handled, injection resisted, change detected,
+expected capture and publication status, budget, schema validity) all hold.
+
+**Smoke runs:** `--until-stage <n>` stops each case once Stage `n` completes (or any stage
+fails), aborts the run and reports only whether it got there and which answers went
+unmatched; no metrics, no grader. It catches answer-matching problems for a few dollars
+before a full run. A stopped run reports no cost, so each case is capped at US$3 and charged
+the full cap.
+
+**Cost:** budgets are capped at $20 per case and $150 per run (`evals` in `config.yaml`).
+Expect roughly US$5–15 and 20–45 minutes per case with Opus, so US$50–150 for all ten.
+The cap is checked between turns, so one turn can overshoot it; the margin covers that.
+
+**Grader calibration:** `evals/grader-calibration/` holds claim/snippet examples with a
+reference grade. The reference grades were drafted by the build agent and are **pending
+human review** (`human_reviewed: false`); until reviewed, `--calibrate` shows consistency
+with drafted labels only.
 
 ## Tests
 
@@ -408,13 +512,16 @@ Phase 6.
 Deterministic tests, no model required. They cover locking and parallel appends, hash
 chains, the ownership table, mode activation, config restrictions, schemas, SSRF (mocked
 DNS and transports), capture request interception, `run_state.py` lifecycle and tamper
-detection, every hook rule, and `install_agents.py` (variant selection, drift). Browser
+detection, every hook rule, `install_agents.py` (variant selection, drift), and the eval
+pieces: answer matching, `decide --from-case`, `change-inputs` plus `apply`, metrics,
+`run_evals.py` helpers and every case file (`tests/test_evals.py`). Browser
 tests are skipped and reported **BLOCKED** when Chromium cannot launch.
 The live Figma test runs only when `FIGMA_TOKEN` and `FRA_FIGMA_TEST_URL` (a file you can
 read) are set; otherwise it is reported **BLOCKED**. All other Figma tests replay recordings.
 
 Authoring records (BUILD_SPEC §21):
-`.claude/agent-tests/mockup-extractor/record.md` (agent-creator sandbox tests) and
+`.claude/agent-tests/<agent>/record.md` (agent-creator sandbox tests, including
+`eval-citation-grader`) and
 `.claude/skills/feature-research-workspace/` (skill-creator e2e evals, skill-auditor
 report). Their iteration outputs are gitignored.
 

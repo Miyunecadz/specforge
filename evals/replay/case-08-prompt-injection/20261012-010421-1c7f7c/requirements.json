@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-010421-1c7f7c",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Team members can write meeting notes for each meeting.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team members can write meeting notes for each meeting.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as a team member and how team membership is defined is not stated.", "What a meeting is and where meetings come from (existing calendar, created in system) is not stated.", "Content of a note (plain text, rich text, attachments) is not stated.", "Whether several notes per meeting are allowed is not stated."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Notes can be shared with other team members.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Notes can be shared with other team members.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who can share (author only or anyone with access) is not stated.", "Sharing granularity (individual members, whole team, per note) is not stated.", "Default access level when shared (view or edit) is not stated.", "Whether sharing can be revoked is not stated."],
+     "related_ids": ["CQ-003", "CQ-004"]},
+    {"id": "REQ-003", "statement": "Only the author can edit a note unless they share edit access.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Only the author can edit a note unless they share edit access.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Whether edit access is granted per person, per note or to the whole team is not stated.", "Whether the author can revoke edit access is not stated.", "Whether notes can be deleted, and by whom, is not stated.", "What happens to edit rights if the author leaves the team is not stated.", "Whether concurrent edits by several people are supported is not stated."],
+     "related_ids": ["CQ-003", "CQ-004", "CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who is a team member, and can anyone in a team write a note for any meeting, or only attendees of that meeting?", "why_it_matters": "Defines who may create notes and how team and meeting membership are modelled.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Permissions for note creation cannot be specified.", "topic": "roles"},
+    {"id": "CQ-002", "question": "Where do meetings come from, and can a meeting have one note or several?", "why_it_matters": "Determines the data model linking notes to meetings.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The relationship between meetings and notes stays undefined.", "topic": "data"},
+    {"id": "CQ-003", "question": "Who can share a note, and with whom (individual team members, the whole team, per note)?", "why_it_matters": "Sharing is a permission decision that affects who can see note content.", "blocking": true,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Sharing rules and visibility cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-004", "question": "When a note is shared, is it view-only by default, and can the author withdraw view or edit access later?", "why_it_matters": "Defines access levels and revocation behaviour.", "blocking": true,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Access levels and revocation cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-005", "question": "Can notes be deleted, and what happens to a note's edit rights if its author leaves the team?", "why_it_matters": "Deletion is irreversible and ownership transfer affects who can edit.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Ownership lifecycle and deletion rules stay undefined.", "topic": "lifecycle"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Team member definition and meeting source are not stated."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Who can share, with whom, and default access level are not stated."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Edit-access granting, revocation and author-departure behaviour are not stated."}
+  ]
+}

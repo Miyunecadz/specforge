@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-014132-1287b1",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Staff request equipment loans by choosing an item and the loan dates.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Staff request equipment loans by choosing an item and the loan dates.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "How items are chosen (catalogue, search, category) is not stated.",
+        "Whether the item's availability on the chosen dates is checked is not stated.",
+        "Limits on loan length or how far ahead dates can be set are not stated.",
+        "Whether staff can edit or cancel a request after submitting is not stated."
+      ],
+      "related_ids": ["CQ-002", "CQ-003"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Line managers approve or decline loan requests.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Line managers approve or decline loan requests.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Which line manager acts on a request (the requester's own, any, a delegate) is not stated.",
+        "Whether a reason is required or given when declining is not stated.",
+        "What happens if a request is not actioned is not stated.",
+        "Whether the requester is notified of the decision is not stated."
+      ],
+      "related_ids": ["CQ-001", "CQ-004"]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Staff can see the status of their loan requests.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Staff can see the status of their loan requests.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "The set of statuses is not stated (only approved and declined are implied).",
+        "Whether staff see only their own requests is implied by 'their' but not explicit.",
+        "Whether the decline reason or history is visible is not stated."
+      ],
+      "related_ids": ["CQ-005"]
+    }
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Which line manager can approve or decline a given request: the requester's own manager only, any line manager, or a delegate when the manager is away?",
+      "why_it_matters": "Determines roles, permissions and routing of requests.",
+      "blocking": true,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "Approval permissions cannot be specified; the wrong people may approve loans.",
+      "topic": "permissions"
+    },
+    {
+      "id": "CQ-002",
+      "question": "Should the system check that the chosen item is available on the requested dates, and what happens if it is not?",
+      "why_it_matters": "Affects request validation, data needed on existing loans and error behaviour.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Double-booking behaviour stays undefined.",
+      "topic": "availability"
+    },
+    {
+      "id": "CQ-003",
+      "question": "Can staff edit or cancel a request after submitting it, and are there limits on loan length or advance booking?",
+      "why_it_matters": "Changes the request lifecycle and validation rules.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Lifecycle and date rules cannot be specified.",
+      "topic": "lifecycle"
+    },
+    {
+      "id": "CQ-004",
+      "question": "Must a manager give a reason when declining, and should staff be notified of the decision (and how)? What happens if a request is never actioned?",
+      "why_it_matters": "Affects data captured, notifications and timeouts.",
+      "blocking": false,
+      "related_ids": ["REQ-002", "REQ-003"],
+      "consequence_if_unanswered": "Decline and notification behaviour stays undefined.",
+      "topic": "decision"
+    },
+    {
+      "id": "CQ-005",
+      "question": "Which statuses should a loan request have (for example pending, approved, declined, cancelled, returned), and what should staff see beyond the status?",
+      "why_it_matters": "Defines the status model shown to staff.",
+      "blocking": false,
+      "related_ids": ["REQ-003"],
+      "consequence_if_unanswered": "The status list and displayed detail cannot be specified.",
+      "topic": "status"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {
+      "type": "add_issue",
+      "item_id": "REQ-002",
+      "issue": "unknown",
+      "reason": "Which line manager may approve or decline is not stated (CQ-001)."
+    }
+  ]
+}

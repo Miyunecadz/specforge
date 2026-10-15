@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "case_id": "case-02-missing-states",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "request"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "approve"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "status"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "empty"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "error"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "declin"
+      ]
+    },
+    {
+      "id": "E4",
+      "keywords": [
+        "cancel"
+      ]
+    },
+    {
+      "id": "E5",
+      "keywords": [
+        "success"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "declin"
+      ]
+    }
+  ],
+  "expect_capture_status": "complete"
+}

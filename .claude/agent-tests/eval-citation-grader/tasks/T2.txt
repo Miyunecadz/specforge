@@ -1,0 +1,1 @@
+Grade the citations in grader-input.json (relative to your current working directory; use the absolute form of that path).

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-012843-0559a0",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Managers approve or reject expense claims.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Managers approve or reject expense claims.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Which managers can act on which claims (any manager, the claimant's own manager, a claim-value limit) is not defined.",
+        "Whether a manager may approve or reject their own claim is not defined.",
+        "Whether a reason or comment is needed on rejection is not defined.",
+        "What happens to a claim after approval or rejection (resubmission, payment) is not defined."
+      ],
+      "related_ids": ["CQ-001", "CQ-002"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Every approval and rejection must be recorded in an audit log.",
+      "type": "functional",
+      "priority": "must",
+      "source_quote": "Every approval and rejection must be recorded in an audit log.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "The data recorded per entry (who, when, claim, decision, reason) is not defined.",
+        "Retention period, and whether entries must be tamper-proof or unchangeable, is not defined.",
+        "Who can view the audit log is not defined."
+      ],
+      "related_ids": ["REQ-001", "CQ-003"]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Finance staff can export the audit log.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Finance staff can export the audit log.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Export format (CSV, PDF, other) is not defined.",
+        "Whether the export can be filtered (date range, manager, claim) or is always the full log is not defined.",
+        "Whether other roles may export or view the log is not defined."
+      ],
+      "related_ids": ["REQ-002", "CQ-004"]
+    }
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Which managers may approve or reject a given expense claim (for example only the claimant's own manager, or any manager), and is there a claim-value limit per manager?",
+      "why_it_matters": "Defines roles and permissions for approving and rejecting claims.",
+      "blocking": true,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "The approval permissions cannot be specified, and the wrong people could approve claims.",
+      "topic": "permissions"
+    },
+    {
+      "id": "CQ-002",
+      "question": "Can a manager approve or reject their own expense claim, and must a rejection include a reason?",
+      "why_it_matters": "Affects control over self-approval and the data captured on a decision.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "Self-approval and rejection-reason behaviour stay undefined.",
+      "topic": "approval-rules"
+    },
+    {
+      "id": "CQ-003",
+      "question": "What must each audit log entry contain, how long must entries be kept, and must they be protected from change or deletion?",
+      "why_it_matters": "Determines the data stored and the compliance strength of the log.",
+      "blocking": false,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "The log content and retention cannot be specified.",
+      "topic": "audit-log"
+    },
+    {
+      "id": "CQ-004",
+      "question": "In what format should finance staff export the audit log, and can they filter it (for example by date range) or only export all of it?",
+      "why_it_matters": "Determines the export feature's scope and the data volume.",
+      "blocking": false,
+      "related_ids": ["REQ-003"],
+      "consequence_if_unanswered": "The export format and filtering cannot be specified.",
+      "topic": "export"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {
+      "type": "add_issue",
+      "item_id": "REQ-001",
+      "issue": "unknown",
+      "reason": "Who may approve or reject which claims is not stated (see CQ-001)."
+    },
+    {
+      "type": "add_issue",
+      "item_id": "REQ-003",
+      "issue": "unknown",
+      "reason": "Export format and scope are not stated (see CQ-004)."
+    }
+  ]
+}

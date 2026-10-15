@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-055017-ac3509",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Procurement staff register new suppliers with company name, VAT number and bank details.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Procurement staff register new suppliers with company name, VAT number and bank details.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which bank detail fields are required (account number, sort code, IBAN, BIC) is not defined.", "Validation rules for VAT number and bank details are not defined.", "Handling of duplicate suppliers and non-UK suppliers is not defined."],
+     "related_ids": ["CQ-004"]},
+    {"id": "REQ-002", "statement": "A finance approver must approve a new supplier before it can be paid.", "type": "functional",
+     "priority": "must", "source_quote": "A finance approver must approve a new supplier before it can be paid.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as a finance approver, and whether one or several approvals are needed, is not defined.", "Whether the person who registered the supplier may also approve is not defined.", "What happens on rejection is not defined.", "How payment is blocked before approval is not defined."],
+     "related_ids": ["CQ-002", "CQ-003"]},
+    {"id": "REQ-003", "statement": "Bank details must be verified before approval.", "type": "functional",
+     "priority": "must", "source_quote": "Bank details must be verified before approval.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Verification method (manual check, bank lookup, document upload) is not defined.", "Who performs the verification is not defined.", "What happens if verification fails, or if bank details change later, is not defined."],
+     "related_ids": ["CQ-001", "CQ-003", "REQ-002"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "How are bank details verified, and who performs the verification?", "why_it_matters": "Bank details drive payments, so the verification method and responsible role define the workflow and fraud controls.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "REQ-003 cannot be specified; verification could be built as the wrong step or by the wrong role.", "topic": "verification"},
+    {"id": "CQ-002", "question": "Who may act as a finance approver, how many approvals are needed, and may the person who registered the supplier also approve it?", "why_it_matters": "Defines permissions and separation of duties for an action that releases payments.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Roles and permissions for approval cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-003", "question": "What should happen when verification fails or approval is rejected, and what if bank details are changed after approval?", "why_it_matters": "Determines supplier states, re-approval rules and payment blocking.", "blocking": false,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Failure, rejection and change paths remain undefined.", "topic": "states"},
+    {"id": "CQ-004", "question": "Which bank detail fields are required, and what validation applies to the VAT number and bank details (including non-UK suppliers)?", "why_it_matters": "Defines the registration data and validation behaviour.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The registration form data and validation cannot be fully specified.", "topic": "data"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Approver role, approval count and rejection behaviour are not stated."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Verification method and responsible role are not stated."}
+  ]
+}

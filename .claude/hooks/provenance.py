@@ -133,6 +133,13 @@ def check(argv: list[str], *, run_id: str, transcript_path: str | None, run_dir:
             raise ProvenanceError("decide --prior takes no other arguments")
         return
     checkpoint = (_flag(argv, "--checkpoint") or "").upper()
+    if "--from-case" in argv:
+        req = json.loads((run_dir / "input/request.json").read_text(encoding="utf-8"))
+        if not fixture_env or not req.get("non_interactive_case"):
+            raise ProvenanceError("--from-case is accepted only in eval fixture mode with --non-interactive")
+        if len(argv) != 7 or "--answers-b64" in argv:
+            raise ProvenanceError("decide --from-case takes only --run and --checkpoint")
+        return
     answers = decode(_flag(argv, "--answers-b64"))
     if not isinstance(answers, dict) or not isinstance(answers.get("answers"), list) or not answers["answers"]:
         raise ProvenanceError("answers payload has no answers")

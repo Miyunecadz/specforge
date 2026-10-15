@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "case_id": "case-05-permission-edge-case",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "view"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "password"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "display name"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "delet"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "role"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "delet"
+      ]
+    }
+  ],
+  "expect_capture_status": "complete"
+}

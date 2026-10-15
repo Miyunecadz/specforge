@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-114601-e40cb7",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Staff can book a meeting room for up to 4 hours.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Staff can book a meeting room for up to 4 hours.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as staff is not defined.", "Whether 4 hours is per booking, per day or per person is not defined.", "How far ahead bookings can be made and how clashes are handled is not defined."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Bookings can be cancelled by the person who made them.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Bookings can be cancelled by the person who made them.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Whether anyone else (for example room admins) can cancel is not defined.", "Whether there is a cutoff, for example after the booking has started, is not defined."],
+     "related_ids": ["CQ-003"]},
+    {"id": "REQ-003", "statement": "Room admins can block rooms for maintenance.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Room admins can block rooms for maintenance.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who room admins are and how they are assigned is not defined.", "Block duration and whether it can be recurring is not defined.", "What happens to existing bookings in a blocked period is not defined."],
+     "related_ids": ["CQ-004", "CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who counts as staff, and can anyone else (contractors, visitors) book rooms?", "why_it_matters": "Defines who has booking permission.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Booking permissions cannot be specified.", "topic": "roles"},
+    {"id": "CQ-002", "question": "Is the 4-hour limit per booking, per person per day, or something else?", "why_it_matters": "Changes the validation rule and what users can do.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The limit may be enforced differently from what the customer intends.", "topic": "limits"},
+    {"id": "CQ-003", "question": "Can anyone other than the person who made a booking (for example a room admin) cancel it, and can a booking be cancelled once it has started?", "why_it_matters": "Defines cancellation permissions and the cutoff.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Cancellation permissions cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-004", "question": "Who are room admins, and are they responsible for all rooms or only specific ones?", "why_it_matters": "Defines the permission to block rooms.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Block permissions cannot be specified.", "topic": "roles"},
+    {"id": "CQ-005", "question": "When a room is blocked for maintenance and it already has bookings in that period, what should happen to those bookings and to the people who made them?", "why_it_matters": "Blocking may cancel or conflict with existing bookings, which affects user data and notifications.", "blocking": true,
+     "related_ids": ["REQ-003", "REQ-002"], "consequence_if_unanswered": "Behaviour of blocking against existing bookings is undefined.", "topic": "blocking"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Handling of existing bookings in a blocked period and who the room admins are is not stated."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Whether others, such as room admins, can cancel and any cancellation cutoff is not stated."}
+  ]
+}

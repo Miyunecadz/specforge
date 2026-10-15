@@ -70,7 +70,10 @@ def test_installed_agents_in_this_repo_have_no_drift():
     for agent in agents:
         text = agent.read_text()
         m = re.search(re.escape(ia.RULES_BEGIN) + r"\n(.*)\n" + re.escape(ia.RULES_END), text, re.S)
-        assert m and m.group(1) == rules, f"{agent.name}: embedded rules differ from the source; re-run install_agents.py"
+        if agent.stem in ia.EVAL_ONLY:  # eval-only agents never embed the workflow rules
+            assert m is None, f"{agent.name}: eval-only agent embeds the shared rules"
+        else:
+            assert m and m.group(1) == rules, f"{agent.name}: embedded rules differ from the source; re-run install_agents.py"
         src = REPO / ".claude/skills/feature-research/agents-src" / agent.name
         expected = ia.render(src, rules, setup["python"], REPO / ".claude/skills/feature-research", False)
         assert text == expected, f"{agent.name}: differs from agents-src; never hand-edit .claude/agents/"
@@ -92,7 +95,8 @@ def test_missing_tools_line_is_rejected(repo):
 
 
 def test_eval_only_agents_not_installed_by_default(repo):
-    add_src(repo, "eval-citation-grader")
+    p = add_src(repo, "eval-citation-grader", "Read")
+    p.write_text(p.read_text().replace("{{SHARED_RULES}}", "No shared rules."))
     install(repo)
     assert not (repo / ".claude/agents/eval-citation-grader.md").exists()
     install(repo, include_eval=True)
@@ -141,3 +145,12 @@ def test_unparseable_frontmatter_is_rejected(repo):
     p.write_text(p.read_text().replace("description: test agent doc-writer.", "description: writes spec.md: the spec"))
     with pytest.raises(ia.InstallError, match="YAML"):
         install(repo)
+
+
+def test_eval_only_agent_rejects_shared_rules_and_write(repo):
+    p = add_src(repo, "eval-citation-grader", "Read")
+    with pytest.raises(ia.InstallError, match="must not embed"):
+        install(repo, include_eval=True)
+    p.write_text(p.read_text().replace("{{SHARED_RULES}}", "No shared rules.").replace("tools: Read", "tools: Read, Write"))
+    with pytest.raises(ia.InstallError, match="exceed"):
+        install(repo, include_eval=True)

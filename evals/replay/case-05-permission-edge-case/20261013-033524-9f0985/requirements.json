@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-033524-9f0985",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Team leads can view the members of their team.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team leads can view the members of their team.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which member details are visible is not stated.", "Whether a user can belong to or lead more than one team is not stated.", "How a user becomes a team lead is not stated."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Team leads can reset a team member's password.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team leads can reset a team member's password.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Not stated whether the lead sets a new password or triggers a reset link or email.", "Not stated whether the member is notified or sessions are ended.", "Not stated whether the action is logged or limited (for example leads resetting other leads)."],
+     "related_ids": ["CQ-003", "CQ-004"]},
+    {"id": "REQ-003", "statement": "Users can change their own display name.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Users can change their own display name.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Rules for display names (length, characters, uniqueness) are not stated.", "Not stated whether changes are visible to team leads immediately or are audited."],
+     "related_ids": ["CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Which details of a team member should a team lead see (for example name, email, role, status)?",
+     "why_it_matters": "Determines the data exposed and any privacy implications.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The member view cannot be specified and may expose too much or too little data.", "topic": "team-members"},
+    {"id": "CQ-002", "question": "Can a user belong to more than one team, or lead more than one team, and how is someone made a team lead?",
+     "why_it_matters": "Defines what 'their team' means and the scope of a lead's permissions.", "blocking": true,
+     "related_ids": ["REQ-001", "REQ-002"], "consequence_if_unanswered": "Permission scope for leads cannot be defined.", "topic": "roles"},
+    {"id": "CQ-003", "question": "How should the password reset work: does the lead set a new password, or does the member receive a reset link or email?",
+     "why_it_matters": "Security-sensitive; a lead choosing a password for someone else differs greatly from triggering a reset.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "The reset behaviour and its security design cannot be specified.", "topic": "password-reset"},
+    {"id": "CQ-004", "question": "Should the member be notified, and should the reset be logged, and can a lead reset another lead's password?",
+     "why_it_matters": "Affects account-takeover risk and auditability.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Permission limits and audit behaviour remain undefined.", "topic": "password-reset"},
+    {"id": "CQ-005", "question": "Are there rules for display names (length, allowed characters, uniqueness)?",
+     "why_it_matters": "Defines validation and error behaviour.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Validation behaviour cannot be specified.", "topic": "display-name"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Reset mechanism, notification and limits are not stated."},
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Visible member details and team membership model are not stated."}
+  ]
+}

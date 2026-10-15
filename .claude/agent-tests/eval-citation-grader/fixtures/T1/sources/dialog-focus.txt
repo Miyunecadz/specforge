@@ -1,0 +1,5 @@
+Dialog focus management (fixture guidance)
+
+When a modal dialog opens, move keyboard focus to the first focusable element inside the dialog, or to the dialog heading when the first control is destructive.
+
+When the dialog closes, return focus to the element that opened it, unless that element no longer exists, in which case move focus to a logical place in the page.

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-030323-1996f1",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Users should be able to manage their documents easily.", "type": "functional",
+     "priority": "should", "source_quote": "Users should be able to manage their documents easily.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["\"manage\" is undefined (create, edit, delete, organise, upload?)", "\"easily\" has no measurable criterion", "Which users or roles is not stated", "Which document types are in scope is not stated"],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "The system must be fast.", "type": "non_functional",
+     "priority": "must", "source_quote": "The system must be fast.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["\"fast\" has no target (response time, load, data volume)", "Which operations it applies to is not stated"],
+     "related_ids": ["CQ-003"]},
+    {"id": "REQ-003", "statement": "Documents should be secure.", "type": "non_functional",
+     "priority": "should", "source_quote": "Documents should be secure.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["\"secure\" is undefined (access control, encryption, audit, retention, compliance?)", "Threats and regulations are not stated"],
+     "related_ids": ["CQ-004"]},
+    {"id": "REQ-004", "statement": "Sharing should work like in other tools.", "type": "functional",
+     "priority": "should", "source_quote": "Sharing should work like in other tools.", "source_location": "line 4",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["\"other tools\" is not named", "Who can share with whom, and with what permissions, is not stated", "Whether external (non-user) sharing is allowed is not stated"],
+     "related_ids": ["CQ-005", "CQ-006"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "What does \"manage\" cover: which actions can users take on documents?", "why_it_matters": "Defines the functional scope of the feature.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The scope of document management cannot be specified.", "topic": "scope"},
+    {"id": "CQ-002", "question": "How would you judge that managing documents is \"easy\", and which users and roles are meant?", "why_it_matters": "Sets acceptance criteria and permissions.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Ease of use cannot be tested and roles remain unknown.", "topic": "usability"},
+    {"id": "CQ-003", "question": "What response times or load figures count as \"fast\", and for which operations?", "why_it_matters": "Needed for a testable performance target.", "blocking": false,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "The requirement cannot be verified.", "topic": "performance"},
+    {"id": "CQ-004", "question": "What does \"secure\" mean here: who may access documents, and are encryption, audit or regulatory requirements expected?", "why_it_matters": "Security affects permissions, data handling and legal obligations.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Access rules and security controls cannot be specified.", "topic": "security"},
+    {"id": "CQ-005", "question": "Which tools should sharing work like, and which of their behaviours do you want?", "why_it_matters": "\"Like other tools\" gives no concrete behaviour.", "blocking": true,
+     "related_ids": ["REQ-004"], "consequence_if_unanswered": "Sharing behaviour cannot be specified.", "topic": "sharing"},
+    {"id": "CQ-006", "question": "Who can share documents, with whom (internal users, external people), and with what permission levels?", "why_it_matters": "Sharing changes who can see or edit data.", "blocking": true,
+     "related_ids": ["REQ-004", "REQ-003"], "consequence_if_unanswered": "Permissions model for sharing is undefined.", "topic": "permissions"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "\"manage\" and \"easily\" are undefined."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "No measurable meaning of \"fast\"."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "\"secure\" is not defined."},
+    {"type": "add_issue", "item_id": "REQ-004", "issue": "unknown", "reason": "Reference tools and sharing rules are not named."}
+  ]
+}

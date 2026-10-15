@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-013540-6d05bb",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Team members can write meeting notes for each meeting.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team members can write meeting notes for each meeting.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as a team member is not defined.", "What a meeting is and where meetings come from (calendar, manual entry) is not defined.", "Whether one or several notes per meeting are allowed is not defined.", "Note content format (plain text, rich text, attachments) is not defined."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Notes can be shared with other team members.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Notes can be shared with other team members.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who may share a note (author only or anyone with access) is not defined.", "Whether sharing is per person, per group or per meeting is not defined.", "Default visibility of an unshared note is not defined.", "How sharing is withdrawn is not defined."],
+     "related_ids": ["CQ-003", "CQ-004"]},
+    {"id": "REQ-003", "statement": "Only the author can edit a note unless they share edit access.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Only the author can edit a note unless they share edit access.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["How edit access differs from the sharing in the previous statement (view versus edit) is not defined.", "Whether edit access can be revoked is not defined.", "What happens to edit rights if the author leaves the team is not defined.", "Whether concurrent edits or edit history are needed is not defined."],
+     "related_ids": ["REQ-002", "CQ-003", "CQ-004", "CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who is a team member, and are there different roles with different rights?",
+     "why_it_matters": "Defines who can write, see and edit notes.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Permissions cannot be specified.", "topic": "roles"},
+    {"id": "CQ-002", "question": "What is a meeting in this system: an existing calendar item, or something created in the product? Can a meeting have more than one note?",
+     "why_it_matters": "Determines the data model and what a note is attached to.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Scope of the note feature stays undefined.", "topic": "meetings"},
+    {"id": "CQ-003", "question": "Does sharing give view-only access by default, with edit access as a separate grant?",
+     "why_it_matters": "Requirements 2 and 3 both mention sharing and the boundary is unclear.", "blocking": true,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Access levels cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-004", "question": "Who can share a note or grant edit access (only the author, or also people with edit access), and can sharing be withdrawn?",
+     "why_it_matters": "Controls who can widen or remove access to a note.", "blocking": true,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Permission rules and revocation behaviour are unspecified.", "topic": "permissions"},
+    {"id": "CQ-005", "question": "What should happen to a note's edit rights if the author leaves the team or is removed?",
+     "why_it_matters": "Notes could become uneditable or ownerless.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Edge-case behaviour is left undefined.", "topic": "ownership"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Sharing scope, who may share and revocation are not stated.", "related_ids": ["CQ-003", "CQ-004"]},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Edit-access granting, revocation and author-departure behaviour are not stated.", "related_ids": ["CQ-003", "CQ-004", "CQ-005"]}
+  ]
+}

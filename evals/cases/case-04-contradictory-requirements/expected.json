@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "case_id": "case-04-contradictory-requirements",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "delete"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "pdf"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "excel"
+      ]
+    },
+    {
+      "id": "E4",
+      "keywords": [
+        "recover"
+      ]
+    }
+  ],
+  "gaps": [],
+  "conflicts": [
+    {
+      "id": "E1",
+      "keywords": [
+        "administrator"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "excel"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "30 days"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "delet"
+      ]
+    }
+  ],
+  "expect_capture_status": "complete"
+}

@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-153211-60981c",
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "title": "How the single awarded supplier is chosen and which suppliers are eligible",
+      "description": "REQ-001 requires awarding a package to one supplier, but the award form on PKG-104 (SCR-013) contains only an Award note field and an Award Package button, with no visible way to choose a supplier. The package already shows a Supplier value while Open, and the Quotes section shows 'No quotes attached yet.' The capture does not show which supplier the award goes to, whether only suppliers who quoted or were invited are eligible (CQ-001, unanswered), or whether a package can be awarded with no quotes attached.",
+      "category": "data integrity",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-003", "SCR-011", "SCR-012", "SCR-013", "SCR-031"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-001 ambiguity_notes[0]"},
+        {"artifact": "requirements.json", "locator": "CQ-001"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[1], unanswered[2]"},
+        {"artifact": "inventory.json", "locator": "SCR-013"},
+        {"artifact": "inventory.json", "locator": "SCR-003 observed_states empty"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "The award is final and cannot be undone by anyone (DEC-001), and the winning supplier is emailed as soon as the award is made (DEC-004). If it is unclear who the award goes to, the one irreversible action in this feature cannot be specified.",
+      "consequences_if_unresolved": "A package could be awarded to an unintended or ineligible supplier, the wrong supplier could be emailed, and the mistake could not be corrected.",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-002",
+      "title": "No confirmation step shown for an irreversible award",
+      "description": "DEC-001 makes the award final: it cannot be withdrawn, changed or undone by anyone. The Award Package button in the mockup is a plain button with no target (SCR-028), and the capture shows no confirmation step, summary of what will be awarded, or warning that the action is permanent.",
+      "category": "destructive action",
+      "reason": "checklist",
+      "checklist_item": "Destructive-action confirmation and undo",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-013", "SCR-028"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-001 verbatim"},
+        {"artifact": "inventory.json", "locator": "SCR-028"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[4]"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "This product has an irreversible award with no correction path (DEC-001) that also triggers an external email to the supplier (DEC-004). A misclick on PKG-104's enabled button would have permanent consequences.",
+      "consequences_if_unresolved": "Accidental or premature awards become permanent and the supplier is notified before anyone can catch the error.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What confirmation patterns do established design systems (for example GOV.UK Design System, Atlassian, Material) recommend for irreversible actions that cannot be undone?",
+        "Does WCAG 2.2 success criterion 3.3.4 (Error Prevention: Legal, Financial, Data) apply to committing a financial award, and what does it require?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-003",
+      "title": "Two Procurement users awarding the same package at once, or a double submission",
+      "description": "DEC-002 allows any Procurement team member to award any package, so more than one person may act on the same package. The capture does not show what happens if two users award the same package at nearly the same time, if one user awards from a stale view after another has already awarded, or if the button is clicked twice.",
+      "category": "data integrity",
+      "reason": "risk",
+      "related_req_ids": ["REQ-001", "REQ-002", "REQ-003"],
+      "related_scr_ids": ["SCR-013", "SCR-028"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-002 verbatim"},
+        {"artifact": "decisions.json", "locator": "DEC-001 verbatim"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[5], unanswered[7]"}
+      ],
+      "basis": "general_risk",
+      "why_it_matters": "A package may be awarded to exactly one supplier (REQ-001), the award is final (DEC-001), and each award sends an email (DEC-004). A race or repeated request could produce two awards, two different winners, or duplicate emails, and none of them could be reversed.",
+      "consequences_if_unresolved": "Conflicting or duplicate awards on one package, more than one supplier told it has won, and no permitted way to correct it.",
+      "resolution_path": "research",
+      "priority": "critical",
+      "research_questions": [
+        "What established techniques prevent double effects for a one-time state transition submitted from a web form (for example idempotency keys, optimistic concurrency checks on a record version)?",
+        "How should a user be told that a record changed state while they were viewing it, according to common practice in procurement or workflow tools?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-004",
+      "title": "Outcome of pressing Award Package is not shown",
+      "description": "The Award Package button has no destination (SCR-028). The capture does not show a success state, how the package's status changes to Awarded after the action, or any loading or error state if the award fails. The only awarded state observed is a separate package (PKG-105) already in that state.",
+      "category": "states",
+      "reason": "flow_issue",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-003", "SCR-004", "SCR-028"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-028"},
+        {"artifact": "inventory.json", "locator": "limitations[0]"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[4], unanswered[5]"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Awarding is the core workflow of this feature. Because the award is final and emails the supplier, the user needs to know for certain whether it succeeded or failed.",
+      "consequences_if_unresolved": "Users cannot tell whether an award took effect, may retry an action that already succeeded, or may leave a package unawarded because a failure went unnoticed.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What are recommended patterns for success and error feedback after a form submission that commits a permanent change (for example GOV.UK confirmation pages, notification banners)?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-005",
+      "title": "Award email delivery failure and source of the supplier's email address",
+      "description": "DEC-004 requires the winning supplier to be emailed when the award is made. The capture does not show where the supplier's email address comes from (the Package entity shows only a supplier name), what happens if the email cannot be sent or bounces, or whether anyone at the buyer is told about a failed delivery.",
+      "category": "notifications",
+      "reason": "checklist",
+      "checklist_item": "Notifications and delivery failure",
+      "related_req_ids": ["REQ-003"],
+      "related_scr_ids": ["SCR-029"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-004 verbatim"},
+        {"artifact": "inventory.json", "locator": "SCR-029 fields"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[8]"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "REQ-003 is a must-have, and the award cannot be undone, so a failed email cannot be fixed by redoing the award. The capture shows no supplier contact data.",
+      "consequences_if_unresolved": "A winning supplier may never learn of the award, and no one at the buyer would know.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What are common practices for detecting and handling transactional email delivery failures (bounces, provider outages) in business applications?",
+        "Should the sending of a transactional email be decoupled from the business transaction that triggers it, and what patterns (for example a transactional outbox) are commonly used?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-006",
+      "title": "Who made each award is not shown",
+      "description": "The awarded package PKG-105 shows only 'Awarded on 2 Oct 2026'. The capture does not show the awarding user, the time, or the award note being recorded or displayed after the award. The requirements and decisions do not say whether awards must be traceable.",
+      "category": "audit",
+      "reason": "checklist",
+      "checklist_item": "Audit logging",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-004", "SCR-030"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-030"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[9]"},
+        {"artifact": "decisions.json", "locator": "DEC-002 verbatim"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Any Procurement member can award any package (DEC-002), and awards are permanent (DEC-001). Without a record of who awarded, disputes about a supplier award cannot be investigated.",
+      "consequences_if_unresolved": "Awards cannot be attributed to a person, which weakens accountability for procurement decisions and makes disputes harder to resolve.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What audit-trail fields (actor, timestamp, before and after values) are commonly expected for contract or tender award decisions in procurement systems?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-007",
+      "title": "What non-Procurement users can see and do on packages",
+      "description": "DEC-002 limits awarding to the Procurement team, but the capture shows the Award Package button enabled with no indication of the viewer's role. It does not show who else (other staff, suppliers) can open the package list or package details, or what they see in place of the award form.",
+      "category": "permissions",
+      "reason": "checklist",
+      "checklist_item": "Roles, permissions, data visibility",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-001", "SCR-003", "SCR-010", "SCR-013"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-002 verbatim"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-010 unanswered[2]"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-015 unanswered[0]"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Package values and suppliers are commercially sensitive. Only one group may perform the irreversible award, so other viewers, if any, need defined access.",
+      "consequences_if_unresolved": "Unauthorised users may see commercial data or be shown an award control they cannot or should not use.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-008",
+      "title": "Award note rules and who sees it afterwards",
+      "description": "The award form has an Award note textarea with no required marker. The capture does not show whether the note is required, whether it has a length limit, what validation messages look like, or where the note appears after the award. PKG-105 does not show a note, and the decided email content (package and award date) does not mention it.",
+      "category": "form validation",
+      "reason": "checklist",
+      "checklist_item": "Form validation and messages",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-004", "SCR-013", "SCR-030"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-013 fields[0]"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-013 unanswered[3]"},
+        {"artifact": "decisions.json", "locator": "DEC-004 verbatim"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "The note is the only input on the award form. Once the award is final and the package is locked for everyone (DEC-003), the note cannot be corrected, so its purpose and audience need to be settled up front.",
+      "consequences_if_unresolved": "Awards may be made without the justification the business expects, or with notes whose audience (internal only or the supplier too) is unclear.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-009",
+      "title": "Accessibility of the disabled award button and award status messages",
+      "description": "On PKG-105 the Award Package button is disabled and the capture does not show any explanation of why. The capture also does not show how the outcome of an award is announced to assistive technology users.",
+      "category": "accessibility",
+      "reason": "checklist",
+      "checklist_item": "Accessibility (WCAG 2.2 AA where relevant)",
+      "related_req_ids": ["REQ-002"],
+      "related_scr_ids": ["SCR-004", "SCR-015"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-015"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-015 unanswered[1]"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "The read-only state required by REQ-002 is shown in the mockup only through a disabled control. Users who cannot perceive the disabled state, or the reason for it, may not understand that the package is locked.",
+      "consequences_if_unresolved": "The read-only state and award results may not be perceivable by keyboard and screen-reader users.",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "What does WCAG 2.2 AA guidance and common design-system practice say about disabled buttons, including whether they should stay focusable and how the reason should be conveyed?",
+        "How does WCAG 2.2 success criterion 4.1.3 (Status Messages) apply to confirming that a form submission succeeded or failed?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-010",
+      "title": "Session expiry or loss of Procurement role while on the award form",
+      "description": "The capture does not show what happens if a user's session expires, or the user is removed from the Procurement team, while the award form is open and the button still appears enabled.",
+      "category": "permissions",
+      "reason": "checklist",
+      "checklist_item": "Session expiry and permission changes",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-003", "SCR-013"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-002 verbatim"},
+        {"artifact": "inventory.json", "locator": "SCR-013"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Award permission depends on team membership (DEC-002) and the action is irreversible, so a stale page must not let someone award without permission.",
+      "consequences_if_unresolved": "An award could be submitted by someone no longer entitled to make it, or a typed award note could be lost on session expiry.",
+      "resolution_path": "research",
+      "priority": "optional",
+      "research_questions": [
+        "What are common practices for re-checking authorisation at submission time and preserving form input when a web session expires?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-011",
+      "title": "Package list search, status values and behaviour with many packages",
+      "description": "The packages list shows two rows and a search box. The capture does not show which fields search matches, a no-results or no-packages state, sorting, filtering or pagination, or the full set of package statuses besides Open and Awarded.",
+      "category": "search",
+      "reason": "checklist",
+      "checklist_item": "Search, filter, sort, pagination",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-001", "SCR-009", "SCR-010"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-009"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-010"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "The list is the only observed way to reach a package to award it. The status values decide which packages can be awarded and which are read-only.",
+      "consequences_if_unresolved": "Users may struggle to find packages to award, and statuses other than Open and Awarded may have no defined award or read-only behaviour.",
+      "resolution_path": "both",
+      "priority": "optional",
+      "research_questions": [
+        "What are recommended search and filtering patterns for tabular record lists in business applications, including empty-result messaging?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-012",
+      "title": "Time zone and format of the award date",
+      "description": "The awarded package shows 'Awarded on 2 Oct 2026', and DEC-004 requires the email to name the award date. The capture does not show which time zone decides the award date or how the date is formatted for recipients.",
+      "category": "internationalisation",
+      "reason": "checklist",
+      "checklist_item": "Internationalisation",
+      "related_req_ids": ["REQ-003"],
+      "related_scr_ids": ["SCR-004", "SCR-030"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-030 fields[1]"},
+        {"artifact": "decisions.json", "locator": "DEC-004 verbatim"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "The award date appears both in the product and in the supplier's email, so the two could disagree for awards made near midnight or when suppliers are in other time zones.",
+      "consequences_if_unresolved": "The supplier's email and the package record could show different award dates.",
+      "resolution_path": "both",
+      "priority": "optional",
+      "research_questions": [
+        "What are common practices for storing and displaying event dates across time zones in transactional emails and application records?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM-G-001",
+      "text": "The Supplier value shown on an Open package (PKG-104) is not by itself confirmation of who will be awarded.",
+      "why": "The award form has no supplier selector and no quotes are attached, so the meaning of the pre-award Supplier field is not evident from the capture.",
+      "impact": "If the Supplier field is in fact the intended awardee, GAP-001 narrows to eligibility rules and handling of packages with no quotes.",
+      "to_confirm": "Confirm what the Supplier field on an Open package represents and whether it is the supplier the award goes to.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-001"]
+    },
+    {
+      "id": "ASM-G-002",
+      "text": "'All fields are locked' in DEC-003 also covers the Award note and the Quotes section of an awarded package.",
+      "why": "DEC-003 does not list the fields, and the capture does not show a note or quotes on the awarded package.",
+      "impact": "Affects whether the award note can be corrected after award (GAP-008).",
+      "to_confirm": "Confirm that the award note and quotes are locked once a package is awarded.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-008"]
+    }
+  ],
+  "proposed_status_changes": [
+    {
+      "type": "add_issue",
+      "item_id": "REQ-001",
+      "issue": "unknown",
+      "reason": "How the single awarded supplier is selected and which suppliers are eligible is not stated (CQ-001 unanswered), and the mockup's award form shows no supplier choice."
+    }
+  ]
+}

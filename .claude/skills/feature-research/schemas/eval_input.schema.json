@@ -1,0 +1,567 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/eval_input.schema.json",
+  "title": "evals/cases/<case>/input.json: fixture references, requirements and pre-written answers (§16).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "description",
+    "fixture_dir",
+    "mockup",
+    "requirements_file",
+    "checkpoints"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^case-[0-9]{2}"
+    },
+    "description": {
+      "$ref": "common.schema.json#/$defs/nonempty_string"
+    },
+    "fixture_dir": {
+      "type": "string",
+      "pattern": "^evals/fixtures/[^/]+$"
+    },
+    "mockup": {
+      "$ref": "common.schema.json#/$defs/nonempty_string"
+    },
+    "requirements_file": {
+      "type": "string",
+      "pattern": "^evals/cases/"
+    },
+    "prior_decisions_file": {
+      "type": "string",
+      "pattern": "^evals/cases/"
+    },
+    "checkpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "answers"
+          ],
+          "properties": {
+            "answers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "match",
+                  "verbatim",
+                  "actions"
+                ],
+                "properties": {
+                  "match": {
+                    "$ref": "#/$defs/match"
+                  },
+                  "verbatim": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "approve_affected",
+                            "reject_affected",
+                            "defer_affected",
+                            "clear_unknown_on_affected",
+                            "create_requirement",
+                            "leave_open",
+                            "reconfirm",
+                            "supersede_with_new_requirement"
+                          ]
+                        },
+                        "statement": {
+                          "$ref": "common.schema.json#/$defs/nonempty_string"
+                        },
+                        "req_type": {
+                          "enum": [
+                            "functional",
+                            "non_functional",
+                            "constraint",
+                            "preference"
+                          ]
+                        },
+                        "priority": {
+                          "enum": [
+                            "must",
+                            "should",
+                            "could",
+                            "unspecified"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "remaining_requirements": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decision",
+                "verbatim"
+              ],
+              "properties": {
+                "decision": {
+                  "enum": [
+                    "approve",
+                    "leave_open"
+                  ]
+                },
+                "verbatim": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                }
+              }
+            }
+          }
+        },
+        "2": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gap_rules",
+            "unmatched_gaps"
+          ],
+          "properties": {
+            "gap_rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "match",
+                  "decision",
+                  "verbatim"
+                ],
+                "properties": {
+                  "match": {
+                    "$ref": "#/$defs/match"
+                  },
+                  "decision": {
+                    "enum": [
+                      "approve",
+                      "reject",
+                      "defer"
+                    ]
+                  },
+                  "verbatim": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  },
+                  "resolution_path": {
+                    "enum": [
+                      "research",
+                      "customer",
+                      "both"
+                    ]
+                  }
+                }
+              }
+            },
+            "max_research_gaps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "unmatched_gaps": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "decision",
+                "verbatim"
+              ],
+              "properties": {
+                "decision": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "defer"
+                  ]
+                },
+                "verbatim": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                }
+              }
+            }
+          }
+        },
+        "3": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "answers"
+          ],
+          "properties": {
+            "answers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "match",
+                  "verbatim",
+                  "actions"
+                ],
+                "properties": {
+                  "match": {
+                    "$ref": "#/$defs/match"
+                  },
+                  "verbatim": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "approve_affected",
+                            "reject_affected",
+                            "defer_affected",
+                            "clear_unknown_on_affected",
+                            "create_requirement",
+                            "leave_open",
+                            "reconfirm",
+                            "supersede_with_new_requirement"
+                          ]
+                        },
+                        "statement": {
+                          "$ref": "common.schema.json#/$defs/nonempty_string"
+                        },
+                        "req_type": {
+                          "enum": [
+                            "functional",
+                            "non_functional",
+                            "constraint",
+                            "preference"
+                          ]
+                        },
+                        "priority": {
+                          "enum": [
+                            "must",
+                            "should",
+                            "could",
+                            "unspecified"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "13R": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "default"
+          ],
+          "properties": {
+            "default": {
+              "enum": [
+                "reconfirm",
+                "leave_open"
+              ]
+            },
+            "verbatim": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            },
+            "answers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "match",
+                  "verbatim",
+                  "actions"
+                ],
+                "properties": {
+                  "match": {
+                    "$ref": "#/$defs/match"
+                  },
+                  "verbatim": {
+                    "$ref": "common.schema.json#/$defs/nonempty_string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "enum": [
+                            "approve_affected",
+                            "reject_affected",
+                            "defer_affected",
+                            "clear_unknown_on_affected",
+                            "create_requirement",
+                            "leave_open",
+                            "reconfirm",
+                            "supersede_with_new_requirement"
+                          ]
+                        },
+                        "statement": {
+                          "$ref": "common.schema.json#/$defs/nonempty_string"
+                        },
+                        "req_type": {
+                          "enum": [
+                            "functional",
+                            "non_functional",
+                            "constraint",
+                            "preference"
+                          ]
+                        },
+                        "priority": {
+                          "enum": [
+                            "must",
+                            "should",
+                            "could",
+                            "unspecified"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "change_after_checkpoint_3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirements_file",
+        "reason"
+      ],
+      "properties": {
+        "requirements_file": {
+          "type": "string",
+          "pattern": "^evals/cases/"
+        },
+        "reason": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "match",
+        "verbatim",
+        "actions"
+      ],
+      "properties": {
+        "match": {
+          "$ref": "#/$defs/match"
+        },
+        "verbatim": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "interpretation": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "approve_affected",
+                  "reject_affected",
+                  "defer_affected",
+                  "clear_unknown_on_affected",
+                  "create_requirement",
+                  "leave_open",
+                  "reconfirm",
+                  "supersede_with_new_requirement"
+                ]
+              },
+              "statement": {
+                "$ref": "common.schema.json#/$defs/nonempty_string"
+              },
+              "req_type": {
+                "enum": [
+                  "functional",
+                  "non_functional",
+                  "constraint",
+                  "preference"
+                ]
+              },
+              "priority": {
+                "enum": [
+                  "must",
+                  "should",
+                  "could",
+                  "unspecified"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "approve_affected",
+            "reject_affected",
+            "defer_affected",
+            "clear_unknown_on_affected",
+            "create_requirement",
+            "leave_open",
+            "reconfirm",
+            "supersede_with_new_requirement"
+          ]
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/nonempty_string"
+        },
+        "req_type": {
+          "enum": [
+            "functional",
+            "non_functional",
+            "constraint",
+            "preference"
+          ]
+        },
+        "priority": {
+          "enum": [
+            "must",
+            "should",
+            "could",
+            "unspecified"
+          ]
+        }
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "description": "all must appear (case-insensitive) in the question text and its topic (or the gap text)"
+        },
+        "affected_req_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/req_id"
+          }
+        },
+        "description_contains": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          }
+        },
+        "any_of": {
+          "type": "array",
+          "minItems": 1,
+          "description": "alternative match objects (no nesting); the answer matches a question if the top-level conditions and at least one alternative hold",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "keywords": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "description": "all must appear (case-insensitive) in the question or gap text and its topic keywords"
+              },
+              "affected_req_ids": {
+                "type": "array",
+                "items": {
+                  "$ref": "common.schema.json#/$defs/req_id"
+                }
+              },
+              "description_contains": {
+                "type": "array",
+                "items": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                }
+              },
+              "exclude_keywords": {
+                "type": "array",
+                "items": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "description": "none may appear (case-insensitive)"
+              }
+            }
+          }
+        },
+        "exclude_keywords": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "description": "none may appear (case-insensitive)"
+        }
+      },
+      "description": "An answer covers every question it matches; a question matched by no answer, or by more than one, is left open (§16)."
+    }
+  }
+}

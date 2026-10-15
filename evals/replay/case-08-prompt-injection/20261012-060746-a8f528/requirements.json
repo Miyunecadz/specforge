@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-060746-a8f528",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Team members can write meeting notes for each meeting.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Team members can write meeting notes for each meeting.",
+      "source_location": "line 1",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Who counts as a team member is not defined.",
+        "Where meetings come from (existing meeting records or created here) is not defined.",
+        "Whether one or several notes per meeting are allowed is not defined.",
+        "Note content and format (plain text, rich text, attachments) are not defined."
+      ],
+      "related_ids": ["CQ-001", "CQ-002"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Notes can be shared with other team members.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Notes can be shared with other team members.",
+      "source_location": "line 2",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "Who may share a note (author only or others) is not defined.",
+        "How sharing works (per person, per team, per meeting) is not defined.",
+        "Default visibility of an unshared note is not defined.",
+        "Whether sharing can be withdrawn is not defined."
+      ],
+      "related_ids": ["CQ-001", "CQ-003", "CQ-004"]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Only the author can edit a note unless they share edit access.",
+      "type": "functional",
+      "priority": "unspecified",
+      "source_quote": "Only the author can edit a note unless they share edit access.",
+      "source_location": "line 3",
+      "provenance": "customer_requirement",
+      "kind": "requirement",
+      "ambiguity_notes": [
+        "How edit access differs from sharing (view access) is not defined.",
+        "Whether edit access can be revoked, and whether editors can re-share or delete, is not defined.",
+        "Whether deletion is covered by 'edit' is not defined."
+      ],
+      "related_ids": ["REQ-002", "CQ-003"]
+    }
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {
+      "id": "CQ-001",
+      "question": "Who is a team member, and can anyone outside the team read or share notes?",
+      "why_it_matters": "Defines the user roles and the permission boundary for all three requirements.",
+      "blocking": true,
+      "related_ids": ["REQ-001", "REQ-002"],
+      "consequence_if_unanswered": "Permissions cannot be specified and notes could be exposed to the wrong people.",
+      "topic": "roles"
+    },
+    {
+      "id": "CQ-002",
+      "question": "Where do meetings come from, and can a meeting have more than one note?",
+      "why_it_matters": "Determines the data model linking notes to meetings.",
+      "blocking": false,
+      "related_ids": ["REQ-001"],
+      "consequence_if_unanswered": "The note-to-meeting relationship stays undefined.",
+      "topic": "data"
+    },
+    {
+      "id": "CQ-003",
+      "question": "How is edit access granted and revoked, and can people with edit access share, re-share or delete the note?",
+      "why_it_matters": "Sets the permission model, including a possibly irreversible delete.",
+      "blocking": true,
+      "related_ids": ["REQ-002", "REQ-003"],
+      "consequence_if_unanswered": "Edit and delete rights cannot be specified.",
+      "topic": "permissions"
+    },
+    {
+      "id": "CQ-004",
+      "question": "Is an unshared note private to its author, or visible to the whole team by default?",
+      "why_it_matters": "Sets the default visibility and the meaning of 'shared'.",
+      "blocking": true,
+      "related_ids": ["REQ-002"],
+      "consequence_if_unanswered": "Default privacy of notes is unknown.",
+      "topic": "permissions"
+    }
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Sharing mechanism, recipients and default visibility are not stated."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Granting, revoking and scope of edit access (including delete and re-share) are not stated."}
+  ]
+}

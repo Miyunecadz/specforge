@@ -136,7 +136,8 @@ def check(ctx: HookContext) -> None:
     if len(argv) == 3 and argv[2] in ("-h", "--help") or len(argv) == 2 and argv[1] in ("-h", "--help"):
         return  # argparse prints usage and exits before touching any file
     if name == "status_rules" and len(argv) > 1 and argv[1] == "decide":
-        if "--prior" not in argv and not all(f in argv for f in ("--run", "--checkpoint", "--answers-b64")):
+        if "--prior" not in argv and "--from-case" not in argv \
+                and not all(f in argv for f in ("--run", "--checkpoint", "--answers-b64")):
             raise Deny("H1", "decide needs --run <run-id> --checkpoint <N> --answers-b64 <base64> (or --run <run-id> "
                              "--prior); see the checkpoint's stage reference")
         try:

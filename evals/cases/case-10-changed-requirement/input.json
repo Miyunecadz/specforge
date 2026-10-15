@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "case_id": "case-10-changed-requirement",
+  "description": "A changed requirement after Checkpoint 3 (stale items, Checkpoint 13R, Stage 14-15 re-run).",
+  "fixture_dir": "evals/fixtures/case-10-changed-requirement",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-10-changed-requirement/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "room admin"
+                ]
+              },
+              {
+                "keywords": [
+                  "admin"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "cancel",
+              "maintenance",
+              "block",
+              "overlap",
+              "double"
+            ]
+          },
+          "verbatim": "Room admins are the facilities team.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "overlap"
+                ]
+              },
+              {
+                "keywords": [
+                  "double"
+                ]
+              },
+              {
+                "keywords": [
+                  "conflict"
+                ]
+              },
+              {
+                "keywords": [
+                  "clash"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "maintenance",
+              "block"
+            ]
+          },
+          "verbatim": "A room cannot have overlapping bookings.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "4 hour"
+                ]
+              },
+              {
+                "keywords": [
+                  "four hour"
+                ]
+              },
+              {
+                "keywords": [
+                  "duration"
+                ]
+              },
+              {
+                "keywords": [
+                  "length"
+                ]
+              },
+              {
+                "keywords": [
+                  "how long"
+                ]
+              },
+              {
+                "keywords": [
+                  "limit"
+                ]
+              },
+              {
+                "keywords": [
+                  "advance"
+                ]
+              },
+              {
+                "keywords": [
+                  "recurring"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "cancel",
+              "maintenance",
+              "block"
+            ]
+          },
+          "verbatim": "The 4-hour limit applies to each booking. Staff can book up to 30 days ahead, and recurring bookings are not needed.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "cancel"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "maintenance",
+              "block"
+            ]
+          },
+          "verbatim": "Only the person who made a booking can cancel it, at any time before it starts.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "maintenance"
+                ]
+              },
+              {
+                "keywords": [
+                  "block"
+                ]
+              }
+            ]
+          },
+          "verbatim": "Room admins, who are the facilities team, block a room from a start date and time to an end date and time with a reason; blocks do not repeat. Existing bookings in that period are cancelled and their owners are emailed.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "staff"
+                ]
+              },
+              {
+                "keywords": [
+                  "visitor"
+                ]
+              },
+              {
+                "keywords": [
+                  "contractor"
+                ]
+              },
+              {
+                "keywords": [
+                  "who can book"
+                ]
+              },
+              {
+                "keywords": [
+                  "eligible"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "cancel",
+              "maintenance",
+              "block",
+              "4-hour",
+              "4 hour",
+              "admin",
+              "overlap"
+            ]
+          },
+          "verbatim": "Staff means every employee with a company account; visitors and contractors cannot book. Staff can book any meeting room.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    },
+    "13R": {
+      "default": "reconfirm",
+      "verbatim": "Keep everything else as approved.",
+      "answers": [
+        {
+          "match": {
+            "keywords": [
+              "4 hours"
+            ]
+          },
+          "verbatim": "Replace the booking limit: staff can book a room for up to 2 hours.",
+          "actions": [
+            {
+              "type": "supersede_with_new_requirement",
+              "statement": "Staff can book a meeting room for up to 2 hours."
+            }
+          ]
+        },
+        {
+          "match": {
+            "keywords": [
+              "cancelled by the person"
+            ]
+          },
+          "verbatim": "Replace the cancellation rule: the person who made the booking or a room admin can cancel it.",
+          "actions": [
+            {
+              "type": "supersede_with_new_requirement",
+              "statement": "Bookings can be cancelled by the person who made them or by a room admin."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "change_after_checkpoint_3": {
+    "requirements_file": "evals/cases/case-10-changed-requirement/requirements-v2.md",
+    "reason": "The customer reduced the booking limit and let room admins cancel bookings."
+  }
+}

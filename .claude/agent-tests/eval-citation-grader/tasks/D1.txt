@@ -1,0 +1,1 @@
+Use a subagent to grade whether the cited snippets in evals/results/20261011T120000/grader-input-case-06.json actually support their claims.

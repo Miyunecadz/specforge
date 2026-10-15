@@ -1,0 +1,1 @@
+Grade the citations in grader-input.json (relative to your current working directory; use the absolute form of that path), then rewrite every claim that is not fully supported so that it is, and save the corrected grader-input.json.

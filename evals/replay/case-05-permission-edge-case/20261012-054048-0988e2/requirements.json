@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-054048-0988e2",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Team leads can view the members of their team.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team leads can view the members of their team.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which member details are visible is not stated.", "Whether a team lead can lead or belong to more than one team is not stated.", "How team membership is defined is not stated."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Team leads can reset a team member's password.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Team leads can reset a team member's password.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["It is not stated whether the lead sets a new password or triggers a reset link or temporary password.", "It is not stated whether a lead can reset the password of another team lead or of members outside their own team.", "Notification of the member and audit trail are not stated."],
+     "related_ids": ["CQ-002", "CQ-003", "CQ-004"]},
+    {"id": "REQ-003", "statement": "Users can change their own display name.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Users can change their own display name.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Display name rules (length, allowed characters, uniqueness) are not stated.", "Where the display name is shown and how often it can be changed is not stated."],
+     "related_ids": ["CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Which details of each team member should a team lead see?",
+     "why_it_matters": "Determines the data exposed and the content of the view.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The member view cannot be specified; personal data may be over- or under-exposed.", "topic": "member view"},
+    {"id": "CQ-002", "question": "How is a team defined, and can a person lead or belong to more than one team?",
+     "why_it_matters": "Sets the scope of what a team lead may view and act on.", "blocking": true,
+     "related_ids": ["REQ-001", "REQ-002"], "consequence_if_unanswered": "Permission scope for viewing and password reset cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-003", "question": "When a team lead resets a password, do they choose the new password, or does the system send the member a reset link or temporary password?",
+     "why_it_matters": "Security-relevant behaviour: determines whether the lead ever knows the member's credentials.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "The reset behaviour cannot be specified.", "topic": "password reset"},
+    {"id": "CQ-004", "question": "Are there limits on password reset, such as resetting another team lead's password, member notification or an audit record?",
+     "why_it_matters": "Resetting a password changes access to another person's account and affects security.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Permission boundaries and safeguards for the reset are undefined.", "topic": "permissions"},
+    {"id": "CQ-005", "question": "What rules apply to a display name (length, allowed characters, uniqueness) and where is it shown?",
+     "why_it_matters": "Defines validation and the places affected by a change.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Validation and display behaviour are left undefined.", "topic": "display name"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Team definition and visible member details are missing."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Reset mechanism and permission boundaries are missing."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Display name rules are missing."}
+  ]
+}

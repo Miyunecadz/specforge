@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-054409-29bc7f",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Employees submit leave requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Employees submit leave requests.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which data a leave request contains (leave type, dates, reason) is not defined.", "Whether all employees can submit, and any limits such as balance or overlapping dates, is not defined."],
+     "related_ids": ["CQ-002"]},
+    {"id": "REQ-002", "statement": "Managers approve or reject leave requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Managers approve or reject leave requests.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which manager may decide on which request is not defined.", "Whether a reason is needed on rejection is not defined.", "Whether a decision can be changed afterwards is not defined."],
+     "related_ids": ["CQ-001", "CQ-003"]},
+    {"id": "REQ-003", "statement": "Employees can see the status of each request.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Employees can see the status of each request.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["The set of statuses is not defined.", "Whether employees see only their own requests is not stated.", "Whether employees are notified of status changes is not defined."],
+     "related_ids": ["CQ-004"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Which manager can approve or reject a given request (the employee's direct manager, any manager, a delegate)?",
+     "why_it_matters": "Determines roles and permissions.", "blocking": true, "related_ids": ["REQ-002"],
+     "consequence_if_unanswered": "Approval permissions cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-002", "question": "What information does a leave request contain, and are there rules such as leave balance or overlapping dates?",
+     "why_it_matters": "Defines the data and validation of submission.", "blocking": false, "related_ids": ["REQ-001"],
+     "consequence_if_unanswered": "Submission form and validation remain undefined.", "topic": "data"},
+    {"id": "CQ-003", "question": "Is a reason required when rejecting, and can a decision be reversed or a request withdrawn?",
+     "why_it_matters": "Affects decision flow and whether actions are reversible.", "blocking": false, "related_ids": ["REQ-002"],
+     "consequence_if_unanswered": "Decision behaviour remains undefined.", "topic": "workflow"},
+    {"id": "CQ-004", "question": "Which statuses should exist, and should employees be notified when the status changes?",
+     "why_it_matters": "Defines what employees see and any notification scope.", "blocking": false, "related_ids": ["REQ-003"],
+     "consequence_if_unanswered": "Status list and notifications remain undefined.", "topic": "status"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Which managers may decide on which requests is not stated.", "related_ids": ["CQ-001"]}
+  ]
+}

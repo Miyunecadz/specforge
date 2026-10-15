@@ -16,7 +16,10 @@ memory and writes only if every change is valid.
   verification --run R --from citations|semantic
                                      set citation_failed from citation_check.json, or kept/dropped
                                      from verified_findings.json (no agent or decision sets these)
-  apply                              Phase 6
+  decide --run R --checkpoint N --from-case
+                                     eval fixture mode only: answers matched from the case file
+  apply input/change-<n>.json --run R
+                                     apply stale reasons from change-impact analysis
 
 Exit codes: 0 ok, 1 invalid input or rejected change, 3 refused.
 """
@@ -228,8 +231,10 @@ def decode_answers(b64: str) -> dict:
 def cmd_decide(args, ctx: runctx.RunContext) -> int:
     if args.prior:
         return _decide_prior(ctx)
+    if args.from_case:
+        return _decide_from_case(args, ctx)
     if not args.checkpoint or not args.answers_b64:
-        raise RunError("decide needs --checkpoint and --answers-b64 (or --prior)")
+        raise RunError("decide needs --checkpoint and --answers-b64 (or --prior, or --from-case in eval mode)")
     answers = decode_answers(args.answers_b64)
     schema.check("checkpoint_answers", answers, what="answers")
     cp = args.checkpoint.upper()
@@ -303,6 +308,69 @@ def _decide_prior(ctx: runctx.RunContext) -> int:
             "affected_ids": [], "actions": []}))
     save_state(ctx.run_dir, st, decisions_changed=True)
     _out({"ok": True, "checkpoint": "prior", "decisions": ids})
+    return 0
+
+
+def _decide_from_case(args, ctx: runctx.RunContext) -> int:
+    """Eval fixture mode with --non-interactive: answers come from the case file, matched deterministically (§16)."""
+    from _lib import case_answers
+
+    cp = (args.checkpoint or "").upper()
+    req = _load_doc(ctx.run_dir, "input/request.json") or {}
+    case_ref = req.get("non_interactive_case")
+    if ctx.mode.mode != modes.FIXTURE or not case_ref:
+        raise RunError("--from-case is accepted only in eval fixture mode with --non-interactive")
+    if ctx.manifest.get("open_checkpoint") != cp or ctx.manifest.get("status") != "running":
+        raise RunError(f"checkpoint {cp} must be opened (await-user) and continued before answers are recorded")
+    case_path = ctx.repo / case_ref["path"]
+    if hashing.sha256_file(case_path) != case_ref["sha256"]:
+        raise RunError("the case file changed after the run started")
+    case = json.loads(case_path.read_text(encoding="utf-8"))
+    schema.check("eval_input", case, what=case_ref["path"])
+    answers, unmatched = case_answers.plan_checkpoint(cp, case, ctx.run_dir)
+    st = load_state(ctx.run_dir, ctx.run_id)
+    agent_reqs, agent_gaps = _agent_ids(ctx.run_dir)
+    ts = now_iso()
+    dec_ids = [status.record_decision(st, checkpoint=cp, source="eval_case_file", answer=a, timestamp=ts,
+                                      agent_req_ids=agent_reqs, agent_gap_ids=agent_gaps) for a in answers]
+    cp_rel = f"checkpoints/checkpoint-{cp}-answers.json"
+    cp_doc = _load_doc(ctx.run_dir, cp_rel) or {"schema_version": 1, "checkpoint": cp, "rounds": []}
+    cp_doc["rounds"].append({"at": ts, "source": "eval_case_file", "answers": answers, "decision_ids": dec_ids,
+                             "unmatched": unmatched})
+    schema.check("checkpoint_file", cp_doc, what=cp_rel)
+    save_state(ctx.run_dir, st, decisions_changed=bool(dec_ids), extra={cp_rel: cp_doc})
+    _out({"ok": True, "checkpoint": cp, "source": "eval_case_file", "decisions": dec_ids,
+          "unmatched": unmatched, "changes": len(st.changes)})
+    return 0
+
+
+# --------------------------------------------------------------------------- apply (change impact)
+
+
+def cmd_apply(args, ctx: runctx.RunContext) -> int:
+    """Apply stale reasons from a change file written by run_state.py change-inputs (§15)."""
+    rel = Path(args.change_file).as_posix()
+    if not re.fullmatch(r"input/change-[0-9]+\.json", rel):
+        raise RunError("apply takes input/change-<n>.json (written by run_state.py change-inputs)")
+    doc = _load_doc(ctx.run_dir, rel)
+    if doc is None:
+        raise RunError(f"{rel} does not exist")
+    schema.check("change", doc, what=rel)
+    if doc["run_id"] != ctx.run_id:
+        raise status.StatusError("the change file belongs to another run")
+    st = load_state(ctx.run_dir, ctx.run_id)
+    applied = []
+    for s in doc["stale_items"]:
+        it = st.registry["items"].get(s["item_id"])
+        if it is None or it["approval"] in ("rejected", "superseded") or it["stale"]:
+            continue
+        status.apply_stale(st, s["item_id"], s["stale_reason"])
+        applied.append(s["item_id"])
+    save_state(ctx.run_dir, st, decisions_changed=False)
+    stale_approved = sorted(i for i, it in st.registry["items"].items() if it["stale"] and it["approval"] == "approved")
+    superseded = sorted(i for i in applied if st.registry["items"][i]["approval"] == "superseded")
+    _out({"ok": True, "change_id": doc["change_id"], "stale_applied": applied, "stale_approved": stale_approved,
+          "superseded": superseded})
     return 0
 
 
@@ -402,6 +470,7 @@ def main(argv: Sequence[str] | None = None, repo: Path | None = None, env: Mappi
     p.add_argument("--checkpoint")
     p.add_argument("--answers-b64")
     p.add_argument("--prior", action="store_true")
+    p.add_argument("--from-case", action="store_true", help="eval fixture mode only: answers from the case file")
     p.set_defaults(func=cmd_decide)
     p = sub.add_parser("labels")
     p.add_argument("--run", required=True)
@@ -410,11 +479,10 @@ def main(argv: Sequence[str] | None = None, repo: Path | None = None, env: Mappi
     p.add_argument("--run", required=True)
     p.add_argument("--from", dest="source", choices=("citations", "semantic"), required=True)
     p.set_defaults(func=cmd_verification)
-    for name, phase in (("apply", "Phase 6"),):
-        p = sub.add_parser(name)
-        p.add_argument("rest", nargs="*")
-        p.add_argument("--run", required=True)
-        p.set_defaults(func=cmd_later(phase))
+    p = sub.add_parser("apply")
+    p.add_argument("change_file")
+    p.add_argument("--run", required=True)
+    p.set_defaults(func=cmd_apply)
     args = ap.parse_args(list(sys.argv if argv is None else argv)[1:])
     repo = repo or paths.REPO_ROOT
     env = os.environ if env is None else env

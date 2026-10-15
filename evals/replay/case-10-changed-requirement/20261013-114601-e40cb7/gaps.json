@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-114601-e40cb7",
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "title": "Maintenance blocking by room admins is not covered by the mockup",
+      "description": "REQ-003 (room admins, the facilities team, block a room from a start to an end date and time with a reason, per DEC-004 and DEC-005) has no supporting screen, component or flow in the capture. Only the staff booking page (SCR-001) was captured; how a facilities team member creates, views, changes or removes a block, enters the reason, and sees which existing bookings will be affected is not shown in the capture.",
+      "category": "flow",
+      "reason": "requirement_uncovered",
+      "related_req_ids": ["REQ-003"],
+      "related_scr_ids": ["SCR-001"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-003"},
+        {"artifact": "decisions.json", "locator": "DEC-004"},
+        {"artifact": "decisions.json", "locator": "DEC-005"},
+        {"artifact": "inventory.json", "locator": "screens (only SCR-001); flows []"},
+        {"artifact": "inventory.json", "locator": "limitations[0]"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Blocking is an approved requirement whose effect is to cancel other people's bookings and email them, so the admin-side steps and inputs must be specified, yet there is no observed design to specify from.",
+      "consequences_if_unresolved": "The facilities team's blocking workflow would be specified without customer-agreed screens or steps, and whether a block can be edited or removed after creation would be left undefined.",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-002",
+      "title": "Rules for overlapping bookings and bookings that clash with a block are undefined",
+      "description": "Neither the requirements nor the decisions state whether two bookings for the same room may overlap, what a staff member sees when they pick a time that is already booked, or whether a booking can be made inside an existing maintenance block. The mockup's form (SCR-002) shows no availability information and the behaviour on pressing Book was not observed.",
+      "category": "data integrity",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'Can a room be booked in the past or at overlapping times; how are conflicts with existing bookings handled?'"},
+        {"artifact": "requirements.json", "locator": "REQ-001 ambiguity_notes[2]"},
+        {"artifact": "decisions.json", "locator": "DEC-002"},
+        {"artifact": "decisions.json", "locator": "DEC-005"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "A room booking feature whose core promise is a reserved room cannot be specified without knowing whether double-booking is prevented; DEC-002 answered the duration and look-ahead limits but not clashes, and DEC-005 covers bookings that exist before a block but not attempts to book into a block afterwards.",
+      "consequences_if_unresolved": "Two staff members could hold the same room at the same time, or staff could book a room under maintenance, with no agreed rule for which booking wins.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "How do established workplace room-booking products (for example Microsoft 365 room mailboxes or Google Workspace resource calendars) handle overlapping requests for the same room by default?",
+        "What are common rules for treating back-to-back bookings (one ending exactly when the next starts) as non-overlapping?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-003",
+      "title": "Blocking cancels other people's bookings with no defined safeguard or recovery",
+      "description": "DEC-005 states that existing bookings in a blocked period are cancelled and their owners emailed. It is not defined whether the facilities team member sees the affected bookings before confirming, whether a block can be undone, and whether removing or shortening a block restores any cancelled bookings. No screen for this was captured.",
+      "category": "data integrity",
+      "reason": "risk",
+      "checklist_item": "Destructive-action confirmation and undo",
+      "related_req_ids": ["REQ-003", "REQ-002"],
+      "related_scr_ids": [],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-005"},
+        {"artifact": "requirements.json", "locator": "REQ-003"},
+        {"artifact": "inventory.json", "locator": "limitations[0]"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "A single admin action can cancel many staff members' bookings at once, which is a bulk, cross-user change to data those users own; DEC-003 otherwise restricts cancellation to the booking owner.",
+      "consequences_if_unresolved": "A mistyped date range could silently cancel a large number of bookings with no way to recover them, and staff would lose rooms they relied on.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What confirmation and undo patterns are recommended for bulk destructive actions that affect other users' records (for example GOV.UK Design System or Nielsen Norman Group guidance)?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-004",
+      "title": "Two people booking the same slot at the same moment, and repeated Book presses",
+      "description": "It is not defined what happens when two staff members submit bookings for the same room and time at nearly the same moment, when a block is created while someone is mid-booking, or when Book is pressed more than once. The capture is static, so behaviour on pressing Book was not observed.",
+      "category": "data integrity",
+      "reason": "checklist",
+      "checklist_item": "Concurrent changes and conflict handling",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-002 actions 'Book'"},
+        {"artifact": "inventory.json", "locator": "limitations[1]"},
+        {"artifact": "decisions.json", "locator": "DEC-005"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Staff can book any meeting room (DEC-001), so popular rooms are likely to be contended, and a block can be created at any time by the facilities team; whatever overlap rule is agreed in GAP-002 is only meaningful if it holds under simultaneous requests.",
+      "consequences_if_unresolved": "Duplicate or overlapping bookings could be created, or a booking could be confirmed for a period that has just been blocked.",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "What techniques are commonly used to guarantee that two concurrent reservation requests for the same resource and time range cannot both succeed?",
+        "How do booking systems make a create-booking request safe to retry without creating a duplicate booking?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-005",
+      "title": "Booking form validation and limit enforcement are unspecified",
+      "description": "The form shows no required-field markers, and it is not defined what happens if Start is empty, in the past, or more than 30 days ahead (DEC-002), what time granularity Start accepts, where errors appear, or whether entered values are kept on error. The Duration list shows only 1, 2 and 4 hours, while REQ-001 and DEC-002 say up to 4 hours per booking; whether other durations up to 4 hours (for example 3 hours or 30 minutes) are allowed is not stated.",
+      "category": "validation",
+      "reason": "checklist",
+      "checklist_item": "Form validation and messages",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-002 fields (required_marker_visible false; Duration visible_options)"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'Which fields are required, and what happens if Start is left empty?'"},
+        {"artifact": "decisions.json", "locator": "DEC-002"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "The approved limits (4 hours per booking, 30 days ahead) are the only booking rules the customer has set, and the mockup does not show how a staff member is told they have broken one.",
+      "consequences_if_unresolved": "Limits could be enforced inconsistently or not at all, and the allowed durations could differ from what the customer intends.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What does WCAG 2.2 AA (success criteria 3.3.1, 3.3.3 and 4.1.3) require for presenting form validation errors and identifying required fields?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-006",
+      "title": "Outcome states after Book and Cancel booking, and empty or loading list states, not shown",
+      "description": "Only the default state of SCR-001 was captured. What staff see after a successful booking or cancellation, when booking or cancelling fails, while data is loading, and when 'My bookings' has no rows is not shown in the capture.",
+      "category": "states",
+      "reason": "checklist",
+      "checklist_item": "Empty, loading, success and error states",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-001", "SCR-002", "SCR-003"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-001 observed_states (default only)"},
+        {"artifact": "inventory.json", "locator": "limitations[0]"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'What confirmation, error or failure feedback appears after pressing Book?'"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-003] 'What happens if cancellation fails?'"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Booking and cancelling are the two approved staff actions, and staff need to know whether they actually hold or have released a room.",
+      "consequences_if_unresolved": "Staff may assume a booking succeeded when it failed (or the reverse), leading to missed or double-occupied meetings.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "How should success and failure status messages be announced to screen-reader users without moving focus, under WCAG 2.2 success criterion 4.1.3?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-007",
+      "title": "Cancellation confirmation, start-time cutoff in the list, and what happens to cancelled rows",
+      "description": "DEC-003 settles that only the owner may cancel, at any time before the booking starts. It is not defined whether a confirmation step precedes cancellation, whether a cancellation can be undone, how the Cancel booking button behaves for a booking that has started or ended, whether past and cancelled bookings (including ones cancelled by a maintenance block) remain in 'My bookings', and whether the room is immediately bookable again.",
+      "category": "states",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-002"],
+      "related_scr_ids": ["SCR-003"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-003]"},
+        {"artifact": "inventory.json", "locator": "SCR-003 actions 'Cancel booking'"},
+        {"artifact": "decisions.json", "locator": "DEC-003"},
+        {"artifact": "decisions.json", "locator": "DEC-005"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "The approved cutoff (before start) must be visible and enforced in the list, and a booking cancelled by the facilities team needs to be distinguishable from one the owner cancelled.",
+      "consequences_if_unresolved": "Staff could cancel by accident with no recovery, or try to cancel bookings that are no longer cancellable, and would not see why a booking vanished after a block.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-008",
+      "title": "Content and delivery failure of the block-cancellation email",
+      "description": "DEC-005 says owners of bookings cancelled by a block are emailed. What the email contains (room, time, block reason, alternatives), who sends it, whether the facilities team learns of delivery failures, and whether any other in-product notice exists are not defined.",
+      "category": "notifications",
+      "reason": "checklist",
+      "checklist_item": "Notifications and delivery failure",
+      "related_req_ids": ["REQ-003", "REQ-002"],
+      "related_scr_ids": [],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-005"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "The email is the only agreed way a staff member learns their room was taken away; if it is not delivered they may turn up to a room under maintenance.",
+      "consequences_if_unresolved": "Staff miss cancellation notices and meetings are disrupted, with no one aware that notification failed.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What delivery-failure signals (bounces, deferrals) do transactional email services typically expose, and how are they usually surfaced to the sending application?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-009",
+      "title": "Staff cannot see room availability or maintenance blocks before choosing a time",
+      "description": "The form offers a room list (Oak, Elm) and a start time but no availability information is shown in the capture. Whether staff can see existing bookings or blocked periods for a room before submitting is not defined.",
+      "category": "flow",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'Is room availability shown anywhere, and does the room list depend on the user?'"},
+        {"artifact": "inventory.json", "locator": "SCR-002 fields"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "DEC-001 answered that staff may book any room, but finding a free slot depends on knowing what is taken or under maintenance; without that, staff learn about clashes only after pressing Book.",
+      "consequences_if_unresolved": "Booking becomes trial and error, and staff cannot plan around maintenance blocks.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-010",
+      "title": "Sign-in requirement and bookings of staff who leave or lose access",
+      "description": "DEC-001 limits booking to employees with a company account, implying sign-in, but what a signed-out user or a visitor sees is not defined, nor what happens to future bookings (and their rooms) when an employee's account is disabled, or when a session expires mid-booking.",
+      "category": "permissions",
+      "reason": "checklist",
+      "checklist_item": "Authentication and accounts",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-001"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-001"},
+        {"artifact": "decisions.json", "locator": "DEC-003"},
+        {"artifact": "inventory.json", "locator": "SCR-004 field 'Booker (owner of My bookings)' basis inferred"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Only the owner may cancel (DEC-003), so a departed employee's future bookings could hold rooms that nobody is permitted to release.",
+      "consequences_if_unresolved": "Rooms stay reserved for people who no longer work there, and access rules for non-staff are left to implementation.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-011",
+      "title": "Accessibility of the booking form and per-row Cancel booking actions",
+      "description": "The Start field is a native date-time input and each row in 'My bookings' has a button labelled only 'Cancel booking'. Keyboard use, accessible names that identify which booking a Cancel button acts on when several rows exist, and how outcomes are announced are not defined.",
+      "category": "accessibility",
+      "reason": "checklist",
+      "checklist_item": "Accessibility (WCAG 2.2 AA where relevant)",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-002", "SCR-003"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-002 field 'Start' input_type datetime-local"},
+        {"artifact": "inventory.json", "locator": "SCR-003 actions 'Cancel booking'"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "All employees may book (DEC-001), so the tool must be usable by staff relying on keyboards and screen readers; identical button labels in a list make it unclear which booking would be cancelled.",
+      "consequences_if_unresolved": "Some staff may be unable to book, or may cancel the wrong booking.",
+      "resolution_path": "research",
+      "priority": "important",
+      "research_questions": [
+        "What do WCAG 2.2 success criteria 2.4.6 and 2.5.3 require for repeated action buttons in a table, such as one 'Cancel booking' per row?",
+        "How accessible are native datetime-local inputs across current major browsers and screen readers?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-012",
+      "title": "Time zone and time granularity for Start and blocks",
+      "description": "The Start input and block start and end times (DEC-005) do not state which time zone they are in, how times are shown to staff and in the cancellation email, or what minute steps are allowed.",
+      "category": "internationalisation",
+      "reason": "checklist",
+      "checklist_item": "Internationalisation",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'Is the Start time in a specific timezone, and are there time-step or granularity rules?'"},
+        {"artifact": "decisions.json", "locator": "DEC-005"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Overlap with other bookings and with blocks, the 30-day window and the before-start cancellation cutoff all depend on comparing times consistently, including across daylight-saving changes.",
+      "consequences_if_unresolved": "Bookings and blocks may be compared or displayed an hour out around clock changes, producing false clashes or missed ones.",
+      "resolution_path": "both",
+      "priority": "optional",
+      "research_questions": [
+        "What is the recommended practice for storing and comparing room-booking times so that bookings around daylight-saving transitions are handled correctly?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-013",
+      "title": "Traceability of blocks and cancellations",
+      "description": "Whether the system must record who created a block, who cancelled a booking (owner or block), when, and with what reason is not defined.",
+      "category": "audit",
+      "reason": "checklist",
+      "checklist_item": "Audit logging",
+      "related_req_ids": ["REQ-002", "REQ-003"],
+      "related_scr_ids": [],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-005"},
+        {"artifact": "decisions.json", "locator": "DEC-003"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Blocks cancel other people's bookings, so staff complaints about lost rooms can only be answered if the cause and actor are recorded.",
+      "consequences_if_unresolved": "Disputes about why a booking disappeared cannot be resolved.",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-014",
+      "title": "Editing bookings, managing the room list, and retention of past bookings",
+      "description": "Whether a booking can be edited rather than cancelled and rebooked, who maintains the list of rooms (Oak, Elm), and how long past or cancelled bookings are kept are not defined.",
+      "category": "admin",
+      "reason": "checklist",
+      "checklist_item": "Admin and back-office",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002", "SCR-003"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-002] 'Can a booking be edited after creation?'"},
+        {"artifact": "inventory.json", "locator": "SCR-002 field 'Room' visible_options"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours[SCR-003] 'What does the table show when there are no bookings, and are past bookings listed?'"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "The facilities team already administers rooms for maintenance (DEC-004), so whether they also manage the room list affects their permissions; booking records include who booked, which is personal data subject to retention.",
+      "consequences_if_unresolved": "Room changes and booking history handling are left to implementation choices.",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM-G-001",
+      "text": "The captured page (SCR-001) is the staff-facing booking view only; the absence of an admin blocking screen means it was not captured, not that it does not exist.",
+      "why": "Only one page was captured and REQ-003 is approved.",
+      "impact": "GAP-001 is framed as uncovered by the mockup rather than as a product limitation.",
+      "to_confirm": "Whether a design for the facilities team's blocking workflow exists.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-001"]
+    },
+    {
+      "id": "ASM-G-002",
+      "text": "The Duration options shown (1, 2 and 4 hours) are treated as possibly incomplete rather than as a contradiction of REQ-001's 'up to 4 hours'.",
+      "why": "Neither REQ-001 nor DEC-002 lists the allowed durations.",
+      "impact": "Recorded under GAP-005 as unclear rather than as a conflict.",
+      "to_confirm": "Which durations staff may choose.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-005"]
+    },
+    {
+      "id": "ASM-G-003",
+      "text": "Bookings cancelled by a maintenance block (DEC-005) are a separate path from owner cancellation and do not breach DEC-003's owner-only rule.",
+      "why": "DEC-003 says only the owner can cancel, while DEC-005 has blocks cancel bookings.",
+      "impact": "Not raised as a conflict; addressed in GAP-003 and GAP-007.",
+      "to_confirm": "That block-driven cancellation is an intended exception to owner-only cancellation.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-003", "GAP-007"]
+    }
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Whether overlapping bookings for the same room, or bookings inside a maintenance block, are allowed is not stated (GAP-002)."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "No mockup coverage for the blocking workflow, and whether a block can be edited, removed or undone is not stated (GAP-001, GAP-003)."}
+  ]
+}

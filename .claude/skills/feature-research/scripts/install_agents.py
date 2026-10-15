@@ -47,7 +47,7 @@ TOOL_ALLOWANCE = {
     "question-generator": {"Read", "Write"},
     "doc-writer": {"Read", "Write"},
     "doc-reviewer": {"Read", "Write"},
-    "eval-citation-grader": {"Read", "Write"},
+    "eval-citation-grader": {"Read"},
 }
 FORBIDDEN_TOOLS = re.compile(r"^(Skill|WebFetch|Agent|Task|mcp__.*|.*[Bb]rowser.*|Monitor|Workflow)$")
 RESEARCHERS = {"identified": "web-researcher", "fallback": "web-researcher-fallback"}
@@ -120,7 +120,12 @@ def render(src: Path, rules: str, python: str, skill_dir: Path, preload: bool) -
     extra = set(tools) - TOOL_ALLOWANCE.get(name, set())
     if name not in TOOL_ALLOWANCE or extra:
         raise InstallError(f"{name}: tools {sorted(extra) or tools} exceed its allowance")
-    if "{{SHARED_RULES}}" not in body:
+    # Eval-only agents are not workflow subagents: they write no run files and keep no
+    # warnings file, so the shared rules do not apply and must not be embedded.
+    if name in EVAL_ONLY:
+        if "{{SHARED_RULES}}" in body:
+            raise InstallError(f"{name}: eval-only agents must not embed the shared workflow rules")
+    elif "{{SHARED_RULES}}" not in body:
         raise InstallError(f"{name}: body must contain the {{{{SHARED_RULES}}}} placeholder")
     if preload:
         front = front.rstrip("\n") + "\nskills:\n  - feature-research-subagent-rules\n"

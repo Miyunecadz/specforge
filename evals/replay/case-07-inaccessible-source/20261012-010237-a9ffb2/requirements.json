@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-010237-a9ffb2",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Procurement staff register new suppliers with company name, VAT number and bank details.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Procurement staff register new suppliers with company name, VAT number and bank details.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which bank detail fields are meant is not stated.", "Whether VAT number or company name must be validated or unique is not stated.", "Whether all procurement staff or only some may register is not stated."],
+     "related_ids": ["CQ-003"]},
+    {"id": "REQ-002", "statement": "A finance approver must approve a new supplier before it can be paid.", "type": "functional",
+     "priority": "must", "source_quote": "A finance approver must approve a new supplier before it can be paid.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who counts as a finance approver and how many approvals are needed is not stated.", "What happens on rejection is not stated.", "Whether the system makes payments or only blocks them is not stated."],
+     "related_ids": ["CQ-002", "CQ-004", "REQ-003"]},
+    {"id": "REQ-003", "statement": "Bank details must be verified before approval.", "type": "functional",
+     "priority": "must", "source_quote": "Bank details must be verified before approval.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Who verifies, and by what method, is not stated.", "Whether verification is manual or automatic is not stated.", "What happens if verification fails is not stated."],
+     "related_ids": ["CQ-001", "REQ-002"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who verifies the bank details, and how (for example a manual check, a call-back, or an automated bank check)?",
+     "why_it_matters": "Verification gates approval of payments to a supplier and defines who needs which permissions.", "blocking": true,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "The verification step and its actor cannot be specified; payment fraud controls stay undefined.", "topic": "verification"},
+    {"id": "CQ-002", "question": "Which role counts as a finance approver, is one approval enough, and can the person who registered the supplier also approve it?",
+     "why_it_matters": "Defines permissions and segregation of duties on a payment-related action.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Approval permissions cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-003", "question": "Which fields make up the bank details, and should the VAT number and company name be validated or checked for duplicates?",
+     "why_it_matters": "Determines the data collected and the validation rules.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The registration data model stays undefined.", "topic": "data"},
+    {"id": "CQ-004", "question": "What happens when a supplier is rejected or its bank details fail verification, and can details be edited after approval?",
+     "why_it_matters": "Defines the supplier states and the behaviour after failure or change.", "blocking": false,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Rejection, failure and re-approval flows stay unspecified.", "topic": "states"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Approver role, approval count and rejection behaviour are not stated."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Verifier and verification method are not stated."}
+  ]
+}

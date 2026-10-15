@@ -54,6 +54,10 @@
             "items": {
               "$ref": "common.schema.json#/$defs/dec_id"
             }
+          },
+          "unmatched": {
+            "type": "array",
+            "description": "eval mode: pre-written answers or questions that did not match exactly one counterpart"
           }
         }
       }

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-053326-83ae98",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Package managers must be able to award a supplier package to one supplier.", "type": "functional",
+     "priority": "must", "source_quote": "Package managers must be able to award a supplier package to one supplier.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which package managers may award (all, or only those assigned to the package) is not stated.", "How the supplier is chosen (from which list of suppliers) is not stated.", "Whether an award can be undone or changed is not stated."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Awarded packages should be read-only.", "type": "functional",
+     "priority": "should", "source_quote": "Awarded packages should be read-only.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which parts of the package are read-only (package details, award, supplier submissions) is not stated.", "Whether read-only applies to every user or has exceptions is not stated."],
+     "related_ids": ["CQ-002", "CQ-003"]},
+    {"id": "REQ-003", "statement": "Suppliers must be notified when they win.", "type": "functional",
+     "priority": "must", "source_quote": "Suppliers must be notified when they win.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Notification channel (email, in-app, other) is not stated.", "Notification content and timing are not stated.", "Which supplier contacts receive it is not stated."],
+     "related_ids": ["CQ-004"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Which package managers are allowed to award a package, and how is the supplier chosen?", "why_it_matters": "Determines roles, permissions and the data the award action needs.", "blocking": true,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The award permission and supplier selection cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-002", "question": "Can an award be reversed or changed after it is made, and by whom?", "why_it_matters": "Awarding may be irreversible and interacts with the read-only rule and the notification already sent.", "blocking": true,
+     "related_ids": ["REQ-001", "REQ-002"], "consequence_if_unanswered": "Behaviour after award, including corrections, is undefined.", "topic": "award reversal"},
+    {"id": "CQ-003", "question": "What exactly must be read-only on an awarded package, and for which users?", "why_it_matters": "Defines the scope of editing restrictions.", "blocking": false,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "The read-only behaviour cannot be specified precisely.", "topic": "read-only"},
+    {"id": "CQ-004", "question": "How should the winning supplier be notified (channel, content, recipients, timing)?", "why_it_matters": "Determines the notification mechanism and supplier contact data used.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "Notification behaviour cannot be specified.", "topic": "notification"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Permissions, supplier selection and reversibility of the award are not stated."},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Scope of read-only and affected users are not stated."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "Notification channel, content and recipients are not stated."}
+  ]
+}

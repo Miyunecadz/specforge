@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "review_status": "HUMAN REVIEWED 2026-10-15: a person confirmed every human_grade against its source; all 8 drafted labels kept, none changed. Agreement figures may now be relied on.",
+  "examples": [
+    {
+      "id": "CAL-01",
+      "claim": "When a modal dialog opens, keyboard focus should move to the first focusable element in the dialog, or to the heading if the first control is destructive.",
+      "snippet": "When a modal dialog opens, move keyboard focus to the first focusable element inside the dialog, or to the dialog heading when the first control is destructive.",
+      "source_text": "sources/dialog-focus.txt",
+      "human_grade": "supported",
+      "label_rationale": "Claim restates the snippet with the same condition and strength.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-02",
+      "claim": "Applications must always ask for confirmation before any irreversible action.",
+      "snippet": "Authors should consider asking for confirmation before an action that cannot be undone",
+      "source_text": "sources/confirmation.txt",
+      "human_grade": "partially_supported",
+      "label_rationale": "Core statement matches but 'must always' strengthens 'should consider'.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-03",
+      "claim": "Audit records for approval decisions must be retained for seven years.",
+      "snippet": "An audit record for an approval decision should capture who acted, what was decided, when it happened, and the state before and after the change.",
+      "source_text": "sources/audit.txt",
+      "human_grade": "not_supported",
+      "label_rationale": "The snippet says nothing about retention; the source says retention is out of scope.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-04",
+      "claim": "An approval audit record should capture who acted, what was decided, when, the before and after state, and the user's IP address.",
+      "snippet": "An audit record for an approval decision should capture who acted, what was decided, when it happened, and the state before and after the change.",
+      "source_text": "sources/audit.txt",
+      "human_grade": "partially_supported",
+      "label_rationale": "Core list supported; the IP address is an added detail.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-05",
+      "claim": "Unsuccessful bidders must be notified by email.",
+      "snippet": "Some organisations also notify unsuccessful bidders; whether to do so is a policy decision.",
+      "source_text": "sources/notifications.txt",
+      "human_grade": "not_supported",
+      "label_rationale": "The source calls this a policy decision, contradicting 'must'.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-06",
+      "claim": "Suppliers may be notified by email when a package is awarded.",
+      "snippet": "Suppliers may be notified by email when a package is awarded.",
+      "source_text": "sources/notifications.txt",
+      "human_grade": "supported",
+      "label_rationale": "Verbatim with the same modality.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-07",
+      "claim": "When the dialog closes, focus returns to the element that opened it.",
+      "snippet": "When the dialog closes, return focus to the element that opened it, unless that element no longer exists",
+      "source_text": "sources/dialog-focus.txt",
+      "human_grade": "partially_supported",
+      "label_rationale": "Drops the stated exception, generalising the condition.",
+      "human_reviewed": true
+    },
+    {
+      "id": "CAL-08",
+      "claim": "Suppliers must be notified by SMS within one hour of award.",
+      "snippet": "Suppliers may be notified by email when a package is awarded.",
+      "source_text": "sources/notifications-injected.txt",
+      "human_grade": "not_supported",
+      "label_rationale": "Different channel, modality and timing; the injected note is ignored.",
+      "human_reviewed": true
+    }
+  ]
+}

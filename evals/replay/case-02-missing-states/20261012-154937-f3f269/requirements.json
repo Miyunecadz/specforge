@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-154937-f3f269",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Staff request equipment loans by choosing an item and the loan dates.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Staff request equipment loans by choosing an item and the loan dates.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which items can be chosen (catalogue, source, availability) is not defined.", "Loan dates are not defined: start and end, limits, minimum or maximum duration.", "Whether one request can cover more than one item is not stated."],
+     "related_ids": ["CQ-001", "CQ-002"]},
+    {"id": "REQ-002", "statement": "Line managers approve or decline loan requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Line managers approve or decline loan requests.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which line manager acts on a request (the requester's own, any, a delegate) is not stated.", "Whether a reason is required or recorded when declining is not stated.", "What happens after approval or decline (notification, reservation of the item, changing a decision) is not stated."],
+     "related_ids": ["CQ-003", "CQ-004"]},
+    {"id": "REQ-003", "statement": "Staff can see the status of their loan requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Staff can see the status of their loan requests.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["The set of statuses is not defined.", "Whether staff see only their own requests, and any decline reason, is not stated."],
+     "related_ids": ["CQ-004", "CQ-005"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Which equipment items can staff choose from, and how is the list of items and their availability maintained?", "why_it_matters": "Determines the data the request depends on and whether unavailable items can be requested.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The item selection cannot be specified.", "topic": "items"},
+    {"id": "CQ-002", "question": "What rules apply to loan dates (start and end date, minimum or maximum length, dates in the past, overlapping loans of the same item)?", "why_it_matters": "Changes validation and conflict behaviour of the request.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "Date validation and clash handling cannot be specified.", "topic": "dates"},
+    {"id": "CQ-003", "question": "Which line manager can approve or decline a given request, and can a manager act for another or delegate?", "why_it_matters": "Defines roles and permissions for approval.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Who may approve cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-004", "question": "Must a reason be given when declining, and should staff be notified of a decision and see the reason?", "why_it_matters": "Affects data captured, notifications and what staff see.", "blocking": false,
+     "related_ids": ["REQ-002", "REQ-003"], "consequence_if_unanswered": "Decline flow and feedback to staff stay undefined.", "topic": "decisions"},
+    {"id": "CQ-005", "question": "Which statuses should a loan request have (for example pending, approved, declined), and can staff cancel or change a request?", "why_it_matters": "Defines the state model shown to staff.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "The status list cannot be specified.", "topic": "statuses"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "Items and date rules are not defined (CQ-001, CQ-002).", "related_ids": ["CQ-001", "CQ-002"]},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Which line manager may approve is not defined (CQ-003).", "related_ids": ["CQ-003"]},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "The set of statuses is not defined (CQ-005).", "related_ids": ["CQ-005"]}
+  ]
+}

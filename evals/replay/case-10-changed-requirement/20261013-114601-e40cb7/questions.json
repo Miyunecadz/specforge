@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-114601-e40cb7",
+  "questions": [
+    {"id": "Q-001",
+     "question": "Can two bookings for the same room overlap? If one booking ends exactly when the next starts, is that a clash? And can staff book a room during a maintenance block?",
+     "why_it_matters": "The core promise of the booking tool is a reserved room. Without a rule, two people could hold the same room at once, or someone could book a room that is under maintenance. Your earlier answers set the 4-hour and 30-day limits but not clashes.",
+     "affected_ids": ["GAP-002", "FEA-006", "REQ-001", "REQ-003"],
+     "topic_keywords": ["overlap", "double", "clash", "back-to-back"],
+     "options": [
+       {"option": "No overlaps; back-to-back bookings are allowed; booking inside a block is refused", "trade_offs": "Each room is held by one person at a time and maintenance is respected. Staff who pick a taken slot are refused and must choose another time."},
+       {"option": "No overlaps; a gap is needed between bookings (for example for room changeover); booking inside a block is refused", "trade_offs": "Leaves time between meetings, but rooms are less available and you must set the gap length."},
+       {"option": "Overlaps are allowed", "trade_offs": "Simplest to build, but two teams can arrive for the same room and there is no rule on which booking wins."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "When the facilities team creates a maintenance block, should they first see which bookings it will cancel and confirm? Once created, can a block be changed, removed or undone, and if it is removed should the cancelled bookings come back? Is there already a design for the facilities team's blocking screen?",
+     "why_it_matters": "A single block cancels other people's bookings and emails them. A mistyped date range could cancel many bookings with no way back. No screen for the blocking workflow was captured, so the steps need your input.",
+     "affected_ids": ["GAP-001", "GAP-003", "FEA-008", "FEA-009", "REQ-003"],
+     "topic_keywords": ["block", "undo", "confirm", "restore"],
+     "options": [
+       {"option": "Block cannot be undone; the facilities team sees the affected bookings and confirms before the block is applied", "trade_offs": "Protects against mistakes before they happen and is simple to build. A block applied by mistake cannot bring bookings back, so owners would have to rebook."},
+       {"option": "Block can be removed or shortened; cancelled bookings are restored and owners are told", "trade_offs": "Mistakes can be corrected, but restoring bookings may clash with rooms others have booked since, and owners receive a second email."},
+       {"option": "Block can be removed or shortened, but cancelled bookings stay cancelled", "trade_offs": "Easy to correct the block itself, but staff still lose their rooms permanently."}
+     ],
+     "recommendation": {"option": "Block cannot be undone; the facilities team sees the affected bookings and confirms before the block is applied",
+       "finding_ids": ["F-GAP-003-01"],
+       "rationale": "Research guidance recommends a confirmation naming what will be affected for actions that cannot be undone. The source has low confidence and does not cover bulk actions on other users' records, so treat this as a starting point for your decision."},
+     "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "If a block only partly overlaps a booking, or starts while a booking is already under way, should that booking be cancelled?",
+     "why_it_matters": "You said bookings in the blocked period are cancelled and owners emailed. This decides exactly which owners lose their room and receive an email.",
+     "affected_ids": ["FEA-007", "REQ-003", "ASM-F-002"],
+     "topic_keywords": ["block", "partial", "in-progress", "cancel"],
+     "options": [
+       {"option": "Cancel any booking that overlaps the block at all, including bookings in progress", "trade_offs": "Room is guaranteed free for maintenance, but staff in a meeting could lose their room."},
+       {"option": "Cancel bookings that overlap the block but leave bookings already in progress", "trade_offs": "Avoids interrupting meetings, but maintenance may have to wait for them to finish."},
+       {"option": "Cancel only bookings that fall entirely inside the block", "trade_offs": "Fewer cancellations, but partly overlapping bookings would still clash with maintenance."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "Can the facilities team block every room, or only certain rooms? How is membership of the facilities team decided?",
+     "why_it_matters": "You named the facilities team as room admins but not which rooms they cover. This sets who is allowed to cancel bookings by blocking.",
+     "affected_ids": ["FEA-004", "REQ-003"],
+     "topic_keywords": ["facilities", "admin", "rooms", "permission"],
+     "options": [
+       {"option": "Every facilities team member can block every room", "trade_offs": "Simplest permission rule, but anyone on the team can cancel bookings for any room."},
+       {"option": "Each facilities team member can block only the rooms assigned to them", "trade_offs": "Tighter control, but someone must maintain the assignments."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005",
+     "question": "What should happen to the future bookings of someone who leaves the company or whose account is disabled? And what should anyone not signed in with a company account see?",
+     "why_it_matters": "Only the person who made a booking can cancel it, so a departed employee's bookings would hold rooms that nobody is allowed to release.",
+     "affected_ids": ["GAP-010", "FEA-014", "FEA-002", "REQ-002"],
+     "topic_keywords": ["leaver", "disabled", "account", "sign-in"],
+     "options": [
+       {"option": "Future bookings are cancelled automatically when the account is disabled", "trade_offs": "Rooms are freed promptly, but owners are not asked first and the system must learn when accounts are disabled."},
+       {"option": "A facilities team member can cancel bookings of disabled accounts", "trade_offs": "Gives a human check, but adds a rare exception to the owner-only cancellation rule and some manual work."},
+       {"option": "Leave them in place until the booking time passes", "trade_offs": "Nothing to build, but rooms can be wasted."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "How long should past and cancelled bookings be kept?",
+     "why_it_matters": "Booking records name the person who booked, so keeping them is a data retention decision.",
+     "affected_ids": ["FEA-015", "GAP-014", "REQ-001"],
+     "topic_keywords": ["retention", "keep", "history", "delete"],
+     "options": [
+       {"option": "Keep for a fixed period (for example 12 months), then delete", "trade_offs": "Limits stored personal data and supports short-term disputes, but older history is lost."},
+       {"option": "Keep indefinitely", "trade_offs": "Full history, but personal data is held with no end date."},
+       {"option": "Delete once the booking has passed or been cancelled", "trade_offs": "Least data held, but there is no way to look back at what happened."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007",
+     "question": "Before choosing a time, should staff see when a room is already booked or blocked? If so, should they see who made other bookings?",
+     "why_it_matters": "Without availability, staff only learn about clashes after pressing Book. Showing who booked exposes colleagues' names.",
+     "affected_ids": ["GAP-009", "FEA-012", "REQ-001", "REQ-003"],
+     "topic_keywords": ["availability", "calendar", "visible", "booked"],
+     "options": [
+       {"option": "Show when each room is booked or blocked, without names", "trade_offs": "Staff can plan around clashes and maintenance, and colleagues' names stay private. It needs an extra view."},
+       {"option": "Show when each room is booked or blocked, with the booker's name", "trade_offs": "Staff can contact the booker, but names are visible to all staff."},
+       {"option": "Show nothing; staff find out after pressing Book", "trade_offs": "No extra screen, but booking is trial and error."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008",
+     "question": "Should past and cancelled bookings stay in 'My bookings'? Should a booking cancelled by a block be marked differently from one the owner cancelled? Is cancelling by a block an intended exception to owner-only cancellation? Should cancelling ask for confirmation?",
+     "why_it_matters": "Staff need to understand why a booking disappeared after a block, and need protection from accidental cancellation.",
+     "affected_ids": ["GAP-007", "FEA-013", "FEA-003", "ASM-G-003", "REQ-002"],
+     "topic_keywords": ["cancelled", "history", "my bookings", "confirmation"],
+     "options": [
+       {"option": "Keep past and cancelled bookings visible, with block cancellations labelled with the reason; owner cancel asks for confirmation", "trade_offs": "Clear history and fewer accidents, but a longer list and an extra step."},
+       {"option": "Show only upcoming active bookings; cancelled bookings disappear", "trade_offs": "Simple list, but staff may not know why a booking vanished after a block."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-009",
+     "question": "Should the system record who created each block and why each booking was cancelled (by the owner or by a block), and when?",
+     "why_it_matters": "Blocks cancel other people's bookings. Complaints about lost rooms can only be answered if the cause and the person responsible are recorded. You have not asked for this.",
+     "affected_ids": ["GAP-013", "FEA-011", "DEC-005"],
+     "topic_keywords": ["audit", "record", "log", "who"],
+     "options": [
+       {"option": "Record who, when and why for every block and cancellation", "trade_offs": "Disputes can be settled, with a small amount of extra data to keep and protect."},
+       {"option": "Record nothing beyond the booking itself", "trade_offs": "Less to build, but the cause of a lost booking cannot be shown later."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"},
+    {"id": "Q-010",
+     "question": "Who adds, renames or removes rooms (the mockup shows Oak and Elm), and can a booking be edited or must it be cancelled and made again?",
+     "why_it_matters": "This sets whether the facilities team needs admin permissions beyond blocking, and what the booking flow must support.",
+     "affected_ids": ["GAP-014", "FEA-016", "REQ-001", "REQ-003"],
+     "topic_keywords": ["rooms", "edit", "manage", "admin"],
+     "options": [
+       {"option": "The facilities team manages rooms; bookings cannot be edited, only cancelled and rebooked", "trade_offs": "Smallest build, but changing a booking takes more steps and may lose the slot."},
+       {"option": "The facilities team manages rooms; owners can edit their own bookings", "trade_offs": "More convenient for staff, but editing needs the same clash checks as a new booking."},
+       {"option": "Room list is fixed and set by the technical team", "trade_offs": "No room admin screen, but every room change needs a developer."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Which durations up to 4 hours are offered (the mockup shows 1, 2 and 4 hours), whether past start times are refused, and time step", "related_ids": ["GAP-005", "FEA-005", "ASM-G-002"]},
+    {"item": "Handling of two people booking the same slot at once and repeated Book presses", "related_ids": ["GAP-004"]},
+    {"item": "Success, failure, empty and loading messages after Book and Cancel", "related_ids": ["GAP-006"]},
+    {"item": "Content of the block-cancellation email and delivery failure handling", "related_ids": ["GAP-008", "FEA-010"]},
+    {"item": "Accessible names for repeated Cancel booking buttons and date-time input accessibility", "related_ids": ["GAP-011"]},
+    {"item": "Time zone and daylight-saving handling for bookings and blocks", "related_ids": ["GAP-012"]},
+    {"item": "Cancellation cutoff is the booking start time with no earlier notice period", "related_ids": ["ASM-F-001", "FEA-003"]}
+  ]
+}

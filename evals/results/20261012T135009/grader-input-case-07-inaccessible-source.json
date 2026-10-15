@@ -1,0 +1,22 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-007-01",
+   "claim": "An audit record for an approval decision should capture who acted, what was decided, when it happened, and the state before and after the change.",
+   "snippet": "An audit record for an approval decision should capture who acted, what was decided, when it happened, and the state before and after the change.",
+   "source_text_path": "/mnt/e/projects/247tech/247-research/evals/runs/20261012-055017-ac3509/sources/SRC-24ac1554.txt"
+  },
+  {
+   "id": "F-GAP-007-02",
+   "claim": "Audit records should be append-only so that later edits cannot rewrite history.",
+   "snippet": "Audit records should be append-only so that later edits cannot rewrite history.",
+   "source_text_path": "/mnt/e/projects/247tech/247-research/evals/runs/20261012-055017-ac3509/sources/SRC-24ac1554.txt"
+  },
+  {
+   "id": "F-GAP-007-03",
+   "claim": "Retention periods for audit records are set by organisation policy, not by the user interface.",
+   "snippet": "Retention periods for audit records are set by the organisation's policy, not by the user interface.",
+   "source_text_path": "/mnt/e/projects/247tech/247-research/evals/runs/20261012-055017-ac3509/sources/SRC-24ac1554.txt"
+  }
+ ]
+}

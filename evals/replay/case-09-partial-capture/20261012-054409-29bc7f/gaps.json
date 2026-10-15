@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-054409-29bc7f",
+  "gaps": [
+    {"id": "GAP-001", "title": "Leave request submission screen not captured",
+     "description": "REQ-001 (employees submit leave requests) is confirmed, but the only entry point, the 'New request' link, leads to a page that failed to capture (HTTP 404). The submission form, its fields, required inputs, validation and confirmation are not shown in the capture. The visible leave request data shows only leave type, duration in days and status; start/end dates and requester are inferred, not visible. Which data a request contains (CQ-002) was not answered by any decision.",
+     "category": "flow",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-001"], "related_scr_ids": ["SCR-001", "SCR-004", "SCR-008", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-008"},
+       {"artifact": "inventory.json", "locator": "SCR-004"},
+       {"artifact": "inventory.json", "locator": "SCR-011"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-004]"},
+       {"artifact": "requirements.json", "locator": "REQ-001"},
+       {"artifact": "requirements.json", "locator": "CQ-002"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "Submission is the first step of the whole leave workflow; without knowing what an employee enters (leave type, dates, part days, reason) the approval and status screens cannot be specified either.",
+     "consequences_if_unresolved": "The submission form, its validation messages and the stored leave request record would be specified by guesswork, and may not match what managers need to decide.",
+     "resolution_path": "both", "priority": "critical",
+     "research_questions": [
+       "Which fields do established leave management products (for example BambooHR, Personio, Microsoft Viva/Teams Shifts time-off) collect on a time-off request, and which are mandatory?",
+       "How do leave request forms commonly handle half days and multi-day ranges spanning weekends or public holidays when computing duration in days?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-002", "title": "Rejection reason entry and display not shown",
+     "description": "DEC-002 confirms that a reason is required when rejecting and that the employee sees it. The Reject button on the request detail has no link or target, and no reason input, prompt or display of a rejection reason is shown anywhere in the capture. Where the manager enters the reason, any length or content limits, and where the employee sees it are not shown.",
+     "category": "states",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-002", "SCR-005", "SCR-010"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-002"},
+       {"artifact": "inventory.json", "locator": "SCR-005"},
+       {"artifact": "inventory.json", "locator": "SCR-010"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "The customer has made the rejection reason mandatory and visible to the employee, so the Reject action cannot be specified without a place to enter it and a place to show it.",
+     "consequences_if_unresolved": "Rejections could be recorded without a reason, or the reason could be captured but never shown to the employee, breaking a confirmed customer decision.",
+     "resolution_path": "both", "priority": "critical",
+     "research_questions": [
+       "How do approval workflows commonly collect a mandatory rejection reason (inline field, modal dialog) and how is the reason surfaced to the requester?",
+       "What WCAG 2.2 AA requirements apply to a required text input shown in a dialog after pressing a button (focus management, error identification)?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-003", "title": "Role-based visibility of requests and approval actions undefined",
+     "description": "DEC-001 confirms that managers decide only on their own direct reports' requests. The capture shows a single list screen with a 'New request' link alongside Open links, and a detail screen showing Approve and Reject, with no requester shown and no indication of whose view this is. Whose requests the list shows (own, direct reports, all), whether employees ever see Approve/Reject, and how a manager's own leave requests are handled (they are not their own direct report) are not shown in the capture.",
+     "category": "permissions",
+     "reason": "ambiguous_behaviour",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-001", "SCR-002", "SCR-003", "SCR-005", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-003]"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-005]"},
+       {"artifact": "inventory.json", "locator": "SCR-011 (Requester basis inferred)"},
+       {"artifact": "requirements.json", "locator": "REQ-003 ambiguity_notes"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "A person can be both an employee (submitting leave) and a manager (deciding on reports' leave); the mockup does not separate these views, so the direct-reports-only rule cannot be mapped onto screens.",
+     "consequences_if_unresolved": "Employees could be shown approval actions on their own requests, or managers could see colleagues' requests outside their reporting line, contradicting DEC-001.",
+     "resolution_path": "customer", "priority": "critical",
+     "research_questions": [],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-004", "title": "Outcome of Approve and Reject not shown",
+     "description": "The Approve and Reject buttons have no link or target in the capture. What happens after either action (status change on the record, confirmation, navigation, effect on any leave balance, error on failure) is not shown in the capture.",
+     "category": "flow",
+     "reason": "flow_issue",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-002", "SCR-005", "SCR-010"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-010"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-005]"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "Approve and Reject are the core actions of REQ-002 and the source of the status employees see under REQ-003; their success and failure behaviour is undefined.",
+     "consequences_if_unresolved": "Managers may be unsure whether a decision was recorded, and employees may see stale or incorrect status.",
+     "resolution_path": "both", "priority": "critical",
+     "research_questions": [
+       "What success and failure feedback patterns are recommended for approve/reject actions in approval queues, and how should the status message be announced to screen readers (WCAG 2.2 SC 4.1.3 Status Messages)?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-005", "title": "Manager-absence escalation mechanism undefined",
+     "description": "DEC-001 says that if a manager is away, their own manager can act instead. How 'away' is determined (manager's own leave, an explicit setting, time elapsed), whether the manager's manager can act at any time or only during absence, whether escalation repeats up the chain, and how a request is routed or surfaced to the manager's manager are not stated and not shown in the capture.",
+     "category": "permissions",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-005"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001"},
+       {"artifact": "inventory.json", "locator": "SCR-005"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "The escalation rule widens who may approve a request; without a defined trigger the permission boundary set by DEC-001 is unclear.",
+     "consequences_if_unresolved": "Requests could stall while a manager is away, or a manager's manager could approve requests when the direct manager is present, contrary to customer intent.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "How do HR and leave systems commonly implement approval delegation or escalation when the approver is absent (automatic based on the approver's own leave, explicit delegation, timeout)?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-006", "title": "Status set and actions available per status undefined",
+     "description": "Only Pending and Approved are visible. Rejected is implied by REQ-002 and a corrected/resubmitted state by DEC-002, but the full status set (CQ-004) was not answered. The detail screen for the Approved Sick leave request failed to capture, so whether Approve and Reject appear for non-pending requests is not shown in the capture.",
+     "category": "states",
+     "reason": "ambiguous_behaviour",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-002", "SCR-003", "SCR-005", "SCR-007", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-007"},
+       {"artifact": "inventory.json", "locator": "SCR-011 (Status field)"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-003]"},
+       {"artifact": "requirements.json", "locator": "CQ-004"},
+       {"artifact": "decisions.json", "locator": "DEC-002"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "REQ-003 requires employees to see the status of each request, which cannot be specified without a defined set of statuses and the transitions between them.",
+     "consequences_if_unresolved": "Status labels and allowed actions could be inconsistent between screens, and decided requests might remain actionable.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-007", "title": "Correction and resubmission of rejected requests not covered",
+     "description": "DEC-002 confirms that a rejected request can be corrected and resubmitted. No screen in the capture shows a rejected request, an edit path, or a resubmit action. Which fields may be changed, whether resubmission reopens the same request or creates a new one, whether the previous rejection reason stays visible, and whether it goes back to the same approver are not stated.",
+     "category": "flow",
+     "reason": "requirement_uncovered",
+     "related_req_ids": ["REQ-001", "REQ-002"], "related_scr_ids": ["SCR-001", "SCR-002"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-002"},
+       {"artifact": "inventory.json", "locator": "SCR-001"},
+       {"artifact": "inventory.json", "locator": "SCR-002"}
+     ],
+     "basis": "confirmed_requirement",
+     "why_it_matters": "The customer explicitly wants a correction loop after rejection; the request lifecycle and history depend on how it works.",
+     "consequences_if_unresolved": "Employees may have to start over, losing context, or the decision history of a request may be overwritten.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-008", "title": "Reversal of approvals and employee withdrawal unanswered",
+     "description": "CQ-003 asked whether a decision can be reversed or a request withdrawn. DEC-002 answered only the rejection path (reason required; corrected and resubmitted). Whether an approved request can be revoked by the manager, cancelled or withdrawn by the employee (before or after approval), and whether Approve needs confirmation, remain unanswered and are not shown in the capture.",
+     "category": "flow",
+     "reason": "checklist",
+     "checklist_item": "Destructive-action confirmation and undo",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-005"],
+     "evidence_refs": [
+       {"artifact": "requirements.json", "locator": "CQ-003"},
+       {"artifact": "decisions.json", "locator": "DEC-002"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-005]"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Approve and Reject sit side by side with no confirmation shown; a mis-click on an approval, or plans changing after approval, is a realistic situation for leave.",
+     "consequences_if_unresolved": "An accidental or outdated approval may be impossible to correct, leaving records that do not reflect actual leave taken.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-009", "title": "Notifications for submission, decision and escalation undefined",
+     "description": "Whether employees are notified of status changes (CQ-004) was not answered. Whether managers are told about new requests, whether a manager's manager is told when they may act during an absence, which channels are used, and what happens if delivery fails are not stated and not shown in the capture.",
+     "category": "notifications",
+     "reason": "checklist",
+     "checklist_item": "Notifications and delivery failure",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-005"],
+     "evidence_refs": [
+       {"artifact": "requirements.json", "locator": "CQ-004"},
+       {"artifact": "requirements.json", "locator": "REQ-003 ambiguity_notes"},
+       {"artifact": "decisions.json", "locator": "DEC-001"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "The workflow passes between employee, manager and possibly the manager's manager; without notifications each party must keep checking the list to know a request needs attention or has been decided.",
+     "consequences_if_unresolved": "Requests may wait unnoticed, and employees may not learn of a rejection and its reason in time to correct and resubmit.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "Which notification events and channels (email, in-app, chat integrations) are standard in leave approval workflows, and how is failed delivery typically handled?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-010", "title": "Concurrent or duplicate decisions on the same request",
+     "description": "Under DEC-001 both a manager and that manager's manager may be able to act on the same request. Behaviour when two approvers act at once, when one approves while the other rejects, when a decision is made on a stale view, or when Approve/Reject is pressed twice is not stated and not shown in the capture.",
+     "category": "data integrity",
+     "reason": "checklist",
+     "checklist_item": "Concurrent changes and conflict handling",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-005", "SCR-010"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-005]"},
+       {"artifact": "inventory.json", "locator": "SCR-010"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "DEC-001 says one approval is enough and introduces a second possible approver, which makes conflicting simultaneous decisions a real case for this product.",
+     "consequences_if_unresolved": "A request could end up both approved and rejected, or the employee could see a status that flips unexpectedly.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "What techniques are commonly used to prevent conflicting concurrent state transitions on a single record in web approval workflows (optimistic concurrency, idempotency keys), and how is the losing user informed?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-011", "title": "Leave balance and overlap rules undefined",
+     "description": "Whether submission is limited by leave balance or by overlapping requests, and whether approval deducts from a balance, were asked (CQ-002, inventory ambiguities) but not answered. No balance is shown in the capture.",
+     "category": "business rules",
+     "reason": "ambiguous_behaviour",
+     "related_req_ids": ["REQ-001", "REQ-002"], "related_scr_ids": ["SCR-004", "SCR-005", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "requirements.json", "locator": "CQ-002"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-004]"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-005]"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Leave types shown include Annual and Sick leave, which are often subject to different entitlement rules; validation on submission and effects of approval depend on this.",
+     "consequences_if_unresolved": "Employees could request leave they are not entitled to, or overlapping requests could both be approved.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-012", "title": "Handling of sick leave as health-related personal data",
+     "description": "The list shows 'Sick leave' as a leave type alongside annual leave, and rejection reasons will be stored and shown. Who may see an employee's sick leave records, whether a reason or medical detail is collected, and how long such records are kept are not stated.",
+     "category": "privacy",
+     "reason": "risk",
+     "related_req_ids": ["REQ-001", "REQ-003"], "related_scr_ids": ["SCR-003", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-011 (Leave type field)"},
+       {"artifact": "inventory.json", "locator": "SCR-003"},
+       {"artifact": "decisions.json", "locator": "DEC-002"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Sickness absence information can reveal health data, which UK and EU data protection law treats as special category data; this feature collects and displays it.",
+     "consequences_if_unresolved": "Health-related information could be shown to people with no need to see it or retained longer than lawful, creating compliance and trust risks.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "Under UK GDPR and ICO employment practices guidance, is recording a leave type of 'sick leave' (without medical detail) treated as health data, and what access and retention rules apply?",
+       "What retention periods does ICO or UK employment guidance suggest for sickness absence and leave records?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-013", "title": "Traceability of decisions and escalated approvals",
+     "description": "Whether approvals, rejections (with reasons), resubmissions and decisions made by a manager's manager on someone else's behalf must be recorded with who, what and when is not stated and not shown in the capture.",
+     "category": "audit",
+     "reason": "checklist",
+     "checklist_item": "Audit logging",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-005"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001"},
+       {"artifact": "decisions.json", "locator": "DEC-002"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Escalated approvals and the correct-and-resubmit loop mean a single request can have several decisions by different people; disputes over leave need that history.",
+     "consequences_if_unresolved": "It may be impossible to tell who approved a request or what reason was given for an earlier rejection.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "What audit trail fields do leave and approval systems commonly record for each decision (actor, acting-on-behalf-of, timestamp, previous and new status, reason)?"
+     ],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-014", "title": "Empty, loading and error states not shown",
+     "description": "The list was captured only with two items, and the detail screen only in its default Pending state. Empty list, loading, failure to load, and failed action states are not shown in the capture for either screen.",
+     "category": "states",
+     "reason": "checklist",
+     "checklist_item": "Empty, loading, success and error states",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-001", "SCR-002", "SCR-003"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-001 observed_states"},
+       {"artifact": "inventory.json", "locator": "SCR-002 observed_states"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-003]"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "A new employee with no requests, or a manager with no pending decisions, will see the list empty; the status view required by REQ-003 must also handle load failures.",
+     "consequences_if_unresolved": "Users could see a blank or broken screen with no guidance, and could mistake a failure to load for having no requests.",
+     "resolution_path": "both", "priority": "important",
+     "research_questions": [
+       "What are recommended patterns for empty, loading and error states in list and detail views, including how to announce them accessibly (WCAG 2.2 SC 4.1.3)?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-015", "title": "Pending requests when reporting lines change",
+     "description": "DEC-001 ties approval to the direct manager. What happens to pending requests when an employee changes manager, a manager leaves, or a user's role changes while a request is pending or while a manager has it open is not stated.",
+     "category": "permissions",
+     "reason": "checklist",
+     "checklist_item": "Session expiry and permission changes",
+     "related_req_ids": ["REQ-002"], "related_scr_ids": ["SCR-005"],
+     "evidence_refs": [
+       {"artifact": "decisions.json", "locator": "DEC-001"}
+     ],
+     "basis": "inference",
+     "why_it_matters": "Because approval rights derive from the reporting line, changes to that line directly change who may act on existing requests.",
+     "consequences_if_unresolved": "Pending requests could be orphaned with no eligible approver, or a former manager could still decide on them.",
+     "resolution_path": "customer", "priority": "important",
+     "research_questions": [],
+     "provenance": "inference", "kind": "gap"},
+
+    {"id": "GAP-016", "title": "List content, ordering and filtering undefined",
+     "description": "The captured list shows only leave type, duration and status; requester and dates are not visible. How the list is sorted, whether it can be filtered (for example by status or employee), and its behaviour with many requests are not shown in the capture.",
+     "category": "search and filter",
+     "reason": "checklist",
+     "checklist_item": "Search, filter, sort, pagination",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-001", "SCR-003", "SCR-011"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "SCR-003"},
+       {"artifact": "inventory.json", "locator": "SCR-011"},
+       {"artifact": "inventory.json", "locator": "ambiguous_behaviours[element_ref=SCR-003]"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "A manager with several direct reports needs to tell requests apart and find pending ones; an employee needs to find a specific request's status over time.",
+     "consequences_if_unresolved": "Managers could act on the wrong person's request, and long histories could become hard to use.",
+     "resolution_path": "both", "priority": "optional",
+     "research_questions": [
+       "Which list columns, default sort orders and filters are typical in leave approval queues for managers versus employee self-service request histories?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"},
+
+    {"id": "GAP-017", "title": "Accessibility of status and decision controls not verifiable",
+     "description": "External stylesheet and script requests were blocked during capture, so contrast, focus indicators and visual styling of status and of the Approve/Reject controls could not be observed. Keyboard behaviour and focus handling after a decision are not shown in the capture.",
+     "category": "accessibility",
+     "reason": "checklist",
+     "checklist_item": "Accessibility (WCAG 2.2 AA where relevant)",
+     "related_req_ids": ["REQ-002", "REQ-003"], "related_scr_ids": ["SCR-001", "SCR-002", "SCR-005"],
+     "evidence_refs": [
+       {"artifact": "inventory.json", "locator": "limitations[5]"},
+       {"artifact": "inventory.json", "locator": "SCR-005"}
+     ],
+     "basis": "observed_limitation",
+     "why_it_matters": "Status is the main information employees need (REQ-003) and Approve/Reject are adjacent consequential actions; both must be perceivable and operable without relying on colour or a mouse.",
+     "consequences_if_unresolved": "Status could be conveyed in ways some users cannot perceive, and keyboard users could trigger the wrong decision.",
+     "resolution_path": "research", "priority": "optional",
+     "research_questions": [
+       "Which WCAG 2.2 AA success criteria apply to status badges and adjacent primary/destructive action buttons (for example 1.4.1, 1.4.3, 2.4.7, 2.5.8)?"
+     ],
+     "provenance": "mockup_observation", "kind": "gap"}
+  ],
+  "assumptions": [
+    {"id": "ASM-G-001", "text": "DEC-003 ('Approve the remaining requirements as written') approves REQ-001 and REQ-003 but does not answer CQ-002 or CQ-004, so those questions are treated as still open.",
+     "why": "DEC-003's verbatim text approves requirements without addressing the questions' content.",
+     "impact": "GAP-001, GAP-006, GAP-009 and GAP-011 are raised for questions the customer may consider settled.",
+     "to_confirm": "Whether the customer intended DEC-003 to leave submission data, status set and notifications to be decided later.",
+     "provenance": "assumption", "kind": "assumption", "related_ids": ["GAP-001", "GAP-006", "GAP-009", "GAP-011"]},
+    {"id": "ASM-G-002", "text": "DEC-002 answers only the rejection part of CQ-003; reversal of approvals and employee withdrawal are treated as unanswered.",
+     "why": "The verbatim answer mentions rejection reasons and resubmission only.",
+     "impact": "GAP-008 is raised.",
+     "to_confirm": "Whether approved requests can be revoked or withdrawn.",
+     "provenance": "assumption", "kind": "assumption", "related_ids": ["GAP-008"]},
+    {"id": "ASM-G-003", "text": "The captured list and detail screens may represent either an employee or a manager view; no role is assumed for them.",
+     "why": "No requester, user name or role indicator is visible in the capture.",
+     "impact": "GAP-003 treats role-based visibility as unresolved.",
+     "to_confirm": "Which role(s) each captured screen is intended for.",
+     "provenance": "assumption", "kind": "assumption", "related_ids": ["GAP-003"]}
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "The submission screen failed to capture and the data a leave request contains (CQ-002) is unanswered, so submission cannot be specified."},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "unknown", "reason": "The set of statuses and whether employees are notified (CQ-004) are unanswered."}
+  ]
+}

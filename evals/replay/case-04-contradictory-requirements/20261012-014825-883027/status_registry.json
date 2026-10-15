@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-014825-883027",
+  "items": {
+    "REQ-001": {
+      "id": "REQ-001",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-002"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-004": {
+      "id": "REQ-004",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-002"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-005": {
+      "id": "REQ-005",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-006": {
+      "id": "REQ-006",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    }
+  },
+  "registered_artifacts": {
+    "requirements.json": "d3b2cf01f98f3056ff55e3c7b79cfe409f0fd7a2cd2598306c1e7731b9f07133"
+  }
+}

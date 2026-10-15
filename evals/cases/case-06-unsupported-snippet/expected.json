@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "case_id": "case-06-unsupported-snippet",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "approve"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "audit"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "export"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "audit"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "retention"
+      ]
+    }
+  ],
+  "trap_claims": [
+    {
+      "id": "T1",
+      "keywords": [
+        "ten years"
+      ],
+      "unless_any": [
+        "no fixed",
+        "not ",
+        "wrong",
+        "myth",
+        "incorrect",
+        "does not",
+        "claim that",
+        "claimed"
+      ],
+      "note": "the source quotes the ten-year rule only to refute it"
+    },
+    {
+      "id": "T2",
+      "keywords": [
+        "two-factor",
+        "required"
+      ],
+      "unless_any": [
+        "not ",
+        "does not",
+        "option",
+        "some vendors",
+        "decide"
+      ],
+      "note": "the source quotes vendors and says it does not require two-factor authentication"
+    }
+  ],
+  "expect_dropped_or_failed_findings": true,
+  "expect_capture_status": "complete"
+}

@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "case_id": "case-06-unsupported-snippet",
+  "description": "A snippet that exists but does not support its claim.",
+  "fixture_dir": "evals/fixtures/case-06-unsupported-snippet",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-06-unsupported-snippet/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "manager"
+                ]
+              },
+              {
+                "keywords": [
+                  "approv"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "reason",
+              "audit",
+              "log",
+              "export",
+              "revers",
+              "changed"
+            ]
+          },
+          "verbatim": "Managers approve or reject claims from their own direct reports only, with no amount limit.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "reason"
+                ]
+              },
+              {
+                "keywords": [
+                  "revers"
+                ]
+              },
+              {
+                "keywords": [
+                  "changed"
+                ]
+              },
+              {
+                "keywords": [
+                  "undo"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "export"
+            ]
+          },
+          "verbatim": "A reason is required when rejecting a claim, and a decision cannot be changed afterwards.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "audit"
+                ]
+              },
+              {
+                "keywords": [
+                  "log entr"
+                ]
+              },
+              {
+                "keywords": [
+                  "retain"
+                ]
+              },
+              {
+                "keywords": [
+                  "kept"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "export",
+              "reason"
+            ]
+          },
+          "verbatim": "Each audit entry records who decided, which claim, the decision, the reason and the time. Entries are kept for seven years and only finance staff can view them.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "export"
+                ]
+              }
+            ]
+          },
+          "verbatim": "The export is a CSV file of the audit log entries for a chosen date range; only finance staff can export.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [
+        {
+          "match": {
+            "keywords": [
+              "audit"
+            ]
+          },
+          "decision": "approve",
+          "verbatim": "Research the audit log gap.",
+          "resolution_path": "research"
+        }
+      ],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

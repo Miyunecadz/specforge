@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-093837-f2d964",
+  "questions": [
+    {
+      "id": "Q-001",
+      "question": "You said a manager's own manager can step in when the manager is away. When exactly may that second-level manager approve or reject a request, and who decides requests from a manager who has no manager above them (or a manager's own leave request)?",
+      "why_it_matters": "Approving leave has payroll and legal effect. The permission check for Approve and Reject depends on this answer; without it requests may stall, or the 'direct reports only' rule may be bypassed.",
+      "affected_ids": ["GAP-002", "FEA-002", "FEA-001", "REQ-002", "ASM-F-002"],
+      "topic_keywords": ["fallback", "away", "approver", "manager"],
+      "options": [
+        {"option": "The second-level manager can act only while the direct manager is marked as away", "trade_offs": "Keeps the direct-reports-only rule strong, but the system needs a way to record absence (a flag or dates), and requests wait if nobody marks it."},
+        {"option": "The second-level manager can act on their indirect reports' requests at any time", "trade_offs": "Nothing stalls and no absence tracking is needed, but the direct-manager rule is weaker and two people can decide the same request."},
+        {"option": "The direct manager names a delegate in advance", "trade_offs": "Explicit and traceable, but managers must set it up before they are away and it adds a new setting."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-002",
+      "question": "Which leave requests should each person see in the list: an employee, a manager, and the second-level manager? Should an employee also see which manager made the decision?",
+      "why_it_matters": "Requests include sick leave and rejection reasons about named employees. Showing too much exposes personal data to colleagues; showing too little means managers miss requests waiting for them.",
+      "affected_ids": ["GAP-005", "FEA-006", "FEA-005", "REQ-003", "ASM-G-003"],
+      "topic_keywords": ["visibility", "list", "see", "role"],
+      "options": [
+        {"option": "Employees see only their own; managers see their direct reports' requests; the second-level manager also sees indirect reports'", "trade_offs": "Least exposure of personal data and matches the approval rule, but needs separate views or filters per role."},
+        {"option": "Same as above, and the employee also sees who decided", "trade_offs": "More transparency for the employee, but reveals the manager's identity and, if the fallback acted, that the direct manager was away."},
+        {"option": "Everyone sees all requests with status only", "trade_offs": "Simple, but exposes colleagues' leave and is hard to reconcile with privacy of sick leave."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-003",
+      "question": "What does an employee fill in when submitting a leave request (for example leave type, start and end dates, partial days, reason, attachments), and what should happen if a request exceeds the leave balance, overlaps another request or misses a notice period: block it, warn, or allow it?",
+      "why_it_matters": "Submitting is the start of the whole workflow. The New request page could not be captured, so the form, its validation and the stored data cannot be specified without your answer.",
+      "affected_ids": ["GAP-001", "FEA-008", "REQ-001", "ASM-G-001"],
+      "topic_keywords": ["submit", "form", "fields", "balance", "overlap"],
+      "options": [
+        {"option": "Whole days only: leave type, start and end date, optional reason; problem requests are blocked", "trade_offs": "Simplest and matches the whole-day durations in the list, but cannot express half days and rigidly blocks edge cases."},
+        {"option": "Also allow partial days and attachments; problem requests are warned about but can still be submitted", "trade_offs": "More flexible for employees, but more fields to validate and managers must judge flagged requests."},
+        {"option": "You provide the field list and rules", "trade_offs": "Most accurate for your business, but delays the specification until you answer."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-004",
+      "question": "When a rejected request is corrected and resubmitted, is it the same request or a new one linked to the old one? What may the employee change, and does it go back to the same approver? Where does the manager enter the rejection reason?",
+      "why_it_matters": "You confirmed rejections need a reason and can be resubmitted, but no rejection or resubmission screen was captured. Without this, the Rejected state is a dead end and history of reasons is undefined.",
+      "affected_ids": ["GAP-003", "FEA-007", "FEA-004", "REQ-002", "REQ-003", "ASM-F-001"],
+      "topic_keywords": ["resubmit", "reject", "reason", "correct"],
+      "options": [
+        {"option": "The same request is reopened and goes back to the same approver; earlier reasons are kept in its history", "trade_offs": "One record per leave, simple for the employee, but the history needs careful design."},
+        {"option": "A new request is created, linked to the rejected one", "trade_offs": "Clean separation of decisions and an easy audit trail, but the employee sees two entries and balances must not be counted twice."},
+        {"option": "Employee may change only some fields (for example dates) on resubmission", "trade_offs": "Prevents changing the leave type to avoid scrutiny, but limits corrections."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "critical"
+    },
+    {
+      "id": "Q-005",
+      "question": "Which statuses can a request have besides Pending, Approved and Rejected (for example Cancelled, Withdrawn or Resubmitted), and should Approve and Reject still show on a request that is already decided?",
+      "why_it_matters": "Employees must see the status of each request, so every status and the changes allowed between them must be defined. The decided-request page could not be captured.",
+      "affected_ids": ["GAP-004", "FEA-009", "REQ-003"],
+      "topic_keywords": ["status", "cancel", "withdraw", "decided"],
+      "options": [
+        {"option": "Only Pending, Approved, Rejected; buttons hidden once decided", "trade_offs": "Simplest, but employees cannot withdraw a request."},
+        {"option": "Add Cancelled/Withdrawn by the employee; buttons hidden once decided", "trade_offs": "Covers plans that change, but adds rules for cancelling approved leave."},
+        {"option": "Add Cancelled and Resubmitted states and allow managers to change decisions", "trade_offs": "Most flexible, but introduces reversal rules that were not decided."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "important"
+    },
+    {
+      "id": "Q-006",
+      "question": "Does approving or rejecting a request change a leave balance or send anything to payroll? If so, how should resubmission or later changes affect it?",
+      "why_it_matters": "Balances or payroll could end up wrong (for example deducted twice on resubmission). It is not established that balances or a payroll system exist for this feature.",
+      "affected_ids": ["GAP-009", "FEA-010", "REQ-002"],
+      "topic_keywords": ["balance", "payroll", "approval", "deduct"],
+      "options": [
+        {"option": "No balance or payroll effect in this feature; it only records decisions", "trade_offs": "Smallest scope, but balances and payroll must be handled elsewhere by hand."},
+        {"option": "Deduct from a balance on approval and restore it if the leave is rejected, cancelled or reversed", "trade_offs": "Keeps balances accurate, but needs balance data and reversal rules."},
+        {"option": "Also pass approved leave to payroll or an HR system", "trade_offs": "Removes manual work, but requires an integration and a defined failure handling."}
+      ],
+      "recommendation": null,
+      "blocking": true,
+      "priority": "important"
+    },
+    {
+      "id": "Q-007",
+      "question": "Who should be notified of a new request, of a decision (including the rejection reason) and of a request waiting for the second-level manager? Through which channel, and what should happen if delivery fails?",
+      "why_it_matters": "Without notifications, requests may sit unnoticed and employees may not learn of a rejection in time to resubmit before their planned leave.",
+      "affected_ids": ["GAP-008", "FEA-011", "REQ-001", "REQ-002", "REQ-003", "ASM-G-002"],
+      "topic_keywords": ["notify", "email", "notification", "rejection"],
+      "options": [
+        {"option": "No notifications; people see status in the list", "trade_offs": "Nothing to build, but requests can wait unseen."},
+        {"option": "Email the manager on new requests and the employee on decisions", "trade_offs": "Covers the key moments, but needs an email capability and retry or failure handling."},
+        {"option": "In-product alerts plus email, including the second-level manager", "trade_offs": "Best coverage, but the most to build and maintain."}
+      ],
+      "recommendation": null,
+      "blocking": false,
+      "priority": "important"
+    },
+    {
+      "id": "Q-008",
+      "question": "Must the system keep a record of who approved or rejected each request, whether they acted as direct manager or second-level manager, and when? Who may read it and for how long is it kept?",
+      "why_it_matters": "Decisions with payroll effect can be made on another manager's behalf, so disputes may need to show who decided under which rule. Retention affects personal data.",
+      "affected_ids": ["GAP-011", "FEA-012", "REQ-002", "REQ-003"],
+      "topic_keywords": ["audit", "record", "history", "retention"],
+      "options": [
+        {"option": "Record decider, capacity and time for every decision; visible to HR and managers", "trade_offs": "Traceable and supports disputes, but requires storage and retention rules."},
+        {"option": "Keep only the current status and the rejection reason", "trade_offs": "Least data kept, but decisions cannot be traced later."}
+      ],
+      "recommendation": null,
+      "blocking": false,
+      "priority": "important"
+    }
+  ],
+  "implementation_details": [
+    {"item": "Design of empty list, loading, success and failure states so a manager can tell whether a decision took effect", "related_ids": ["GAP-012", "FEA-013", "REQ-002", "REQ-003"]}
+  ]
+}

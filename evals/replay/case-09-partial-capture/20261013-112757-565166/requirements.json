@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-112757-565166",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Employees submit leave requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Employees submit leave requests.", "source_location": "line 1",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which information a leave request contains (leave type, dates, reason) is not stated.", "Whether all employees can submit, or only some, is not stated.", "Whether a submitted request can be edited or withdrawn is not stated."],
+     "related_ids": ["CQ-001", "CQ-003"]},
+    {"id": "REQ-002", "statement": "Managers approve or reject leave requests.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Managers approve or reject leave requests.", "source_location": "line 2",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["Which manager can act on which request (direct manager, any manager, delegate) is not stated.", "Whether a reason is required on rejection is not stated.", "Whether a decision can be changed afterwards is not stated.", "Whether the employee is told of the decision is not stated."],
+     "related_ids": ["CQ-002", "CQ-003"]},
+    {"id": "REQ-003", "statement": "Employees can see the status of each request.", "type": "functional",
+     "priority": "unspecified", "source_quote": "Employees can see the status of each request.", "source_location": "line 3",
+     "provenance": "customer_requirement", "kind": "requirement",
+     "ambiguity_notes": ["The set of statuses is not stated (for example pending, approved, rejected).", "Whether employees see only their own requests is not stated.", "Whether the status is shown as a list, per request, or with notifications is not stated."],
+     "related_ids": ["CQ-003", "CQ-004"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "What information does an employee provide when submitting a leave request (for example leave type, start and end dates, reason)?",
+     "why_it_matters": "Defines the data captured and the form content.", "blocking": false,
+     "related_ids": ["REQ-001"], "consequence_if_unanswered": "The request data model and form cannot be specified.", "topic": "leave request data"},
+    {"id": "CQ-002", "question": "Which manager is allowed to approve or reject a given request (the employee's direct manager, any manager, or a delegate), and can a decision be reversed?",
+     "why_it_matters": "Sets roles and permissions and whether a decision is final.", "blocking": true,
+     "related_ids": ["REQ-002"], "consequence_if_unanswered": "Approval permissions and decision rules cannot be specified.", "topic": "permissions"},
+    {"id": "CQ-003", "question": "Can an employee edit or withdraw a request after submitting it, and is a reason required when a manager rejects one?",
+     "why_it_matters": "Changes the request lifecycle and the set of states.", "blocking": false,
+     "related_ids": ["REQ-001", "REQ-002", "REQ-003"], "consequence_if_unanswered": "The lifecycle of a request is left undefined.", "topic": "lifecycle"},
+    {"id": "CQ-004", "question": "Which statuses should employees see, and should they be notified when the status changes?",
+     "why_it_matters": "Defines the status values and any notification behaviour.", "blocking": false,
+     "related_ids": ["REQ-003"], "consequence_if_unanswered": "The status set and notification behaviour cannot be specified.", "topic": "status"}
+  ],
+  "conflicts": [],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "unknown", "reason": "Which managers may approve or reject, and whether decisions are final, is not stated.", "related_ids": ["CQ-002"]}
+  ]
+}

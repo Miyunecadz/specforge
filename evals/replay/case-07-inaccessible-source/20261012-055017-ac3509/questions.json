@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-055017-ac3509",
+  "questions": [
+    {"id": "Q-001",
+     "question": "Besides the New supplier form, are there other screens where Finance team members find a submitted supplier, record the phone check on its bank details, and approve or reject it? If not, should they be designed?",
+     "why_it_matters": "The only screen we have seen is the form used by Procurement staff. Without a place for Finance to verify and approve, the two must-have controls (approval before payment, bank details verified first) have nowhere to happen in the product.",
+     "affected_ids": ["GAP-001", "FEA-011", "REQ-002", "REQ-003", "ASM-G-001"],
+     "topic_keywords": ["approval", "screens", "verification", "finance"],
+     "options": [
+       {"option": "Further mockup screens exist; we will supply them", "trade_offs": "Keeps the design consistent with what you already have, but the specification waits until the screens are provided."},
+       {"option": "No such screens exist; design them as part of this feature", "trade_offs": "Makes the specification complete, but increases the scope and the amount to design and build."},
+       {"option": "Handle approval outside this product for now", "trade_offs": "Smallest scope, but the product cannot enforce who approves or that verification happened."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "Where are supplier payments made, and how must that place be stopped from paying a supplier that has not been approved?",
+     "why_it_matters": "The rule that a supplier cannot be paid before approval only works if whatever makes payments respects the supplier's approval status. Otherwise unverified bank accounts could still be paid.",
+     "affected_ids": ["GAP-002", "FEA-006", "FEA-007", "REQ-002"],
+     "topic_keywords": ["payment", "block", "approved", "unapproved"],
+     "options": [
+       {"option": "Payments are made inside this product, which refuses unapproved suppliers", "trade_offs": "The control is fully in our hands, but the payment function must be part of or covered by this specification."},
+       {"option": "Payments are made in another system that reads each supplier's approval status from this product", "trade_offs": "Needs an agreed link between the two systems and a decision on what happens if the status cannot be read."},
+       {"option": "Payments are made elsewhere and Finance checks approval manually", "trade_offs": "No integration needed, but the block depends on people remembering and can be bypassed."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "If the bank details of an already approved supplier are changed, must they be phoned through and approved again, who may make the change, and are payments held until then?",
+     "why_it_matters": "Changing a supplier's bank details after approval is a common way to divert payments to a fraudster. At present details are verified only before the first approval, so changed details could be paid without the phone check.",
+     "affected_ids": ["GAP-003", "FEA-010", "REQ-002", "REQ-003"],
+     "topic_keywords": ["bank", "change", "reverify", "fraud"],
+     "options": [
+       {"option": "Any change returns the supplier to pending: phone check and approval by a different Finance member again, and payments held meanwhile", "trade_offs": "Strongest protection against payment diversion, but slows legitimate bank changes and needs a held state."},
+       {"option": "Changes need approval again but not a new phone check, and payments continue to the old details until approved", "trade_offs": "Lighter workload, but changed details could be approved without independent verification."},
+       {"option": "Bank details cannot be edited after approval; a new supplier record must be registered", "trade_offs": "Simple and safe, but creates duplicate suppliers and conflicts with the duplicate VAT rule."},
+       {"option": "Allow changes without re-approval", "trade_offs": "Least effort, but removes the protection that REQ-003 is intended to give."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "When the phone check finds that bank details do not match, is the supplier treated as rejected and returned to the registrant, or held in a separate state? What if the supplier cannot be reached, and must corrected details be phoned through again?",
+     "why_it_matters": "This sets the supplier's states and who acts in each. It also decides whether corrected details could be approved without a fresh check, and whether the person who corrects a returned supplier is barred from approving it (the approver must differ from the registrant).",
+     "affected_ids": ["GAP-005", "FEA-008", "FEA-009", "FEA-018", "REQ-002", "REQ-003", "ASM-F-001", "ASM-F-002"],
+     "topic_keywords": ["verification", "failure", "reject", "resubmit"],
+     "options": [
+       {"option": "A failed check counts as a rejection: it returns to the registrant, and every resubmission needs a new phone check", "trade_offs": "One simple path and always re-verified, but a supplier who simply cannot be reached is treated like a rejection."},
+       {"option": "A failed check puts the supplier in a separate on-hold state with the Finance approver; the registrant is only involved on a rejection", "trade_offs": "Models unreachable suppliers more accurately, but adds a state and a rule for who may correct details."},
+       {"option": "Either, chosen by the Finance approver each time, with a new phone check after any correction", "trade_offs": "Flexible, but less predictable and harder to test and audit."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005",
+     "question": "Should bank details be typed in as account name, sort code and account number, uploaded as a file, or both?",
+     "why_it_matters": "You defined bank details as three fields, but the form we saw only has a file upload. The Finance approver phones to confirm these values and payments use them, so the form and stored record must hold exactly what is verified. Non-UK suppliers cannot be held in sort code and account number fields.",
+     "affected_ids": ["GAP-004", "FEA-012", "FEA-003", "REQ-001", "DEC-004"],
+     "topic_keywords": ["bank", "fields", "upload", "format"],
+     "options": [
+       {"option": "Three typed fields only; remove the file upload", "trade_offs": "Matches your answer and gives checkable values, but gives no supporting document."},
+       {"option": "Three typed fields plus an optional or required supporting file", "trade_offs": "Keeps a document for reference, but adds file rules (types, size, who can view it) and the file could differ from the typed values."},
+       {"option": "File upload only", "trade_offs": "Matches the mockup, but the values cannot be validated, searched or used for payment."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "What should be recorded about each registration, phone check, approval and rejection, and how long should those records be kept?",
+     "why_it_matters": "Without a record of who did what and when, the rule that the approver differs from the registrant cannot be checked and a disputed payment cannot be traced to the verification performed. Retention is a policy choice only you can make.",
+     "affected_ids": ["GAP-007", "FEA-015", "FEA-016", "FEA-017", "REQ-002", "REQ-003"],
+     "topic_keywords": ["audit", "record", "retention", "history"],
+     "options": [
+       {"option": "Keep an unchangeable history of who acted, what they decided, when, and the number used for the phone check; keep it for as long as your organisation's policy says", "trade_offs": "Supports tracing and the separation-of-duties check, but needs storage and your retention period."},
+       {"option": "Keep only the current status and the approver's name", "trade_offs": "Less to build, but the history of changes and verifications is lost."},
+       {"option": "Keep a full history that Finance may correct", "trade_offs": "Allows fixing mistakes, but history could be rewritten, weakening its value as evidence."}
+     ],
+     "recommendation": {"option": "Keep an unchangeable history of who acted, what they decided, when, and the number used for the phone check; keep it for as long as your organisation's policy says",
+                        "finding_ids": ["F-GAP-007-02", "F-GAP-007-03"],
+                        "rationale": "Kept research findings say audit records should be append-only and that retention is set by organisation policy. The source is low confidence generic guidance, not COSO or UK audit practice, so please confirm against your own policy."},
+     "blocking": false, "priority": "important"},
+    {"id": "Q-007",
+     "question": "How should Finance be told that a supplier is waiting for approval, and how should the registrant be told that a supplier was returned?",
+     "why_it_matters": "Any Finance member can approve, so a submission with no prompt may sit unnoticed and delay paying the supplier. A returned supplier the registrant does not know about stalls the same way.",
+     "affected_ids": ["GAP-009", "FEA-014", "REQ-002"],
+     "topic_keywords": ["notification", "email", "alert", "returned"],
+     "options": [
+       {"option": "Email to the Finance team on submission and to the registrant on return", "trade_offs": "People are told without opening the product, but needs an email service and a plan for failed delivery."},
+       {"option": "An in-product list of suppliers awaiting approval and of returned suppliers, with no messages", "trade_offs": "Cheaper to build, but relies on people checking the list."},
+       {"option": "Both the in-product lists and email", "trade_offs": "Least likely to stall, but the most to build and maintain."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008",
+     "question": "For the rule that blocks a supplier with the same VAT number as an existing supplier, do suppliers that are pending approval or were rejected count as existing? What if two people submit the same supplier at once?",
+     "why_it_matters": "This decides whether a returned supplier can be resubmitted and whether duplicate supplier records, with the risk of duplicate payments, can slip through.",
+     "affected_ids": ["GAP-011", "FEA-004", "FEA-005", "REQ-001", "DEC-004"],
+     "topic_keywords": ["duplicate", "vat", "pending", "simultaneous"],
+     "options": [
+       {"option": "Pending and approved suppliers count; rejected ones do not, and the second simultaneous submission is blocked", "trade_offs": "Prevents duplicates while allowing a rejected supplier to be corrected and resubmitted."},
+       {"option": "All suppliers count, including rejected ones", "trade_offs": "Strictest, but a rejected supplier can only be resubmitted by correcting the existing record."},
+       {"option": "Only approved suppliers count", "trade_offs": "Easiest, but two pending records with the same VAT number can exist."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Exact messages and states shown to the registrant on successful submit, invalid VAT format, blocked duplicate and upload failure", "related_ids": ["GAP-006", "FEA-013"]},
+    {"item": "What happens if two Finance members approve and reject the same supplier at the same time (only one decision takes effect)", "related_ids": ["FEA-019"]},
+    {"item": "Accessibility of error messages and the file chooser, to be addressed during implementation (deferred gap)", "related_ids": ["GAP-012"]}
+  ]
+}

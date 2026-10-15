@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-031950-5a40ac",
+  "questions": [
+    {"id": "Q-001",
+     "question": "Who counts as a finance administrator, how does someone get or lose that role, and what should other users see where the Delete button is today (a hidden button, a greyed-out button, or a refusal message when they try)?",
+     "why_it_matters": "You have decided that only finance administrators can delete invoices. Without a definition of the role and of what everyone else sees, the restriction cannot be written down or tested.",
+     "affected_ids": ["REQ-001", "REQ-002", "FEA-001", "GAP-004"],
+     "topic_keywords": ["finance", "administrator", "role", "delete"],
+     "options": [
+       {"option": "Use a role that already exists in your product; Delete is hidden for everyone else", "trade_offs": "Least new work and no clutter for other users, but they cannot tell that deletion exists or who to ask."},
+       {"option": "Use an existing role; Delete is shown greyed out with a note that it needs a finance administrator", "trade_offs": "Other users learn who to ask, but the button invites clicks they cannot use."},
+       {"option": "Create a new finance administrator role that account owners assign and remove", "trade_offs": "Gives precise control over who can delete, but adds role-management screens and work."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "During the 30 days after an invoice is deleted, who may see the deleted invoices and restore them, and where should they do that?",
+     "why_it_matters": "Recovery within 30 days is a must-have, but nothing shows a place to find deleted invoices and nobody has said who may restore them. Without this, recovery cannot be built.",
+     "affected_ids": ["REQ-006", "FEA-002", "GAP-002", "ASM-G-002"],
+     "topic_keywords": ["restore", "recover", "deleted", "permission"],
+     "options": [
+       {"option": "Only finance administrators can view and restore deleted invoices", "trade_offs": "Matches who can delete and is the safest, but the person who deleted by mistake may need an administrator to help."},
+       {"option": "Finance administrators, plus the user who created the invoice", "trade_offs": "Easier self-service for creators, but gives non-administrators access to invoices an administrator removed."},
+       {"option": "Any user who can see invoices can restore them", "trade_offs": "Simplest to use, but weakens the restriction on who controls deleted invoices."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "Do any invoices (for example sent or paid ones) have to be kept for legal or accounting reasons, and in which countries are your invoices issued?",
+     "why_it_matters": "You have decided deleted invoices are permanently removed after 30 days. Invoices are financial records, and permanent removal could destroy records the business is required to keep. No research on this was kept in this run, so the rules are not established.",
+     "affected_ids": ["REQ-005", "FEA-004", "GAP-003", "ASM-G-003"],
+     "topic_keywords": ["retention", "legal", "invoices", "country"],
+     "options": [
+       {"option": "No retention obligation applies; all deleted invoices are removed after 30 days", "trade_offs": "Simplest to build, but risky if sent or paid invoices must be kept, and gaps may appear in invoice number sequences."},
+       {"option": "Invoices that were sent or paid cannot be deleted, only cancelled or credited, and only unsent drafts can be deleted", "trade_offs": "Protects financial records, but changes the Delete behaviour you described and needs an invoice-state rule."},
+       {"option": "Take advice on the rules for your countries first, then decide", "trade_offs": "Safest answer, but delays the specification of deletion and permanent removal."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "For the Excel export: does it cover one invoice or many at a time, which invoice fields does it include, where does the user start it, and which users may use it?",
+     "why_it_matters": "Excel export is a must-have, but the mockup only shows a per-row Export PDF button. Scope, content and permissions are all unstated, so the feature cannot be specified or built to your expectations.",
+     "affected_ids": ["REQ-004", "FEA-007", "FEA-008", "GAP-001"],
+     "topic_keywords": ["excel", "export", "fields", "users"],
+     "options": [
+       {"option": "Per-invoice Excel export next to Export PDF, open to anyone who can see the invoice", "trade_offs": "Matches the existing PDF action and is quick to build, but cannot export a whole list."},
+       {"option": "Export of the whole invoice list (with filters) to Excel, finance administrators only", "trade_offs": "Suits reporting and limits who can take data out, but needs a new list-level action and a field list."},
+       {"option": "Both per-invoice and list-level export, with permissions to be agreed", "trade_offs": "Most complete, but the most work and more decisions on content."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005",
+     "question": "When an invoice is permanently removed after 30 days, should that also remove it from backups, delete any record that it existed, and affect PDF or Excel files already exported? Should anyone be warned beforehand?",
+     "why_it_matters": "Permanent removal is confirmed, but how far it reaches is not defined. Invoice data could stay where you expect it gone, or disappear where you expect it kept.",
+     "affected_ids": ["REQ-005", "FEA-003", "GAP-011"],
+     "topic_keywords": ["permanent", "removal", "backups", "warning"],
+     "options": [
+       {"option": "Remove the invoice from the live system only; keep a log entry of who deleted it and when; no warning", "trade_offs": "Simple and traceable, but copies in backups and exports remain."},
+       {"option": "Remove the invoice and its backups on the normal backup cycle; keep a log entry; notify administrators before removal", "trade_offs": "Closer to a true removal and gives a last chance to restore, but needs backup handling and a notice step."},
+       {"option": "Remove everything including the log entry", "trade_offs": "Fullest removal, but a disputed deletion could no longer be investigated."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "While an invoice is deleted but still recoverable, should it still count in customer balances, totals and reports, and should it still appear in the invoice list?",
+     "why_it_matters": "Invoices carry amounts tied to customers. Figures you rely on could change differently when an invoice is deleted, restored and finally removed.",
+     "affected_ids": ["REQ-005", "REQ-006", "FEA-005", "GAP-006"],
+     "topic_keywords": ["balances", "reports", "deleted", "list"],
+     "options": [
+       {"option": "Deleted invoices disappear from the list and stop counting in balances and reports straight away; restoring brings them back", "trade_offs": "Behaves as users expect from a delete, but figures change on delete and restore."},
+       {"option": "Deleted invoices stay in the list marked as deleted and are excluded from balances and reports", "trade_offs": "Easy to find and restore, but clutters the list and needs a visible deleted state."},
+       {"option": "Deleted invoices still count in balances and reports until permanently removed", "trade_offs": "Figures do not change if a deletion is reversed, but deleted invoices still affect totals."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007",
+     "question": "What should users see while an invoice is being deleted, restored or exported, when it succeeds, when it fails, and when the invoice list is empty?",
+     "why_it_matters": "Only the normal view of the Invoices screen was captured. Both actions change or produce financial records, and users need to know whether they worked.",
+     "affected_ids": ["FEA-009", "GAP-009", "REQ-001", "REQ-004", "REQ-006"],
+     "topic_keywords": ["success", "error", "empty", "message"],
+     "options": [
+       {"option": "Standard feedback: a progress indicator, a confirmation message after success, an error message with a retry on failure, and an empty-list message", "trade_offs": "Clear to users and quick to specify, but adds a message to each action."},
+       {"option": "Minimal feedback: show messages for failures only", "trade_offs": "Less to build, but users may repeat actions because they cannot tell they succeeded."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008",
+     "question": "What should happen if Delete is pressed twice, if two administrators act on the same invoice at once, or if an invoice is exported while someone else deletes it?",
+     "why_it_matters": "Delete and export act on the same invoice row, and deletion is time-limited, so simultaneous actions could leave users with stale lists or exports of deleted invoices.",
+     "affected_ids": ["FEA-006", "GAP-012", "REQ-001", "REQ-006"],
+     "topic_keywords": ["concurrent", "twice", "simultaneous", "delete"],
+     "options": [
+       {"option": "The first action wins; later ones show a message that the invoice has already changed", "trade_offs": "Predictable and safe, but needs a message and a check on each action."},
+       {"option": "Treat repeats as harmless: they quietly do nothing", "trade_offs": "Less to build, but users may not understand why nothing happened."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Confirm that REQ-002 (any user can delete their own invoices) is treated as superseded by DEC-001 (only finance administrators delete); wording tidy-up in the specification.", "related_ids": ["REQ-002", "ASM-G-001", "ASM-F-001"]},
+    {"item": "Reword REQ-003 so it no longer reads 'PDF only', since DEC-002 requires both PDF and Excel.", "related_ids": ["REQ-003", "ASM-F-002"]},
+    {"item": "Escape user-entered fields in the Excel export so they cannot be read as spreadsheet formulas (inference only; not researched in this run).", "related_ids": ["FEA-010", "GAP-001"]},
+    {"item": "Choose how a missed permanent removal after 30 days is noticed and handled.", "related_ids": ["FEA-011", "REQ-005"]}
+  ]
+}

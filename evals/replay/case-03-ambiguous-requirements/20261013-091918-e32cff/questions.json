@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-091918-e32cff",
+  "questions": [
+    {"id": "Q-001",
+     "question": "When you share a document, what can a viewer and an editor each do? For example, can an editor rename it, delete it, or share it with other people, and can a viewer download or copy it?",
+     "why_it_matters": "You said only people the owner shares with can open a document, and that only owners manage their own documents. If editors can re-share, documents can reach people the owner never chose. If editors can delete or rename, they act on documents that are not theirs.",
+     "affected_ids": ["GAP-002", "FEA-003", "REQ-001", "REQ-004", "REQ-003"],
+     "topic_keywords": ["editor", "viewer", "permissions", "reshare"],
+     "options": [
+       {"option": "Editors change content only; viewers can only read. Only the owner renames, deletes and shares.", "trade_offs": "Strictest and matches 'owners manage their own documents'. Editors cannot fix names or share with a teammate, so owners do more of the work."},
+       {"option": "Editors change content and can rename; only the owner deletes and shares.", "trade_offs": "More convenient for teams. Renaming changes what the owner sees in their own list, and the owner stays in control of who has access and of deletion."},
+       {"option": "Editors can also share with others, like some other tools.", "trade_offs": "Most flexible, but access can spread beyond the people the owner chose, which conflicts with your security definition unless the owner approves each share."},
+       {"option": "Viewers may also download or copy the document.", "trade_offs": "Easier for viewers, but a downloaded copy is outside the access control, so revoking access no longer protects that copy. This can be combined with any option above."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "When someone deletes a document, is it gone for good, or can it be restored (and for how long)? And what happens to colleagues who were given access to it?",
+     "why_it_matters": "A shared document may be one that colleagues are viewing or editing. One misclick could remove work other people rely on, and the choice decides whether delete needs a confirmation step, an undo or a trash area.",
+     "affected_ids": ["GAP-001", "FEA-006", "FEA-005", "REQ-001", "REQ-004"],
+     "topic_keywords": ["delete", "restore", "confirmation", "trash"],
+     "options": [
+       {"option": "Permanent delete after a confirmation that names the document", "trade_offs": "Simplest to build. A mistake cannot be corrected. The confirmation may count towards your two-click limit (see the two-click question). The only supporting guidance found is low-confidence and generic, and does not cover shared documents."},
+       {"option": "Delete moves the document to a trash that the owner can restore from for a set period", "trade_offs": "Protects against mistakes and avoids a confirmation prompt, but needs a trash view, a retention period and rules for what colleagues see while the document is in the trash."},
+       {"option": "Delete is immediate with a short-lived Undo message", "trade_offs": "Fits the two-click limit best. The document can only be recovered for a short time, so later mistakes cannot be fixed."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "Who can an owner share a document with: only other signed-in employees of your organisation, or also people outside it? How should the owner find and pick a colleague?",
+     "why_it_matters": "This sets who can ever be given access. The run assumed only signed-in employees, but nothing you supplied confirms it, and external people would add identity and exposure questions.",
+     "affected_ids": ["FEA-015", "ASM-G-001", "REQ-004", "ASM-F-001"],
+     "topic_keywords": ["share", "colleagues", "external", "directory"],
+     "options": [
+       {"option": "Only signed-in employees, picked by searching the employee directory by name", "trade_offs": "Keeps access inside the organisation and is simplest to secure. Needs a list of employees to search."},
+       {"option": "Employees and named external people (for example by email address)", "trade_offs": "Allows working with partners, but external people need a way to sign in, and exposure of documents is harder to control."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "Where does a colleague find documents that were shared with them, and what can they do with those documents?",
+     "why_it_matters": "The mockup shows one list with Share and Delete on each row and no owner column. A colleague needs a way to reach shared documents, and must not be offered owner-only actions on them.",
+     "affected_ids": ["GAP-003", "FEA-004", "REQ-001", "REQ-004"],
+     "topic_keywords": ["shared", "list", "colleague", "owner"],
+     "options": [
+       {"option": "Show them in the same Documents list, with an owner column, and hide owner-only actions on rows the user does not own", "trade_offs": "One place to look. The list gets busier, and the 1,000 document target must cover shared documents too."},
+       {"option": "Show them in a separate 'Shared with me' list", "trade_offs": "Keeps the user's own library clear and makes the actions on each list obvious. Adds a screen to design and build."},
+       {"option": "Shared documents are opened only from a link or notification and do not appear in any list", "trade_offs": "Least to build, but shared documents are easy to lose, and 'no public links' limits how people get to them."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-005",
+     "question": "For the 'at most two clicks' rule, what counts as a click? For example, does choosing a file, typing a name, picking a role, or confirming a deletion count?",
+     "why_it_matters": "Sharing with a named colleague and a role, or a delete confirmation, may need more than two interactions. Without a rule, the limit can only be met by dropping safeguards.",
+     "affected_ids": ["GAP-007", "FEA-009", "REQ-001", "REQ-004", "FEA-005"],
+     "topic_keywords": ["clicks", "two-click", "easily", "confirmation"],
+     "options": [
+       {"option": "Count only clicks on buttons and menu items from the Documents list; choosing a file or typing text does not count", "trade_offs": "Lets safeguards such as confirmations and role pickers fit. The count is a little looser than the wording suggests."},
+       {"option": "Count every click, including the confirmation, but not typing or the file picker", "trade_offs": "Closer to the literal wording, but delete confirmation and sharing with a role are hard to fit inside two."},
+       {"option": "Count every interaction, including typing and the file picker", "trade_offs": "Strictest. Likely rules out a confirmation or a full share flow, so some actions would need to be simplified."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-006",
+     "question": "What rules apply when renaming a document: allowed characters and length, what happens to the file extension, and what happens if the new name matches an existing document?",
+     "why_it_matters": "Rename is one of your four actions, but the mockup shows no rename control. It cannot be built or tested without these rules, and name clashes can cause one document to be mistaken for another.",
+     "affected_ids": ["GAP-004", "FEA-007", "REQ-001"],
+     "topic_keywords": ["rename", "name", "extension", "duplicate"],
+     "options": [
+       {"option": "Keep the extension fixed, reject a name that already exists and show a message", "trade_offs": "Safe and clear. Users must choose a different name themselves."},
+       {"option": "Keep the extension fixed and automatically add a number to a clashing name", "trade_offs": "Never blocks the user, but the final name may differ from what they typed."},
+       {"option": "Allow the extension to be edited and allow duplicate names", "trade_offs": "Most freedom, but the extension can be broken and two documents can look identical in the list."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-007",
+     "question": "What should happen to an employee's documents and the access they gave when that employee leaves or their account is deactivated? Can anyone take over or recover them?",
+     "why_it_matters": "Only owners manage their documents and no administrator role has been mentioned. Without a rule, documents colleagues rely on could become impossible to change, share or remove, or be kept indefinitely.",
+     "affected_ids": ["GAP-011", "FEA-010", "REQ-001", "REQ-003"],
+     "topic_keywords": ["leaves", "ownership", "deactivated", "retention"],
+     "options": [
+       {"option": "An administrator can transfer the documents to another employee, and shares stay in place", "trade_offs": "Colleagues keep access and work is not lost. Needs an administrator role, which is not in your requirements yet."},
+       {"option": "Documents and their shares are deleted when the employee leaves", "trade_offs": "No new role needed, but colleagues lose shared work without warning."},
+       {"option": "Documents are kept but nobody can manage them, and existing shares continue to work", "trade_offs": "Nothing is lost, but nobody can fix sharing mistakes, and the documents are kept indefinitely."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-008",
+     "question": "Which pages must load within two seconds, and does 'up to 1,000 documents' mean one employee's own library or everything they can see, including shared documents?",
+     "why_it_matters": "The target is a must-have, but it cannot be tested without a defined page and data volume.",
+     "affected_ids": ["REQ-005", "FEA-008", "ASM-G-002", "REQ-002"],
+     "topic_keywords": ["two seconds", "load", "pages", "1,000 documents"],
+     "options": [
+       {"option": "Only the Documents list, with up to 1,000 of the employee's own documents", "trade_offs": "Easiest to meet and to test. Says nothing about other screens or shared documents."},
+       {"option": "The Documents list, with up to 1,000 documents including those shared with the user", "trade_offs": "Covers what users actually see, but needs more careful design of the list."},
+       {"option": "Every page of the product, with up to 1,000 documents visible to the user", "trade_offs": "Broadest promise and most costly to guarantee and test."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-009",
+     "question": "Should colleagues be told when a document is shared with them, when their role changes or when their access is removed? Do owners need a history of who was given or lost access?",
+     "why_it_matters": "Shared documents may go unnoticed without a notification. A history would let owners check and correct who can open their documents, but nothing in your requirements asks for it and you said no compliance rules apply.",
+     "affected_ids": ["GAP-013", "FEA-011", "FEA-013", "REQ-004", "REQ-003"],
+     "topic_keywords": ["notification", "history", "revoke", "audit"],
+     "options": [
+       {"option": "No notifications and no history", "trade_offs": "Least to build. Colleagues must discover shared documents on their own, and owners cannot review past changes."},
+       {"option": "Notify the colleague when access is shared, changed or removed", "trade_offs": "Shared documents are noticed. Needs a notification channel, which has not been identified."},
+       {"option": "Show owners a history of sharing, revocation and deletion", "trade_offs": "Helps owners correct mistakes. Adds data to store and a screen to build, beyond what you have asked for."},
+       {"option": "Both notifications and history", "trade_offs": "Most complete, with the combined cost of both."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"},
+    {"id": "Q-010",
+     "question": "What should the 'Modified' column mean: which changes update it, should it show who made the change, and how should older dates be shown?",
+     "why_it_matters": "With editors able to change shared documents, owners may rely on 'Modified' to notice changes by others.",
+     "affected_ids": ["GAP-015", "FEA-014", "REQ-001"],
+     "topic_keywords": ["modified", "date", "timestamp", "editor"],
+     "options": [
+       {"option": "Updates only when the content is edited or the document is renamed; shows a relative time such as '2 days ago', then a date for older changes", "trade_offs": "Simple and familiar. Does not show who changed it."},
+       {"option": "Updates on content edits, renames and sharing changes, and shows who made the latest change", "trade_offs": "More informative for owners with editors, but needs the extra 'who' information to be kept and displayed."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Empty, loading, success and error states of the Documents list and of each action (deferred at Checkpoint 2; follow established design-system guidance)", "related_ids": ["GAP-009"]},
+    {"item": "Labelling and keyboard/screen-reader identification of the icon-only Delete button and repeated per-row actions", "related_ids": ["GAP-012"]}
+  ]
+}

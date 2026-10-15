@@ -8,7 +8,8 @@ gap is not approval of any solution. §9.5, §7 Checkpoints.
 1. `run_state.py verify`, `run_state.py stage 7 --run <run-id> --start`,
    `run_state.py await-user 2 --run <run-id>`.
 2. First, list the decisions recorded at Checkpoint 1 with your interpretation of each
-   (from `decisions.json`), so the user can catch a misreading.
+   (from `decisions.json`), so the user can catch a misreading. If `status_rules.py labels`
+   lists stale items, list each with its `stale_reason`.
 3. Read `<run dir>/gaps.json` and present:
 
    | ID | Gap | Reason | Priority | Path | Why it matters | Research objective |

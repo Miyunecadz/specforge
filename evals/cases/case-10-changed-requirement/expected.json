@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "case_id": "case-10-changed-requirement",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "book"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "cancel"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "maintenance"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "cancel"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "expect_stale_and_13r": true,
+  "expect_capture_status": "complete"
+}

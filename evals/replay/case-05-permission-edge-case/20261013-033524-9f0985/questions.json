@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-033524-9f0985",
+  "questions": [
+    {"id": "Q-001",
+     "question": "Team leads may not reset passwords for other team leads, administrators or themselves, but the mockup shows an enabled Reset password button on a Team lead row. For rows a lead may not reset, should the button be hidden, shown greyed out with a short explanation, or left clickable and refused with a message? And should the lead's own row appear in the list at all?",
+     "why_it_matters": "You ruled out resets for other leads, administrators and the lead themself, and the mockup as drawn offers exactly that action. How this is shown decides whether the screen invites an account-takeover action. It also assumes the captured screen is the team lead's view, which needs confirming.",
+     "affected_ids": ["GAP-001", "FEA-008", "FEA-001", "REQ-002", "ASM-G-001"],
+     "topic_keywords": ["reset", "button", "ineligible", "hidden", "disabled"],
+     "options": [
+       {"option": "Hide the button on rows the lead may not reset", "trade_offs": "Simplest screen and nothing to click, but the lead is not told why a person has no reset option."},
+       {"option": "Show the button disabled with a short explanation", "trade_offs": "Clear to the lead why reset is unavailable, but it advertises the action on leads and administrators and adds wording to design."},
+       {"option": "Leave the button clickable and refuse with an error message on use", "trade_offs": "Least design work, but leads can try forbidden actions and see error messages for them, which is poorer to use."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "The mockup also offers Change role and Delete user on every row, and no requirement covers them. Are these actions part of this feature? If yes, who may use them, is deletion confirmed and permanent, and what happens to the person's data and sign-in sessions?",
+     "why_it_matters": "Deleting a user is destructive, and changing roles in the app may conflict with your rule that who leads a team comes from HR records. Left open, they could ship to team leads without permission rules or confirmation.",
+     "affected_ids": ["GAP-002", "FEA-012", "REQ-001", "REQ-002"],
+     "topic_keywords": ["delete", "role", "change", "scope"],
+     "options": [
+       {"option": "Remove both actions from this feature", "trade_offs": "Keeps scope to the three agreed requirements and avoids destructive actions, but the mockup must be changed."},
+       {"option": "Keep Change role only, for named roles", "trade_offs": "Allows role edits in the app, but they could diverge from HR and need their own permission rules."},
+       {"option": "Keep both, with permissions, confirmation and defined data and session handling", "trade_offs": "Most capability, but it adds significant scope, including recovery or retention rules for deletion."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "How long should an emailed reset link stay valid, can it be used only once, and should the member's current password and signed-in sessions stop working as soon as a reset is triggered, or only once the link is used?",
+     "why_it_matters": "A lead-triggered reset link is a way into the member's account. Its lifetime and its effect on existing sessions decide how exposed the account is if the email is intercepted or the reset was unwanted.",
+     "affected_ids": ["GAP-003", "FEA-009", "FEA-006", "REQ-002"],
+     "topic_keywords": ["link", "expiry", "session", "single-use"],
+     "options": [
+       {"option": "Short-lived, single-use link; current password and sessions end when the link is used", "trade_offs": "Limits exposure of the link while the member can keep working until they reset, but an unwanted reset leaves old sessions alive until then."},
+       {"option": "Short-lived, single-use link; current password and sessions end immediately when a reset is triggered", "trade_offs": "Strongest protection against a compromised account, but a mistaken or unwanted reset locks the member out at once."},
+       {"option": "Longer-lived link that can be reused until it expires", "trade_offs": "More forgiving for members who miss the email, but a leaked link works for longer and more than once."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "If the reset email cannot be delivered, or the member has no usable email address, what should the team lead and the member be told, and should the reset still count as done?",
+     "why_it_matters": "Without this, failed resets may go unnoticed and members stay locked out. Whether delivery failures can be detected at all is not established.",
+     "affected_ids": ["GAP-003", "FEA-010", "REQ-002"],
+     "topic_keywords": ["email", "delivery", "failure", "bounce"],
+     "options": [
+       {"option": "Show the lead an error and record the failed reset in the log", "trade_offs": "The lead knows to follow up and the log is complete, but it needs delivery failures to be detectable."},
+       {"option": "Tell the lead the email was sent, without reporting later delivery failures", "trade_offs": "Simpler and needs no bounce detection, but failed resets go unnoticed."},
+       {"option": "Block the reset up front for members with no usable email, and show why", "trade_offs": "Avoids sending to nowhere, but does not cover emails that fail after sending."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-005",
+     "question": "Besides the reset-link email, should the member get a separate notice that their team lead reset their password, and must they choose a new password at next sign-in?",
+     "why_it_matters": "This is the member's main warning that someone else triggered a reset on their account, and it affects the sign-in experience.",
+     "affected_ids": ["FEA-006", "GAP-003", "REQ-002"],
+     "topic_keywords": ["notify", "member", "new-password", "sign-in"],
+     "options": [
+       {"option": "Notify the member and require a new password at next sign-in", "trade_offs": "Gives the member a warning and ensures the lead-triggered reset ends with a password only they know, but adds an email and a forced step at sign-in."},
+       {"option": "Rely on the reset-link email only", "trade_offs": "Fewer messages and a simpler flow, but the member gets no separate notice that someone else triggered it."}
+     ],
+     "recommendation": {"option": "Notify the member and require a new password at next sign-in", "finding_ids": ["F-GAP-003-01"], "rationale": "The kept finding says that when someone resets another user's password, the account owner should be notified and required to choose a new password at next sign-in. Its confidence is low (a single test-fixture source), so please confirm."},
+     "blocking": false, "priority": "important"},
+    {"id": "Q-006",
+     "question": "What account statuses exist (for example active, invited, suspended, deactivated), and may a team lead trigger a reset for each of them?",
+     "why_it_matters": "A reset link sent to a suspended or deactivated account could restore access the organisation meant to remove. It also defines the status column leads see.",
+     "affected_ids": ["GAP-008", "FEA-011", "REQ-001", "REQ-002"],
+     "topic_keywords": ["status", "suspended", "deactivated", "account"],
+     "options": [
+       {"option": "Allow reset for active accounts only", "trade_offs": "Safest for suspended or deactivated accounts, but invited members who never signed in cannot be helped by their lead."},
+       {"option": "Allow reset for active and invited accounts", "trade_offs": "Helps members still being onboarded, but needs a clear definition of invited and sends links to accounts not yet in use."},
+       {"option": "Allow reset for any status", "trade_offs": "No special cases, but resets can bypass suspension or deactivation."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007",
+     "question": "The mockup shows a Role column, but you listed name, email, job title and account status. Should Role stay in the list, is it the same thing as job title, and should the email and status columns be added?",
+     "why_it_matters": "The member list is the core of what team leads see and you limited it on purpose. The mockup omits agreed fields and shows one you did not list.",
+     "affected_ids": ["GAP-004", "FEA-002", "REQ-001"],
+     "topic_keywords": ["role", "job-title", "columns", "members"],
+     "options": [
+       {"option": "Show exactly name, email, job title and account status; drop Role", "trade_offs": "Matches what you agreed, but the mockup needs to be changed."},
+       {"option": "Treat Role as the job title and show name, email, job title (labelled Role) and status", "trade_offs": "Keeps the mockup's wording, but only works if the two are really the same thing."},
+       {"option": "Show the agreed fields plus Role as a separate column", "trade_offs": "Adds information beyond what you agreed, which leads may not need to see."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008",
+     "question": "Do team leads see a member's HR name, their chosen display name, or both? And where does a user change their own display name, since no screen shows it?",
+     "why_it_matters": "Display names are not unique, so if they replace the HR name two members could look identical in the reset list and a lead could reset the wrong person. The display name change also has no screen yet.",
+     "affected_ids": ["GAP-005", "FEA-013", "FEA-007", "REQ-003", "REQ-001", "ASM-G-002"],
+     "topic_keywords": ["display-name", "hr-name", "profile"],
+     "options": [
+       {"option": "Leads see the HR name only", "trade_offs": "Unambiguous when acting on a member, but the display name a person chose is not shown to their lead."},
+       {"option": "Leads see both the HR name and the display name", "trade_offs": "Avoids confusion between members with the same display name, but a lead sees more and the list is wider."},
+       {"option": "Leads see the display name only", "trade_offs": "Simplest and friendly, but duplicate or misleading names risk a reset on the wrong member."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-009",
+     "question": "What is the typical and largest team size, and does the member list need search, sort or paging?",
+     "why_it_matters": "The capture shows two members. With many rows and non-unique display names, finding the right member before a reset becomes harder.",
+     "affected_ids": ["GAP-013", "FEA-014", "REQ-001"],
+     "topic_keywords": ["team-size", "search", "paging", "list"],
+     "options": [
+       {"option": "Plain list, no search or paging", "trade_offs": "Simplest to build, but only fine for small teams."},
+       {"option": "Add search and sorting", "trade_offs": "Helps find members in mid-sized teams with modest extra work."},
+       {"option": "Add search, sorting and paging", "trade_offs": "Scales to large teams, but costs the most to design and build."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Whether display name changes are recorded in an audit trail (recommendation only; no customer decision made).", "related_ids": ["FEA-015", "REQ-003", "GAP-005"]},
+    {"item": "Which hosting system holds administrator status and HR data, and how the feature reads them.", "related_ids": ["ASM-F-001", "ASM-F-002", "FEA-001", "FEA-003"]}
+  ]
+}

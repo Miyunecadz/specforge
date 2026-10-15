@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "case_id": "case-03-ambiguous-requirements",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "manage"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "fast"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "secur"
+      ]
+    },
+    {
+      "id": "E4",
+      "keywords": [
+        "shar"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "upload"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "delet"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "fast"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "secur"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "shar"
+      ]
+    }
+  ],
+  "expect_capture_status": "complete"
+}

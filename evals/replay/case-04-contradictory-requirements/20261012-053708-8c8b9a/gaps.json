@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-053708-8c8b9a",
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "title": "Recovery of deleted invoices within 30 days is not covered",
+      "description": "REQ-006 and DEC-003 confirm that deleted invoices are recoverable for 30 days and then removed permanently. No captured screen, component or flow shows where deleted invoices can be found, how one is recovered, or what a user sees about the time left before permanent removal. CQ-004 asked who can recover and how; the recorded answer (DEC-004) repeats the 30-day rule and does not say who may recover or by what means, so those points are still open. Recovery is not shown in the capture; this does not mean the product lacks it.",
+      "category": "data lifecycle",
+      "reason": "requirement_uncovered",
+      "related_req_ids": ["REQ-005", "REQ-006"],
+      "related_scr_ids": ["SCR-001", "SCR-002"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-006"},
+        {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+        {"artifact": "decisions.json", "locator": "DEC-004 verbatim"},
+        {"artifact": "requirements.json", "locator": "CQ-004"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Can a deleted invoice be restored?'"},
+        {"artifact": "inventory.json", "locator": "flows (empty)"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Recoverability is a confirmed must-have, and it is the only safety net for an invoice deleted by mistake. Without knowing who may recover and how, the recovery capability cannot be specified or tested.",
+      "consequences_if_unresolved": "Invoices deleted in error could be lost when the 30 days pass, or the wrong users could restore invoices that finance administrators deliberately removed.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "How do established invoicing and accounting products (for example Xero, QuickBooks Online, FreeAgent) present soft-deleted invoices and their recovery during a retention window?",
+        "What are common practices for telling users how long remains before a soft-deleted record is permanently purged?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-002",
+      "title": "Excel export is not shown and its scope is undefined",
+      "description": "DEC-002 confirms that both PDF and Excel exports are needed, and REQ-004 is a must. The captured invoices table offers only an 'Export PDF' row button; no Excel export is shown in the capture. It is also not stated which invoice data and columns the Excel file contains, whether export is per invoice or for many invoices at once, and how it relates to the current table view.",
+      "category": "import and export",
+      "reason": "requirement_uncovered",
+      "related_req_ids": ["REQ-004"],
+      "related_scr_ids": ["SCR-001", "SCR-002", "SCR-003"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-004"},
+        {"artifact": "decisions.json", "locator": "DEC-002 verbatim"},
+        {"artifact": "inventory.json", "locator": "SCR-002 actions"},
+        {"artifact": "inventory.json", "locator": "SCR-003 fields"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Excel export is a confirmed must-have with no mockup coverage. The content and scope of a spreadsheet export decide what finance users can do with it, for example reconciliation across many invoices compared with a single-invoice copy.",
+      "consequences_if_unresolved": "The export could be built with the wrong scope or columns, and the customer would have to rework it.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What columns and formatting (dates, currency amounts as numbers) do invoicing products typically include in Excel exports of invoices?",
+        "Do comparable invoicing products offer Excel export per invoice, for a filtered list, or both?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-003",
+      "title": "Finance administrator role and Delete visibility for other users are undefined",
+      "description": "DEC-001 confirms that only finance administrators delete invoices and other users cannot. It is not defined what a finance administrator is, how the role is granted or removed, or what other users see in place of the Delete action. The capture shows an enabled-looking Delete button on the row without any indication of which role is viewing the page, so how Delete appears to users who may not delete is not shown in the capture.",
+      "category": "permissions",
+      "reason": "checklist",
+      "checklist_item": "Roles, permissions, data visibility",
+      "related_req_ids": ["REQ-001", "REQ-002"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-001 ambiguity_notes"},
+        {"artifact": "decisions.json", "locator": "DEC-001 verbatim"},
+        {"artifact": "inventory.json", "locator": "SCR-002 actions, Delete visibly_disabled false"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Who is allowed to delete an invoice?'"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Deletion of invoices is restricted to one role. If that role is not defined, the restriction cannot be enforced or tested, and the mockup does not show how the screen differs for users without it.",
+      "consequences_if_unresolved": "Users outside finance administration could delete invoices, or legitimate finance administrators could be blocked.",
+      "resolution_path": "customer",
+      "priority": "critical",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-004",
+      "title": "Accounting record-retention duties versus permanent removal after 30 days",
+      "description": "DEC-003 confirms that deleted invoices are removed permanently after 30 days. It is not stated whether any legal, tax or audit retention obligations apply to invoices in this product, or whether certain invoices (for example issued, sent or paid ones) must be kept regardless of deletion. The amounts are shown in pounds sterling, which suggests (inference) a UK context.",
+      "category": "data integrity",
+      "reason": "risk",
+      "related_req_ids": ["REQ-005", "REQ-006"],
+      "related_scr_ids": ["SCR-003"],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-003 verbatim"},
+        {"artifact": "requirements.json", "locator": "REQ-005 ambiguity_notes, 'Not defined whether audit or legal retention applies'"},
+        {"artifact": "inventory.json", "locator": "SCR-003 field Amount, value £1,200"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Permanent removal of invoices is irreversible. If invoices are financial records the business must keep, permanently removing them after 30 days could breach those obligations.",
+      "consequences_if_unresolved": "Invoices the business must legally keep could be destroyed with no way back, exposing the customer to compliance and audit risk.",
+      "resolution_path": "both",
+      "priority": "critical",
+      "research_questions": [
+        "What invoice record-retention periods do HMRC rules set for UK businesses (including VAT records), and do they apply to deleted or cancelled invoices?",
+        "Under UK accounting practice, may an issued invoice be deleted, or must it be cancelled or credited instead?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-005",
+      "title": "Deletion restrictions by invoice state are undefined",
+      "description": "It is not stated whether finance administrators may delete invoices in every state, for example draft, sent, paid, partly paid or already exported. The capture shows one invoice with no visible status, so how invoice states affect the Delete action is not shown in the capture.",
+      "category": "data integrity",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-001"],
+      "related_scr_ids": ["SCR-002", "SCR-003"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Are there restrictions on deleting an invoice (for example paid, exported or sent invoices)?'"},
+        {"artifact": "requirements.json", "locator": "REQ-001 ambiguity_notes, 'Not defined whether this applies to invoices in every state'"},
+        {"artifact": "inventory.json", "locator": "SCR-003 fields"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Deleting an invoice that has been sent to or paid by a customer affects customer balances and reports. The confirmed deletion rule does not say whether such invoices can be deleted.",
+      "consequences_if_unresolved": "Paid or sent invoices could disappear from the books, or deletion could be blocked where the customer expects it to work.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "Which invoice states do established invoicing products allow to be deleted, and which do they require to be voided or credited instead?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-006",
+      "title": "Delete confirmation, failure handling and downstream effects are not shown",
+      "description": "The capture does not show whether Delete asks for confirmation, what the user sees after a successful or failed delete, or what happens during the 30-day window to reports, customer records and totals that include the deleted invoice. The Delete button has no visible target.",
+      "category": "states",
+      "reason": "checklist",
+      "checklist_item": "Destructive-action confirmation and undo",
+      "related_req_ids": ["REQ-001", "REQ-006"],
+      "related_scr_ids": ["SCR-001", "SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Does Delete ask for confirmation, and is it a hard or soft delete?'"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'What happens on delete failure, and what changes downstream (reports, customer records, audit trail)?'"},
+        {"artifact": "inventory.json", "locator": "limitations[1]"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Deletion sits on every invoice row, next to Export PDF. A misclick or a silent failure on a financial record has real consequences, and while an invoice is soft-deleted it is unclear whether it still counts in reports.",
+      "consequences_if_unresolved": "Accidental deletions, users unsure whether a delete succeeded, and reports that disagree during the recovery window.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What confirmation and post-delete feedback patterns (confirmation dialog, undo notification) do design systems such as GOV.UK Design System or Material recommend for destructive actions on records?",
+        "How do accounting products treat soft-deleted invoices in reports and customer balances during a recovery window?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-007",
+      "title": "PDF export contents, availability and failure handling are undefined",
+      "description": "REQ-003 confirms PDF export (with Excel also required per DEC-002). The capture shows an 'Export PDF' button on the row but no outcome. It is not stated what the PDF contains, whether export is available for every invoice state, whether exporting changes the invoice (for example marking it as exported), or what the user sees if the export fails.",
+      "category": "import and export",
+      "reason": "ambiguous_behaviour",
+      "related_req_ids": ["REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'What does the exported PDF contain, and what happens if the export fails?'"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Is exporting available for every invoice state, and does it change the invoice in any way?'"},
+        {"artifact": "inventory.json", "locator": "limitations[1]"},
+        {"artifact": "requirements.json", "locator": "REQ-003"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "A PDF invoice is often sent to the customer's own client, so its content and layout matter. Whether exporting changes the invoice also affects the deletion rules if exported invoices are treated differently.",
+      "consequences_if_unresolved": "The PDF could leave out required invoice details, and failed exports could go unnoticed.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What information must a valid UK VAT invoice include according to HMRC guidance?",
+        "What makes a generated PDF accessible (for example tagged PDF per PDF/UA)?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-008",
+      "title": "Who may export invoices is undefined",
+      "description": "REQ-003 and REQ-004 do not say which users may export invoices as PDF or Excel, and the inventory records this as unanswered for PDF. The capture shows the Export PDF button without any role context.",
+      "category": "permissions",
+      "reason": "checklist",
+      "checklist_item": "Import and export",
+      "related_req_ids": ["REQ-003", "REQ-004"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "requirements.json", "locator": "REQ-003 ambiguity_notes"},
+        {"artifact": "requirements.json", "locator": "REQ-004 ambiguity_notes"},
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, 'Who is allowed to export a PDF, and are there limits on how often?'"}
+      ],
+      "basis": "confirmed_requirement",
+      "why_it_matters": "Exports take invoice data, including customer names and amounts, out of the product. Deletion is restricted to one role, but nothing says whether exporting is restricted too.",
+      "consequences_if_unresolved": "Invoice data could be exported by users who should not have it, or blocked for users who need it.",
+      "resolution_path": "customer",
+      "priority": "important",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-009",
+      "title": "Audit trail for delete, recovery, permanent removal and export is undefined",
+      "description": "It is not stated whether deleting, recovering, permanently removing or exporting an invoice must be recorded (who, what, when), or whether that record must outlast the invoice's permanent removal.",
+      "category": "audit",
+      "reason": "checklist",
+      "checklist_item": "Audit logging",
+      "related_req_ids": ["REQ-001", "REQ-005", "REQ-006"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "ambiguous_behaviours SCR-002, '... what changes downstream (reports, customer records, audit trail)?'"},
+        {"artifact": "decisions.json", "locator": "DEC-003 verbatim"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Financial records are deleted by a restricted role and then removed permanently. Without a trace, nobody can later show who deleted an invoice or why it is missing.",
+      "consequences_if_unresolved": "Disputes and audits about missing invoices cannot be answered once the invoice is gone.",
+      "resolution_path": "both",
+      "priority": "important",
+      "research_questions": [
+        "What audit-trail expectations apply to deletion of financial records in UK accounting software (for example HMRC Making Tax Digital digital-record requirements)?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-010",
+      "title": "Empty, loading, error and post-action states of the invoices table are not shown",
+      "description": "Only a default state with one invoice row was captured. The capture does not show the table with no invoices, while loading, after an invoice is deleted or recovered, or when loading fails.",
+      "category": "states",
+      "reason": "checklist",
+      "checklist_item": "Empty, loading, success and error states",
+      "related_req_ids": ["REQ-001", "REQ-006"],
+      "related_scr_ids": ["SCR-001"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-001 observed_states"},
+        {"artifact": "inventory.json", "locator": "limitations[0]"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "Deleting a row changes the table directly, and deleting the last invoice leads to an empty table. These states are part of the delete and recover workflow being specified.",
+      "consequences_if_unresolved": "Inconsistent or confusing screens after delete or recovery, left to the developers to decide.",
+      "resolution_path": "research",
+      "priority": "optional",
+      "research_questions": [
+        "What empty-state and error-state patterns do established design systems recommend for data tables after a row is removed?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-011",
+      "title": "Accessibility of row actions and the unlabelled actions column",
+      "description": "The invoices table has an actions column with no header label, and each row repeats 'Delete' and 'Export PDF' buttons whose labels do not name the invoice. It is not defined how these actions are identified for screen-reader and keyboard users, or how confirmation and status messages for delete and export are announced.",
+      "category": "accessibility",
+      "reason": "checklist",
+      "checklist_item": "Accessibility (WCAG 2.2 AA where relevant)",
+      "related_req_ids": ["REQ-001", "REQ-003"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-002 label, 'unlabeled actions column'"},
+        {"artifact": "inventory.json", "locator": "SCR-002 actions"}
+      ],
+      "basis": "observed_limitation",
+      "why_it_matters": "With many rows, identical 'Delete' buttons make it easy for assistive-technology users to delete the wrong invoice, and deletion here is destructive.",
+      "consequences_if_unresolved": "Screen-reader users may act on the wrong invoice, and the feature may fail WCAG 2.2 AA review.",
+      "resolution_path": "research",
+      "priority": "optional",
+      "research_questions": [
+        "Which WCAG 2.2 success criteria (for example 1.3.1, 2.4.6, 4.1.2, 4.1.3) apply to repeated row action buttons and unlabelled table header cells, and what techniques satisfy them?"
+      ],
+      "provenance": "mockup_observation",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-012",
+      "title": "Simultaneous or repeated delete and recover actions are undefined",
+      "description": "It is not stated what happens when two finance administrators act on the same invoice at once (for example one deletes while another recovers or exports), or when Delete or Export is triggered twice in quick succession.",
+      "category": "data integrity",
+      "reason": "checklist",
+      "checklist_item": "Concurrent changes and conflict handling",
+      "related_req_ids": ["REQ-001", "REQ-006"],
+      "related_scr_ids": ["SCR-002"],
+      "evidence_refs": [
+        {"artifact": "inventory.json", "locator": "SCR-002 actions"},
+        {"artifact": "decisions.json", "locator": "DEC-003 verbatim"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "Delete and recover change the state of the same financial record, and a stale view could let a user act on an invoice that is already deleted or restored.",
+      "consequences_if_unresolved": "Confusing results or inconsistent invoice state when actions overlap.",
+      "resolution_path": "research",
+      "priority": "optional",
+      "research_questions": [
+        "What patterns do web applications use to handle stale views and repeated requests for delete and restore operations on the same record?"
+      ],
+      "provenance": "inference",
+      "kind": "gap"
+    },
+    {
+      "id": "GAP-013",
+      "title": "Whether anyone is told when an invoice is deleted or about to be permanently removed",
+      "description": "Since only finance administrators can delete, the user who created an invoice may not be the one who deletes it. It is not stated whether the creator or anyone else is told when an invoice is deleted, recovered, or nearing permanent removal at the end of the 30 days.",
+      "category": "notifications",
+      "reason": "checklist",
+      "checklist_item": "Notifications and delivery failure",
+      "related_req_ids": ["REQ-001", "REQ-006"],
+      "related_scr_ids": [],
+      "evidence_refs": [
+        {"artifact": "decisions.json", "locator": "DEC-001 verbatim"},
+        {"artifact": "decisions.json", "locator": "DEC-003 verbatim"}
+      ],
+      "basis": "inference",
+      "why_it_matters": "The 30-day recovery window only helps if someone notices the deletion in time; the person most likely to notice a wrongly deleted invoice may not be the person who deleted it.",
+      "consequences_if_unresolved": "Mistaken deletions may go unnoticed until the invoice is permanently removed.",
+      "resolution_path": "customer",
+      "priority": "optional",
+      "research_questions": [],
+      "provenance": "inference",
+      "kind": "gap"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM-G-001",
+      "text": "DEC-001 ('Only finance administrators delete invoices; other users cannot delete') is taken to mean that REQ-002 no longer lets non-finance-administrator creators delete their own invoices, even though REQ-002 is recorded as approved.",
+      "why": "REQ-002 carries approval from DEC-001 while the decision's wording excludes other users from deleting.",
+      "impact": "No conflict gap is raised between REQ-001 and REQ-002; permission gaps assume finance administrators are the only deleters.",
+      "to_confirm": "Confirm that invoice creators who are not finance administrators cannot delete their own invoices.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-003"]
+    },
+    {
+      "id": "ASM-G-002",
+      "text": "DEC-002 ('Both PDF and Excel exports are needed') is taken to override the word 'only' in REQ-003.",
+      "why": "REQ-003 says PDF only and is recorded as approved alongside REQ-004.",
+      "impact": "Excel export is treated as confirmed and its missing coverage is raised as a gap.",
+      "to_confirm": "Confirm that REQ-003 should read as 'invoices can be exported as PDF' rather than 'PDF only'.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-002", "GAP-007"]
+    },
+    {
+      "id": "ASM-G-003",
+      "text": "The pound sterling amount in the capture is taken to suggest the product is used by UK businesses.",
+      "why": "Retention and invoice-content research questions need a jurisdiction.",
+      "impact": "Research questions in GAP-004, GAP-007 and GAP-009 name HMRC guidance.",
+      "to_confirm": "Confirm the jurisdictions in which the product's customers operate.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-004", "GAP-007", "GAP-009"]
+    },
+    {
+      "id": "ASM-G-004",
+      "text": "The capture is assumed to show one unknown role's view of the invoices page, so the enabled Delete button is not treated as evidence that every user can delete.",
+      "why": "The inventory records no signed-in user or role for SCR-001.",
+      "impact": "No conflict is raised between the mockup and DEC-001; the question is raised as GAP-003 instead.",
+      "to_confirm": "Confirm which role the mockup represents.",
+      "provenance": "assumption",
+      "kind": "assumption",
+      "related_ids": ["GAP-003"]
+    }
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-006", "issue": "unknown", "reason": "Who can recover deleted invoices and how is still not stated; DEC-004 repeats the 30-day rule without answering CQ-004's who/how."},
+    {"type": "add_issue", "item_id": "REQ-004", "issue": "unknown", "reason": "Excel export content, scope (single or bulk) and permitted users are not stated, and the mockup shows no Excel export."},
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "unknown", "reason": "The finance administrator role is not defined, and whether deletion applies to invoices in every state is not stated."},
+    {"type": "add_issue", "item_id": "REQ-005", "issue": "unknown", "reason": "Whether legal, tax or audit retention obligations limit permanent removal after 30 days is not stated."}
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "case_id": "case-04-contradictory-requirements",
+  "description": "Contradictory requirements.",
+  "fixture_dir": "evals/fixtures/case-04-contradictory-requirements",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-04-contradictory-requirements/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "keywords": [
+              "administrator"
+            ]
+          },
+          "verbatim": "Only finance administrators delete invoices; other users cannot delete.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "keywords": [
+              "excel"
+            ]
+          },
+          "verbatim": "Both PDF and Excel exports are needed.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "keywords": [
+              "30 days"
+            ]
+          },
+          "verbatim": "Deleted invoices are recoverable for 30 days, then removed permanently.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "leave_open",
+        "verbatim": "Leave the rest open."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

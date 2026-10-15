@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "case_id": "case-01-award-packages",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "award"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "read-only"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "notif"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "confirm"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "duplicate"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "notif"
+      ]
+    }
+  ],
+  "expect_capture_status": "complete",
+  "expect_publication_status": "eval_only"
+}

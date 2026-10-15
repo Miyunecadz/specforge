@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "run_id": "20261013-112757-565166",
+  "questions": [
+    {"id": "Q-001",
+     "question": "You told us a manager's own manager can approve when the manager is away. How should the system know a manager is away, can the direct manager still act while away or after the substitute has acted, and who approves a manager's own leave request?",
+     "why_it_matters": "This decides who is allowed to approve or reject each request. Without it, the system cannot check who is eligible, and requests could be approved by the wrong person or wait forever.",
+     "affected_ids": ["REQ-002", "GAP-002", "FEA-001", "FEA-002", "FEA-011"],
+     "topic_keywords": ["manager", "away", "substitute", "approver"],
+     "options": [
+       {"option": "Managers mark themselves away for a date range, and their manager can act only during that period", "trade_offs": "Clear and auditable, but managers must remember to set it, and a request can stay stuck if they forget."},
+       {"option": "Their manager can act on any pending request at any time, with the direct manager still allowed to act", "trade_offs": "Nothing gets stuck and no away status is needed, but it widens who can decide and weakens the rule that only the direct manager decides."},
+       {"option": "Their manager can act only after a request has waited a set number of days", "trade_offs": "Needs no away status and limits stuck requests, but approval is delayed and you must choose the waiting time."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002",
+     "question": "Which leave requests should each person see in the list: employees only their own, managers their direct reports' requests, and what should a substitute manager see? Can anyone else, such as HR, see them?",
+     "why_it_matters": "Leave records include sick leave and manager comments, so showing them to the wrong person exposes personal data. Hiding them from the right manager stops approvals.",
+     "affected_ids": ["REQ-003", "GAP-008", "FEA-004", "ASM-G-002"],
+     "topic_keywords": ["visibility", "list", "requests", "manager"],
+     "options": [
+       {"option": "Employees see only their own requests; managers see their direct reports' requests in a separate view", "trade_offs": "Keeps personal data tight and keeps the approval task separate, but needs two views to design and build."},
+       {"option": "One list for everyone, filtered to own requests plus direct reports' requests for managers", "trade_offs": "Simpler to build, but a manager's own requests and the requests they must decide are mixed together."},
+       {"option": "As above, and HR can also see all requests", "trade_offs": "Gives HR oversight, but widens access to sick-leave information and needs its own rules."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003",
+     "question": "What does an employee fill in when requesting leave (leave type, start and end dates, half days, reason), which fields are required, and which date rules apply, such as past dates or overlapping requests? Which leave types exist beyond Annual and Sick leave?",
+     "why_it_matters": "The request form, the stored data and the checks on it all depend on this. The New request page could not be captured, and your earlier answer was about rejection, not about the request itself.",
+     "affected_ids": ["REQ-001", "GAP-003", "FEA-005", "ASM-G-001"],
+     "topic_keywords": ["request", "form", "dates", "validation"],
+     "options": [
+       {"option": "Leave type, start date and end date only, with full days, and past dates and overlaps are blocked", "trade_offs": "Simplest to build and check, but cannot handle half days, a reason, or back-dated sick leave."},
+       {"option": "Leave type, start and end dates with optional half days and an optional note; overlaps are blocked and past dates are allowed only for sick leave", "trade_offs": "Covers more real cases but needs more rules, and the note may hold health details."},
+       {"option": "Another set of fields and rules that you describe", "trade_offs": "Matches your business exactly, but we need the full list from you before the form can be specified."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004",
+     "question": "You confirmed a reason is required when rejecting. Where should the manager enter it, what should happen if it is left empty, and is a comment allowed or required when approving? Is the 'manager's comment' the employee sees the same as the rejection reason?",
+     "why_it_matters": "The current Reject button has no place for a reason. Without a defined step, a rejection could be recorded with no reason and the employee could not correct the request.",
+     "affected_ids": ["REQ-002", "REQ-003", "GAP-001", "FEA-003"],
+     "topic_keywords": ["rejection", "reason", "comment", "approve"],
+     "options": [
+       {"option": "Pressing Reject opens a required reason box; Approve has an optional comment; both appear to the employee as the manager's comment", "trade_offs": "One simple concept for employees, but managers get an extra step on every rejection."},
+       {"option": "Reason box required on Reject, with no comment on Approve", "trade_offs": "Quicker approvals, but managers cannot add a note to an approval."},
+       {"option": "Reason is separate from a general comment, and both can be recorded", "trade_offs": "Most flexible, but more fields to build, show and explain."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005",
+     "question": "Who can cancel a request (the employee, the manager, or both), and in which statuses: only while pending, or also after approval? Can an employee edit or withdraw a pending request?",
+     "why_it_matters": "Cancelled is one of the four statuses you confirmed, but nothing says who can reach it. The wrong rule could let leave already taken be cancelled.",
+     "affected_ids": ["REQ-001", "REQ-003", "GAP-004", "FEA-007"],
+     "topic_keywords": ["cancel", "withdraw", "status", "pending"],
+     "options": [
+       {"option": "The employee can cancel while pending or approved, before the leave starts; managers cannot cancel", "trade_offs": "Gives employees control and handles a change of plan, but managers cannot cancel leave themselves."},
+       {"option": "The employee can cancel only while pending; cancelling approved leave goes through the manager", "trade_offs": "Protects approved leave, but adds a manual step for any change."},
+       {"option": "Both the employee and the manager can cancel pending or approved requests before the leave starts", "trade_offs": "Most flexible, but needs rules on telling the other person and recording who cancelled."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-006",
+     "question": "When a rejected request is corrected and resubmitted, should it reopen the same request or create a new one? Should the earlier rejection reason be kept, is there a limit on resubmissions, and does resubmitting send an email?",
+     "why_it_matters": "A rejected request is not final under your rule, so this decides the status model and the history that employees and managers see.",
+     "affected_ids": ["REQ-001", "REQ-002", "GAP-005", "FEA-007"],
+     "topic_keywords": ["resubmit", "rejected", "history", "correct"],
+     "options": [
+       {"option": "Reopen the same request, keep all earlier reasons in its history, no limit", "trade_offs": "One continuous record per leave need, but the history can grow long."},
+       {"option": "Create a new linked request each time and leave the rejected one unchanged", "trade_offs": "Keeps each decision clean and separate, but the employee sees several requests for the same leave."},
+       {"option": "Reopen the same request but show only the latest reason", "trade_offs": "Simple to show, but earlier reasons are lost and decisions are harder to trace."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-007",
+     "question": "Once a manager approves or rejects a request, can the decision be changed or revoked, by whom, and should Approve and Reject ask for confirmation first? Can they be used only on pending requests?",
+     "why_it_matters": "Every decision immediately emails the employee, so a mistaken click is communicated at once and cannot be silently undone.",
+     "affected_ids": ["REQ-002", "GAP-009", "FEA-008", "ASM-F-001"],
+     "topic_keywords": ["reverse", "decision", "confirmation", "undo"],
+     "options": [
+       {"option": "Decisions are final; a confirmation step is shown, and a mistake is fixed by cancelling and resubmitting", "trade_offs": "Simple and predictable, but a mistake means extra work and extra emails."},
+       {"option": "Managers can change a decision for a short period, and the employee is emailed about the change", "trade_offs": "Forgives mistakes, but the employee may get contradictory emails and the period must be chosen."},
+       {"option": "No confirmation step, decisions final", "trade_offs": "Fastest for managers, but the highest risk of mistaken decisions with no remedy."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-008",
+     "question": "Where should the system get each employee's manager and that manager's manager from, and what should happen to pending requests when someone's manager changes?",
+     "why_it_matters": "The approval rule only works with reliable reporting-line information, and no document describes an existing source.",
+     "affected_ids": ["REQ-002", "FEA-010"],
+     "topic_keywords": ["reporting", "line", "manager", "directory"],
+     "options": [
+       {"option": "Read it from an existing HR or directory system, and move pending requests to the new manager", "trade_offs": "One source of truth that stays current, but depends on that system and on an integration we have not scoped."},
+       {"option": "Keep the reporting lines in this feature and have an administrator maintain them", "trade_offs": "Independent of other systems, but the data can go out of date and needs an admin screen."},
+       {"option": "Read it from an existing system, but keep pending requests with the manager who held the role at submission", "trade_offs": "Easy to trace, but requests can sit with someone who no longer manages the employee."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-009",
+     "question": "What should the status-change email to the employee contain (for example the leave type, the dates, the rejection reason), and should managers, or the substitute manager, also be emailed when a request is submitted or resubmitted?",
+     "why_it_matters": "Email is how employees learn of decisions. If managers are not told, pending requests may go unnoticed, and sick-leave details in emails may be over-shared.",
+     "affected_ids": ["REQ-003", "FEA-006", "ASM-F-002"],
+     "topic_keywords": ["email", "notification", "content", "manager"],
+     "options": [
+       {"option": "Employee email shows new status, dates and the manager's comment, with no leave type; managers get an email on each new or resubmitted request", "trade_offs": "Managers act sooner and sick-leave type is kept out of email, but it adds a second kind of email."},
+       {"option": "Employee email only; managers see pending requests in the list", "trade_offs": "Matches what you confirmed and is simple, but managers may not notice waiting requests."},
+       {"option": "Employee email with the full details including leave type; managers also emailed", "trade_offs": "Most informative, but sick-leave information travels by email."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-010",
+     "question": "Should approving or cancelling leave change the employee's leave balance, and are balances shown or managed as part of this feature?",
+     "why_it_matters": "Annual leave is a limited entitlement. This decides the feature's scope and whether approvals must keep balances correct.",
+     "affected_ids": ["REQ-002", "GAP-015", "FEA-009"],
+     "topic_keywords": ["balance", "entitlement", "annual", "scope"],
+     "options": [
+       {"option": "Out of scope: balances are handled elsewhere and not changed here", "trade_offs": "Smallest feature, but balances may not match approved leave unless another process updates them."},
+       {"option": "In scope: approval deducts and cancellation restores the balance, and balances are shown", "trade_offs": "Keeps balances consistent, but needs balance rules, balance data and more testing."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Wording of confirmation and error messages after submitting, approving or rejecting, and the empty-list message for a new employee", "related_ids": ["GAP-011", "REQ-001", "REQ-002"]},
+    {"item": "Check on the server, for every Approve or Reject action, that the user is eligible, rather than relying on hidden buttons (technical approach settled during build, after Q-001)", "related_ids": ["FEA-002", "GAP-002"]},
+    {"item": "Distinct, descriptive labels for the repeated Open links in the list and how status changes are announced to assistive technology", "related_ids": ["GAP-014", "REQ-003"]},
+    {"item": "Length or content limits on the rejection reason", "related_ids": ["FEA-003", "GAP-001"]}
+  ]
+}

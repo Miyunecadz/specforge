@@ -1,0 +1,1 @@
+Do the snippets in evals/results/20261011T120000/grader-input-case-06.json support their claims? Grade each one.

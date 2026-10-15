@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "case_id": "case-01-award-packages",
+  "description": "Straightforward feature with a mostly complete mockup.",
+  "fixture_dir": "evals/fixtures/case-01-award-packages",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-01-award-packages/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "package manager"
+                ]
+              },
+              {
+                "keywords": [
+                  "who can award"
+                ]
+              },
+              {
+                "keywords": [
+                  "allowed to award"
+                ]
+              },
+              {
+                "keywords": [
+                  "permission"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "withdraw",
+              "undo",
+              "undone",
+              "revers",
+              "read-only",
+              "locked",
+              "notif"
+            ]
+          },
+          "verbatim": "Package managers means only people in the Procurement team, and any of them can award any package.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "undo"
+                ]
+              },
+              {
+                "keywords": [
+                  "undone"
+                ]
+              },
+              {
+                "keywords": [
+                  "withdraw"
+                ]
+              },
+              {
+                "keywords": [
+                  "revers"
+                ]
+              },
+              {
+                "keywords": [
+                  "changed"
+                ]
+              },
+              {
+                "keywords": [
+                  "cancel"
+                ]
+              },
+              {
+                "keywords": [
+                  "revoke"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "notif"
+            ]
+          },
+          "verbatim": "The award is final; it cannot be withdrawn, changed or undone by anyone.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "read-only"
+                ]
+              },
+              {
+                "keywords": [
+                  "locked"
+                ]
+              },
+              {
+                "keywords": [
+                  "edit"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "withdraw",
+              "undo",
+              "undone",
+              "revers",
+              "notif"
+            ]
+          },
+          "verbatim": "Awarded packages are read-only for everyone and all fields are locked.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "notif"
+                ]
+              },
+              {
+                "keywords": [
+                  "email"
+                ]
+              },
+              {
+                "keywords": [
+                  "told"
+                ]
+              },
+              {
+                "keywords": [
+                  "message"
+                ]
+              }
+            ]
+          },
+          "verbatim": "Only the winning supplier is notified, by email, when the award is made; the email names the package and the award date.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "quote"
+                ]
+              },
+              {
+                "keywords": [
+                  "chosen"
+                ]
+              },
+              {
+                "keywords": [
+                  "choose"
+                ]
+              },
+              {
+                "keywords": [
+                  "select"
+                ]
+              },
+              {
+                "keywords": [
+                  "more than one supplier"
+                ]
+              },
+              {
+                "keywords": [
+                  "several suppliers"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "notif",
+              "withdraw",
+              "undo",
+              "read-only",
+              "package manager"
+            ]
+          },
+          "verbatim": "The supplier is chosen from the quotes attached to the package, and a package is awarded to exactly one supplier.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Everything else is approved as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": [
+        {
+          "match": {
+            "keywords": [
+              "notif"
+            ]
+          },
+          "verbatim": "Suppliers are told by email as soon as the award is confirmed.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            },
+            {
+              "type": "create_requirement",
+              "statement": "Suppliers are told by email as soon as the award is confirmed."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

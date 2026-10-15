@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-053708-8c8b9a",
+  "items": {
+    "REQ-001": {
+      "id": "REQ-001",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting",
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting"
+      ],
+      "decision_ids": [
+        "DEC-002"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-004": {
+      "id": "REQ-004",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting",
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-002"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-005": {
+      "id": "REQ-005",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting",
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-006": {
+      "id": "REQ-006",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "conflicting",
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-003"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-001": {
+      "id": "GAP-001",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-002": {
+      "id": "GAP-002",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-003": {
+      "id": "GAP-003",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-004": {
+      "id": "GAP-004",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-005": {
+      "id": "GAP-005",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-006": {
+      "id": "GAP-006",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-007": {
+      "id": "GAP-007",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-008": {
+      "id": "GAP-008",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-009": {
+      "id": "GAP-009",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-010": {
+      "id": "GAP-010",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-011": {
+      "id": "GAP-011",
+      "kind": "gap",
+      "provenance": "mockup_observation",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-012": {
+      "id": "GAP-012",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "deferred",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "GAP-013": {
+      "id": "GAP-013",
+      "kind": "gap",
+      "provenance": "inference",
+      "source_artifact": "gaps.json",
+      "approval": "approved",
+      "issues": [],
+      "decision_ids": [
+        "DEC-005"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-001": {
+      "id": "ASM-G-001",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-002": {
+      "id": "ASM-G-002",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-003": {
+      "id": "ASM-G-003",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "ASM-G-004": {
+      "id": "ASM-G-004",
+      "kind": "assumption",
+      "provenance": "assumption",
+      "source_artifact": "gaps.json",
+      "approval": "not_reviewed",
+      "issues": [],
+      "decision_ids": [],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    }
+  },
+  "registered_artifacts": {
+    "requirements.json": "bc1c09cf0e444e47d6ca59c080fe0298d337148eb9a757daefad18a32d68a0ea",
+    "gaps.json": "975b8d46f2786b8a63adb53ffc30d0875a1322bbeaba2bc38d285a3c0cb12c8d"
+  }
+}

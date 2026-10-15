@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-010421-1c7f7c",
+  "items": {
+    "REQ-001": {
+      "id": "REQ-001",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "kind": "requirement",
+      "provenance": "customer_requirement",
+      "source_artifact": "requirements.json",
+      "approval": "approved",
+      "issues": [
+        "unknown"
+      ],
+      "decision_ids": [
+        "DEC-001"
+      ],
+      "stale": false,
+      "stale_reason": null,
+      "superseded_by": null
+    }
+  },
+  "registered_artifacts": {
+    "requirements.json": "ed9c5a6e7ce21917b6ac90dff51c42778eb9486e1cf88132ea1e942ffe6504a3"
+  }
+}

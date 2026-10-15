@@ -29,8 +29,8 @@ seven years" becomes a requirement with that statement), so the specification ca
 approved unless the user approves them.
 
 Then `status_rules.py labels --run <run-id>` and `run_state.py stage 13 --run <run-id> --complete`.
-If `labels` lists any `stale_approved` items, run Checkpoint 13R next (`stage-13r.md`);
-otherwise go to Stage 14.
+If `labels` lists any `stale_approved` items, run Checkpoint 13R
+next (`stage-13r.md`); otherwise go to Stage 14.
 
 ## Report
 

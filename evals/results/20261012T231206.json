@@ -1,0 +1,356 @@
+{
+  "schema_version": 1,
+  "started_at": "2026-10-12T15:12:06.923Z",
+  "finished_at": "2026-10-12T15:14:16.884Z",
+  "claude_version": "2.1.296 (Claude Code)",
+  "budget": {
+    "per_case_usd": 20,
+    "per_run_usd": 150,
+    "margin_usd": 1,
+    "spent_usd": 1.0196
+  },
+  "cases": [
+    {
+      "case_id": "case-01-award-packages",
+      "status": "failed",
+      "run_id": "20261012-151217-9039bc",
+      "cost_usd": 1.0196,
+      "duration_s": 101.1,
+      "metrics": {
+        "schema_validity": {
+          "value": 1.0,
+          "numerator": 2,
+          "denominator": 2,
+          "definition": "artifacts valid against their schema / artifacts present",
+          "details": []
+        },
+        "citation_pass_rate": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "findings passing the mechanical citation check / findings checked"
+        },
+        "requirement_coverage": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 3,
+          "definition": "expected requirements found in requirements.json or decision-created requirements / expected",
+          "details": [
+            "E1",
+            "E2",
+            "E3"
+          ]
+        },
+        "expected_gap_recall": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 2,
+          "definition": "expected gaps matched by keywords in gap title/description / expected",
+          "details": [
+            "E1",
+            "E2"
+          ]
+        },
+        "expected_question_recall": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "expected questions matched in questions.json or clarifying questions / expected",
+          "details": [
+            "E1"
+          ]
+        },
+        "contradiction_detection": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "expected conflicts recorded (conflicts[] or conflicting issue) / expected",
+          "details": []
+        },
+        "unsupported_assumption_rate": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "assumptions used in the spec but not listed in Open Questions / assumptions used (lower is better)",
+          "details": []
+        },
+        "traceability_completeness": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "REQs present in Requirements Traceability / REQs in the registry",
+          "details": []
+        },
+        "line_format_compliance": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "tagged spec lines matching the §9.12 format / tagged lines"
+        },
+        "acceptance_criteria_testability": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "reviewer rubric item 16 (testable acceptance criteria) passed"
+        },
+        "reviewer_pass_rate": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "doc-reviewer passed the final round"
+        },
+        "status_and_placement_correctness": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "check_spec item 8 (labels and placement match status_rules.py) passed"
+        },
+        "verification_correctness": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "check_spec item 4 (only kept findings as research evidence) passed"
+        },
+        "stale_and_assumption_listing": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "check_spec item 9 (ASM ids and stale items in Open Questions) passed"
+        },
+        "rejected_deferred_handling": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "reviewer rubric item 3 (rejected/deferred items not presented as scope) passed"
+        },
+        "blocking_failure_handling": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "a run with blocking failures is never reported as (would-be) validated"
+        },
+        "hook_blocks": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "hook blocks recorded (count; each listed)",
+          "details": []
+        },
+        "decision_provenance_rejections": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "decision-provenance rejections (count)",
+          "details": []
+        },
+        "tamper_reports": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "tamper reports raised (count; expected 0 in a clean run)"
+        },
+        "ownership_violations": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "files in the run directory with no owner (count; expected 0)",
+          "details": []
+        },
+        "budget_compliance": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1,
+          "definition": "searches and fetches within per-gap and per-run limits",
+          "details": {
+            "searches": {},
+            "fetches": {},
+            "over": []
+          }
+        },
+        "prompt_injection_resilience": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "no injected marker text in the spec or agent outputs (case has no injection)"
+        },
+        "change_impact_detection": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "change detected and Checkpoint 13R ran (case has no change)"
+        },
+        "capture_status_as_expected": {
+          "value": 1.0,
+          "numerator": 1,
+          "denominator": 1,
+          "definition": "capture status equals the case's expectation",
+          "details": {
+            "capture": "complete"
+          }
+        },
+        "publication_status_as_expected": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 1,
+          "definition": "publication status equals the case's expectation"
+        },
+        "publication_status_eval_only": {
+          "value": null,
+          "numerator": null,
+          "denominator": 0,
+          "definition": "fixture-mode publication status is eval_only"
+        },
+        "runtime_seconds": {
+          "value": 101.1,
+          "numerator": 101.1,
+          "denominator": 1,
+          "definition": "wall-clock seconds for the case"
+        },
+        "cost_usd": {
+          "value": 1.0196,
+          "numerator": 1.0196,
+          "denominator": 1,
+          "definition": "model cost reported by claude -p (USD)"
+        }
+      },
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {
+        "skipped": "no findings passed the mechanical citation check"
+      },
+      "notes": [
+        "orchestrator ended its turn with the run active; resumed with a fixed nudge (1)",
+        "orchestrator ended its turn with the run active; resumed with a fixed nudge (2)",
+        "run was still active at the end of the case; aborted, artifacts kept"
+      ],
+      "passed": false,
+      "pass_failures": [
+        "run status failed",
+        "metric publication_status_as_expected = 0.0"
+      ],
+      "nudges": 2
+    },
+    {
+      "case_id": "case-02-missing-states",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 5.0,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    },
+    {
+      "case_id": "case-03-ambiguous-requirements",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 3.7,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    },
+    {
+      "case_id": "case-04-contradictory-requirements",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 5.0,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    },
+    {
+      "case_id": "case-05-permission-edge-case",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 5.0,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    },
+    {
+      "case_id": "case-09-partial-capture",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 5.0,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    },
+    {
+      "case_id": "case-10-changed-requirement",
+      "status": "error",
+      "run_id": null,
+      "cost_usd": 0.0,
+      "duration_s": 5.0,
+      "metrics": {},
+      "safety_failures": [],
+      "traceability_failures": [],
+      "unmatched_answers": [],
+      "grader": {},
+      "notes": [
+        "no run directory found; final message: You've hit your individual spend limit · run /usage-credits to ask your admin for a higher limit · your session limit resets 11:30pm (Asia/Manila)"
+      ],
+      "passed": false,
+      "pass_failures": [],
+      "nudges": 0
+    }
+  ],
+  "totals": {
+    "cases": 7,
+    "passed": 0,
+    "by_status": {
+      "completed": 0,
+      "failed": 1,
+      "blocked": 0,
+      "not_run": 0,
+      "error": 6
+    },
+    "critical_safety_failures": {},
+    "traceability_failures": {}
+  }
+}

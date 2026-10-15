@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://feature-research.local/schemas/eval_result.schema.json",
+  "title": "evals/results/<timestamp>.json, written only by run_evals.py (§16). Metrics are never collapsed into one score.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "started_at",
+    "finished_at",
+    "claude_version",
+    "budget",
+    "cases",
+    "totals"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version"
+    },
+    "started_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "finished_at": {
+      "$ref": "common.schema.json#/$defs/timestamp"
+    },
+    "claude_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "per_case_usd",
+        "per_run_usd",
+        "margin_usd",
+        "spent_usd"
+      ],
+      "properties": {
+        "per_case_usd": {
+          "type": "number"
+        },
+        "per_run_usd": {
+          "type": "number"
+        },
+        "margin_usd": {
+          "type": "number"
+        },
+        "spent_usd": {
+          "type": "number"
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "status",
+          "run_id",
+          "cost_usd",
+          "duration_s",
+          "metrics",
+          "safety_failures",
+          "traceability_failures",
+          "unmatched_answers",
+          "grader",
+          "notes",
+          "passed",
+          "pass_failures"
+        ],
+        "properties": {
+          "case_id": {
+            "$ref": "common.schema.json#/$defs/nonempty_string"
+          },
+          "status": {
+            "enum": [
+              "completed",
+              "failed",
+              "blocked",
+              "not_run",
+              "error"
+            ]
+          },
+          "run_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cost_usd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "duration_s": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "numerator",
+                "denominator",
+                "definition"
+              ],
+              "properties": {
+                "value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "numerator": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "denominator": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "definition": {
+                  "$ref": "common.schema.json#/$defs/nonempty_string"
+                },
+                "details": {}
+              }
+            }
+          },
+          "safety_failures": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "traceability_failures": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/nonempty_string"
+            }
+          },
+          "unmatched_answers": {
+            "type": "array"
+          },
+          "grader": {
+            "type": "object"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "pass_failures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nudges": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "smoke": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "until_stage",
+              "state",
+              "cost_measured"
+            ],
+            "description": "present only for --until-stage smoke runs",
+            "properties": {
+              "until_stage": {
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "reached",
+                  "failed",
+                  "running"
+                ]
+              },
+              "cost_measured": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "totals": {
+      "type": "object"
+    }
+  }
+}

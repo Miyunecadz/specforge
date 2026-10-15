@@ -228,6 +228,48 @@ e2e 19/19 at US$12.08 per case; re-audit APPROVED).
 7. **Stage 13 guidance**: answers that set a rule, number, channel, retention or policy create a
    requirement (found when the doc-writer could not tag a decision with no item).
 8. **Schemas**: validation, review, run_summary; manifest gains revisions, events marks, post-15 flags.
+
+## Phase 6 implementation notes (2026-10-12)
+
+**Phase 6 gate: pending.**
+
+1. **Change impact** (§15): `run_state.py change-inputs` saves `input/requirements-v<n>.md`, compares
+   each requirement's source quote with the new text and writes `input/change-<n>.json` (changed REQs,
+   added text, dependent items with stale reasons, `schemas/change.schema.json`). `status_rules.py
+   apply` accepts only those files: approved items become stale, unapproved ones superseded. Only
+   requirement changes are detected; a changed mockup needs a new run (limitation).
+2. **Non-interactive answers**: `status_rules.py decide --from-case` matches the case's pre-written
+   answers in `_lib/case_answers.py` (keywords plus REQ ID or gap description, never Q-ids); zero or
+   several matches leave the question unanswered and listed as `unmatched`. DECs record source
+   `eval_case_file`. Refused unless fixture mode and `--non-interactive` are active and the case file
+   hash still matches. H1's provenance check also accepts `--from-case` (with only `--run` and
+   `--checkpoint`) only in a fixture-mode non-interactive run.
+3. **Orchestrator**: `references/non-interactive.md` (await-user, continue, decide --from-case in one
+   turn; never read `expected.json`), `references/change-inputs.md`. A case's
+   `change_after_checkpoint_3` is applied after Stage 15, then post-review 13R and the Stage 14–15
+   re-run (§16 case 10); `change_impact_detection` requires all three. Re-audit fixes: a change
+   raised at an open checkpoint is applied after that checkpoint completes (`change-inputs`
+   refuses while a stage runs); `--change` on a completed run tells the user to start a new run.
+4. **run_state.py start** resolves a relative `--requirements-file` against the repo root, matching
+   `change-inputs` and `--non-interactive` (was cwd).
+5. **run_evals.py** and `_lib/metrics.py` as §16; headless flags as in Phase 0 findings; case-specific
+   pass checks; results in `evals/results/<ts>.json`; `--dry-run`, `--calibrate`.
+6. **eval-citation-grader** (Opus, Read only): agent-creator iteration 1 failed T5 (graded, then said
+   out of scope); rule fixed; iteration 2 8/8. Calibration set drafted by the build agent, **pending
+   human review**.
+7. **Answer matching revised after the first live runs** (cases 07 and 08 stopped at Checkpoint 1:
+   broad keywords matched two questions, so blocking questions stayed open, and the questions are
+   worded differently on every run). An answer now covers every question it matches; a question
+   with zero or several matching answers stays open (the §16 rule). Matching uses the question
+   text and topic only (`why_it_matters` caused false matches), with `exclude_keywords` and
+   `any_of`. Generated question sets are kept in `evals/replay/` and a test re-checks every case
+   against them offline. `run_evals.py --until-stage <n>` smoke-runs cases cheaply (US$3 cap each,
+   charged in full since a stopped run reports no cost).
+8. **run_evals.py fixes from the first live runs**: open runs were detected by a status that does
+   not exist (`active`), so they were never aborted and blocked the next case; a leftover run was
+   aborted under the next case's fixture dir and the refusal ignored.
+9. **Cases**: all ten in `evals/cases/`; shared source pages in `evals/fixtures/shared-sources/`;
+   `eval_expected.schema.json` gained `trap_claims` (cases 6 and 8).
 ---
 
 ## 1. Current-state findings

@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "case_id": "case-09-partial-capture",
+  "description": "Partial or failed mockup capture.",
+  "fixture_dir": "evals/fixtures/case-09-partial-capture",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-09-partial-capture/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "approv"
+                ]
+              },
+              {
+                "keywords": [
+                  "manager"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "reason",
+              "resubmit",
+              "status",
+              "notif",
+              "cancel",
+              "balance",
+              "type"
+            ]
+          },
+          "verbatim": "Managers approve or reject leave requests from their own direct reports only. One approval is enough; if a manager is away, their own manager can act instead.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "reason"
+                ]
+              },
+              {
+                "keywords": [
+                  "resubmit"
+                ]
+              }
+            ]
+          },
+          "verbatim": "A reason is required when rejecting, and the employee sees it. A rejected request can be corrected and resubmitted.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "status"
+                ]
+              },
+              {
+                "keywords": [
+                  "see"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "reason"
+            ]
+          },
+          "verbatim": "Requests are pending, approved, rejected or cancelled; employees see each request's status, dates and the manager's comment, and are emailed whenever the status changes.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "type"
+                ]
+              },
+              {
+                "keywords": [
+                  "balance"
+                ]
+              },
+              {
+                "keywords": [
+                  "allowance"
+                ]
+              },
+              {
+                "keywords": [
+                  "date"
+                ]
+              },
+              {
+                "keywords": [
+                  "half"
+                ]
+              },
+              {
+                "keywords": [
+                  "field"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "status",
+              "reason",
+              "approv",
+              "manager"
+            ]
+          },
+          "verbatim": "A request has a leave type (annual, sick or unpaid), start and end dates and an optional note. Half days are allowed, and annual leave cannot exceed the remaining balance. A request cannot overlap another of the employee's own requests.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "cancel"
+                ]
+              },
+              {
+                "keywords": [
+                  "edit"
+                ]
+              },
+              {
+                "keywords": [
+                  "withdraw"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "reason",
+              "status"
+            ]
+          },
+          "verbatim": "Employees can cancel a pending request, or an approved one before it starts; approved requests cannot be edited.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "notif"
+                ]
+              },
+              {
+                "keywords": [
+                  "email"
+                ]
+              },
+              {
+                "keywords": [
+                  "told"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "status"
+            ]
+          },
+          "verbatim": "The manager is emailed when a request is submitted and the employee when it is decided.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

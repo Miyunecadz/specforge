@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-014825-883027",
+  "requirements": [
+    {"id": "REQ-001", "statement": "Only finance administrators can delete invoices.", "type": "functional", "priority": "unspecified", "source_quote": "Only finance administrators can delete invoices.", "source_location": "line 1", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined what a finance administrator is or how the role is assigned", "Conflicts with line 2, which lets any user delete invoices they created"], "related_ids": ["REQ-002", "CQ-001"]},
+    {"id": "REQ-002", "statement": "Any user can delete invoices they created.", "type": "functional", "priority": "unspecified", "source_quote": "Any user can delete invoices they created.", "source_location": "line 2", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined whether this applies to invoices in every state (for example already sent or paid)", "Conflicts with line 1, which restricts deletion to finance administrators"], "related_ids": ["REQ-001", "CQ-001"]},
+    {"id": "REQ-003", "statement": "Invoices must be exported as PDF only.", "type": "constraint", "priority": "must", "source_quote": "Invoices must be exported as PDF only.", "source_location": "line 3", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined whether export covers single or multiple invoices", "Conflicts with line 4, which requires export to Excel"], "related_ids": ["REQ-004", "CQ-002"]},
+    {"id": "REQ-004", "statement": "Users must be able to export invoices to Excel.", "type": "functional", "priority": "must", "source_quote": "Users must be able to export invoices to Excel.", "source_location": "line 4", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined which users, or which invoice data the Excel file contains", "Conflicts with line 3, which limits export to PDF only"], "related_ids": ["REQ-003", "CQ-002"]},
+    {"id": "REQ-005", "statement": "Deleted invoices are removed permanently.", "type": "functional", "priority": "unspecified", "source_quote": "Deleted invoices are removed permanently.", "source_location": "line 5", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined whether removal is immediate or after a delay", "Conflicts with line 6, which requires recoverability for 30 days"], "related_ids": ["REQ-006", "CQ-003"]},
+    {"id": "REQ-006", "statement": "Deleted invoices must be recoverable for 30 days.", "type": "functional", "priority": "must", "source_quote": "Deleted invoices must be recoverable for 30 days.", "source_location": "line 6", "provenance": "customer_requirement", "kind": "requirement", "ambiguity_notes": ["Not defined who may recover an invoice or how", "Not defined what happens after 30 days", "Conflicts with line 5, which says deletion is permanent"], "related_ids": ["REQ-005", "CQ-003", "CQ-004"]}
+  ],
+  "assumptions": [],
+  "clarifying_questions": [
+    {"id": "CQ-001", "question": "Who may delete an invoice: only finance administrators, or also any user for the invoices they created?", "why_it_matters": "Decides the permission model for deletion; the two statements give opposite rules.", "blocking": true, "related_ids": ["REQ-001", "REQ-002"], "consequence_if_unanswered": "Deletion permissions cannot be specified; the wrong rule could let unauthorised users delete financial records.", "topic": "permissions"},
+    {"id": "CQ-002", "question": "Should invoices be exportable as PDF only, or also to Excel? If both, who can use each format?", "why_it_matters": "The statements contradict each other on supported export formats.", "blocking": false, "related_ids": ["REQ-003", "REQ-004"], "consequence_if_unanswered": "Export scope cannot be fixed; one format may be built or omitted wrongly.", "topic": "export"},
+    {"id": "CQ-003", "question": "When an invoice is deleted, is it removed permanently at once, or kept and recoverable for 30 days?", "why_it_matters": "Decides whether deletion is reversible, which affects data retention and legal effect.", "blocking": true, "related_ids": ["REQ-005", "REQ-006"], "consequence_if_unanswered": "Deletion behaviour cannot be specified; an irreversible action could be built where recovery was expected.", "topic": "deletion"},
+    {"id": "CQ-004", "question": "If invoices are recoverable for 30 days, who can recover them, and what happens to them after 30 days?", "why_it_matters": "Defines the recovery permissions and the end-of-retention behaviour.", "blocking": false, "related_ids": ["REQ-006"], "consequence_if_unanswered": "Recovery flow and purge behaviour remain undefined.", "topic": "recovery"}
+  ],
+  "conflicts": [
+    {"ids": ["REQ-001", "REQ-002"], "description": "REQ-001 says only finance administrators can delete invoices; REQ-002 says any user can delete invoices they created. Both are kept unreconciled."},
+    {"ids": ["REQ-003", "REQ-004"], "description": "REQ-003 says invoices must be exported as PDF only; REQ-004 says users must be able to export invoices to Excel. Both are kept unreconciled."},
+    {"ids": ["REQ-005", "REQ-006"], "description": "REQ-005 says deleted invoices are removed permanently; REQ-006 says deleted invoices must be recoverable for 30 days. Both are kept unreconciled."}
+  ],
+  "proposed_status_changes": [
+    {"type": "add_issue", "item_id": "REQ-001", "issue": "conflicting", "reason": "Contradicts REQ-002 on who can delete invoices.", "related_ids": ["REQ-002"]},
+    {"type": "add_issue", "item_id": "REQ-002", "issue": "conflicting", "reason": "Contradicts REQ-001 on who can delete invoices.", "related_ids": ["REQ-001"]},
+    {"type": "add_issue", "item_id": "REQ-003", "issue": "conflicting", "reason": "Contradicts REQ-004 on supported export formats.", "related_ids": ["REQ-004"]},
+    {"type": "add_issue", "item_id": "REQ-004", "issue": "conflicting", "reason": "Contradicts REQ-003 on supported export formats.", "related_ids": ["REQ-003"]},
+    {"type": "add_issue", "item_id": "REQ-005", "issue": "conflicting", "reason": "Contradicts REQ-006 on whether deletion is permanent.", "related_ids": ["REQ-006"]},
+    {"type": "add_issue", "item_id": "REQ-006", "issue": "conflicting", "reason": "Contradicts REQ-005 on whether deletion is permanent.", "related_ids": ["REQ-005"]},
+    {"type": "add_issue", "item_id": "REQ-006", "issue": "unknown", "reason": "Who can recover invoices and what happens after 30 days is not stated."}
+  ]
+}

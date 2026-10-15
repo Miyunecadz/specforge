@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "case_id": "case-02-missing-states",
+  "description": "Multiple missing states and dead-end flows.",
+  "fixture_dir": "evals/fixtures/case-02-missing-states",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-02-missing-states/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "line manager"
+                ]
+              },
+              {
+                "keywords": [
+                  "manager"
+                ]
+              },
+              {
+                "keywords": [
+                  "approv"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "reason",
+              "notif",
+              "status",
+              "availab",
+              "overlap",
+              "cancel",
+              "edit"
+            ]
+          },
+          "verbatim": "Line managers approve or decline requests from their own direct reports only. If the manager is away, their own manager can act instead.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "reason"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "notif",
+              "status",
+              "availab"
+            ]
+          },
+          "verbatim": "A reason is required when declining, and staff see it with the decision.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "availab"
+                ]
+              },
+              {
+                "keywords": [
+                  "overlap"
+                ]
+              },
+              {
+                "keywords": [
+                  "double"
+                ]
+              },
+              {
+                "keywords": [
+                  "conflict"
+                ]
+              }
+            ]
+          },
+          "verbatim": "An item cannot be loaned to two people for overlapping dates; the request form only offers dates when the item is free.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "notif"
+                ]
+              },
+              {
+                "keywords": [
+                  "email"
+                ]
+              },
+              {
+                "keywords": [
+                  "told"
+                ]
+              },
+              {
+                "keywords": [
+                  "inform"
+                ]
+              }
+            ]
+          },
+          "verbatim": "Staff are notified by email when their request is approved or declined, and managers when a request is submitted.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "status"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "notif",
+              "reason"
+            ]
+          },
+          "verbatim": "Requests are pending, approved, declined, cancelled or returned; staff see the status, the dates and any decline reason.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "cancel"
+                ]
+              },
+              {
+                "keywords": [
+                  "edit"
+                ]
+              },
+              {
+                "keywords": [
+                  "length"
+                ]
+              },
+              {
+                "keywords": [
+                  "how long"
+                ]
+              },
+              {
+                "keywords": [
+                  "advance"
+                ]
+              },
+              {
+                "keywords": [
+                  "limit"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "notif",
+              "reason",
+              "status",
+              "availab",
+              "overlap"
+            ]
+          },
+          "verbatim": "Staff can cancel a pending request but not edit it. Loans are at most 14 days and can be booked up to 30 days ahead.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

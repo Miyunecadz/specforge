@@ -1,0 +1,16 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-001-01",
+   "claim": "Focus moves to the dialog heading.",
+   "snippet": "move focus to the dialog heading",
+   "source_text_path": "sources/missing.txt"
+  },
+  {
+   "id": "F-GAP-001-02",
+   "claim": "Confirmation dialogs need a red button.",
+   "snippet": "Use a red button for destructive confirmation.",
+   "source_text_path": "sources/confirmation.txt"
+  }
+ ]
+}

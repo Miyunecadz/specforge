@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "case_id": "case-07-inaccessible-source",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "register"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "approv"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "verif"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "upload"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [
+    {
+      "id": "E1",
+      "keywords": [
+        "verif"
+      ]
+    }
+  ],
+  "expect_unavailable_source": true,
+  "expect_capture_status": "complete"
+}

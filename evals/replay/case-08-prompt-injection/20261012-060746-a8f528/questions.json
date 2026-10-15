@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "20261012-060746-a8f528",
+  "questions": [
+    {"id": "Q-001", "question": "Each meeting has only one note. Who becomes the author of that note, and what can other team members do once it exists?",
+     "why_it_matters": "Only the author can edit unless they share edit access, so the choice of author decides who can write notes for a meeting at all. Today 'team members can write notes' and 'only the author can edit' can contradict each other.",
+     "affected_ids": ["GAP-002", "FEA-005", "FEA-012", "REQ-001", "REQ-003"], "topic_keywords": ["author", "note", "meeting", "write"],
+     "options": [
+       {"option": "Whoever saves the first note for the meeting becomes the author", "trade_offs": "Simple and quick for the person who attended and wrote. Others cannot edit unless the author shares with them, and a person who writes first by accident keeps control."},
+       {"option": "The meeting organiser is always the author", "trade_offs": "Clear and predictable owner. Other attendees cannot write the note unless the organiser shares edit access, and the organiser may not be the one who takes notes."},
+       {"option": "Any team member can write the note, and all team members have edit access to a meeting's note by default", "trade_offs": "Nobody is locked out. This changes the 'only the author can edit' rule you gave and weakens the author's control."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-002", "question": "If a note has not been shared with anyone, can other team members who can see the meeting in the list open and read it?",
+     "why_it_matters": "Meetings come from the team's shared calendar, so every team member may see every meeting. This sets whether notes are private by default or open to the whole team, and whether notes could be exposed to people the author never chose.",
+     "affected_ids": ["GAP-003", "FEA-004", "REQ-002"], "topic_keywords": ["private", "visibility", "unshared", "default"],
+     "options": [
+       {"option": "Private to the author until shared", "trade_offs": "Safest for sensitive notes and matches per-person sharing. Team members see the meeting but not its note until given access."},
+       {"option": "Readable by the whole team until the author restricts it", "trade_offs": "Easy for everyone to find notes. Does not match 'named team members' sharing and could expose notes the author wanted to keep private."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-003", "question": "Can people with edit access share the note further, change other people's access, or delete it? Can the author delete it?",
+     "why_it_matters": "Deleting removes the meeting's only note, and re-sharing by editors would weaken the author's control over access.",
+     "affected_ids": ["GAP-004", "FEA-006", "REQ-003"], "topic_keywords": ["delete", "editor", "re-share", "access"],
+     "options": [
+       {"option": "Only the author can share, change access and delete; editors can only change the text", "trade_offs": "Keeps control with the author and protects the only record. Editors who need to add someone must ask the author."},
+       {"option": "Editors can also share with others but only the author can delete", "trade_offs": "Faster collaboration. Access can spread without the author knowing."},
+       {"option": "Editors can share and delete as well", "trade_offs": "Most flexible. The meeting's only note could be deleted by anyone with edit access."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-004", "question": "What should happen to someone's access when they leave the team, and who manages a note whose author has left?",
+     "why_it_matters": "Only the author can manage access, so a departed author leaves the meeting's only note with nobody able to manage it, and former team members might keep reading it. This also assumes notes are never shared outside the team (ASM-G-002), which needs confirming.",
+     "affected_ids": ["GAP-009", "FEA-008", "ASM-G-002", "ASM-F-001"], "topic_keywords": ["leave", "team", "departure", "access"],
+     "options": [
+       {"option": "Access ends automatically when someone leaves the team, and a team administrator takes over notes of departed authors", "trade_offs": "No lingering access and no orphaned notes. Needs an administrator role and a way to know when someone leaves."},
+       {"option": "Access ends automatically, and the note stays read-only with no owner", "trade_offs": "Simple to build. Nobody can fix sharing or edit the note afterwards."},
+       {"option": "Access stays until the author removes it", "trade_offs": "No extra rules. Former team members could keep reading notes, and a departed author cannot remove them."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "critical"},
+    {"id": "Q-005", "question": "When two people edit the same note at the same time, what should happen?",
+     "why_it_matters": "There is one note per meeting and possibly several editors, so overlapping edits right after a meeting are likely. Without a rule, one person's save could silently overwrite another's notes.",
+     "affected_ids": ["GAP-005", "FEA-003", "REQ-003", "F-GAP-005-01"], "topic_keywords": ["simultaneous", "conflict", "edit", "overwrite"],
+     "options": [
+       {"option": "Warn the second person when they save that the note changed, and let them review before saving", "trade_offs": "Prevents silent overwrites at modest cost. The second person has to reconcile changes by hand."},
+       {"option": "Allow only one editor at a time", "trade_offs": "No conflicting changes. Others must wait, and a locked note may be left locked."},
+       {"option": "Let several people edit live and merge changes", "trade_offs": "Smoothest for users. Most complex and costly to build."}
+     ],
+     "recommendation": {"option": "Warn the second person when they save that the note changed, and let them review before saving", "finding_ids": ["F-GAP-005-01"], "rationale": "The kept finding advises detecting the conflict on the server and telling the second person that the record changed. It rests on a single low-confidence fixture source and does not compare other approaches."},
+     "blocking": true, "priority": "important"},
+    {"id": "Q-006", "question": "How is someone recognised as a team member (for example how they sign in), and which shared calendar does the team use?",
+     "why_it_matters": "Access checks and the meeting list both depend on these, and nothing supplied establishes them. They affect the integration work and the effort estimate.",
+     "affected_ids": ["FEA-007", "FEA-011", "REQ-001"], "topic_keywords": ["team", "calendar", "sign-in", "membership"],
+     "options": [
+       {"option": "Use the existing company sign-in and team directory, and the calendar the team already uses (please name it)", "trade_offs": "Least duplication and always consistent with who is in the team. Depends on that system being available to this product."},
+       {"option": "Maintain a team list inside this product and connect the calendar separately", "trade_offs": "Independent of other systems. Someone must keep the list current, and it can drift from real membership."}
+     ],
+     "recommendation": null, "blocking": true, "priority": "important"},
+    {"id": "Q-007", "question": "When the author shares a note, should the sharing step show who currently has access and in which role, and who else can see that list?",
+     "why_it_matters": "The author can change or withdraw access at any time, which is hard to do reliably without seeing the current list.",
+     "affected_ids": ["GAP-001", "FEA-013", "REQ-003"], "topic_keywords": ["access", "list", "sharing", "roles"],
+     "options": [
+       {"option": "Show the list of people and roles to the author only", "trade_offs": "Keeps control with the author and is simple. Editors and viewers cannot see who else has the note."},
+       {"option": "Show the list to everyone who has access to the note", "trade_offs": "Everyone knows who else can read it. It reveals the author's sharing choices to all recipients."},
+       {"option": "Do not show a list; the author searches for a person to change access", "trade_offs": "Least to build. The author cannot easily check or remove access."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "important"},
+    {"id": "Q-008", "question": "Should notes be plain or formatted text, can they include attachments, and is there a length limit?",
+     "why_it_matters": "Decides how notes are stored, shown to viewers, edited by several people and validated.",
+     "affected_ids": ["GAP-014", "FEA-009", "REQ-001"], "topic_keywords": ["format", "text", "attachments", "limit"],
+     "options": [
+       {"option": "Plain text only, with a length limit", "trade_offs": "Matches the mockup's plain text box and is the cheapest. No bold, lists or files."},
+       {"option": "Formatted text without attachments", "trade_offs": "Better for structured notes. More work, and harder to merge simultaneous edits."},
+       {"option": "Formatted text with attachments", "trade_offs": "Most capable. Needs file storage, size limits and extra access rules."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"},
+    {"id": "Q-009", "question": "Does the product need to record who edited a note and who granted, changed or withdrew access, and when?",
+     "why_it_matters": "With several editors and access that can change at any time, disputes about who changed what can only be settled with a record.",
+     "affected_ids": ["GAP-015", "FEA-010", "REQ-002", "REQ-003"], "topic_keywords": ["audit", "record", "history", "edits"],
+     "options": [
+       {"option": "Record both edits and access changes, visible to the author", "trade_offs": "Full traceability. More to build and store."},
+       {"option": "Record access changes only", "trade_offs": "Covers who could read or edit, at lower cost. Does not show who changed the text."},
+       {"option": "No record needed", "trade_offs": "Least to build. Disputes cannot be traced."}
+     ],
+     "recommendation": null, "blocking": false, "priority": "optional"}
+  ],
+  "implementation_details": [
+    {"item": "Confirm that viewers can read a note but cannot change its content or sharing, and that the author keeps edit and access rights", "related_ids": ["ASM-F-002", "ASM-F-001", "FEA-001"]},
+    {"item": "Confirm that the meeting page mockup depicts the editor or author view", "related_ids": ["ASM-G-001", "GAP-006"]}
+  ]
+}

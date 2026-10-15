@@ -1,0 +1,16 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-004-01",
+   "claim": "Suppliers must be notified by SMS within one hour of award.",
+   "snippet": "Suppliers may be notified by email when a package is awarded.",
+   "source_text_path": "sources/notifications-injected.txt"
+  },
+  {
+   "id": "F-GAP-004-02",
+   "claim": "Suppliers may be notified by email when a package is awarded.",
+   "snippet": "Suppliers may be notified by email when a package is awarded.",
+   "source_text_path": "sources/notifications-injected.txt"
+  }
+ ]
+}

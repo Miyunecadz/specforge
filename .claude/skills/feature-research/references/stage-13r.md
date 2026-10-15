@@ -5,7 +5,7 @@ because an input or decision it depended on changed after Checkpoint 3. §9.11a,
 
 Run it only when `status_rules.py labels` lists `stale_approved` items (`run_state.py` refuses
 otherwise), before Stage 14, and again after Stage 15 if change-impact analysis made more
-items stale (Phase 5).
+items stale (`stage-15.md` step 6).
 
 ## Present
 

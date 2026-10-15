@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "case-09-partial-capture",
+  "requirements": [
+    {
+      "id": "E1",
+      "keywords": [
+        "submit"
+      ]
+    },
+    {
+      "id": "E2",
+      "keywords": [
+        "approve"
+      ]
+    },
+    {
+      "id": "E3",
+      "keywords": [
+        "status"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "E1",
+      "keywords": [
+        "new"
+      ]
+    }
+  ],
+  "conflicts": [],
+  "questions": [],
+  "expect_capture_status": "partial"
+}

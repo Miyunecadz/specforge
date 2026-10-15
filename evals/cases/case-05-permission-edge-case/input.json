@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "case_id": "case-05-permission-edge-case",
+  "description": "Missing permission or security edge case.",
+  "fixture_dir": "evals/fixtures/case-05-permission-edge-case",
+  "mockup": "index.html",
+  "requirements_file": "evals/cases/case-05-permission-edge-case/requirements.md",
+  "checkpoints": {
+    "1": {
+      "answers": [
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "password"
+                ]
+              },
+              {
+                "keywords": [
+                  "reset"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "display name"
+            ]
+          },
+          "verbatim": "Team leads can reset passwords only for members of their own team, never for other team leads, administrators or themselves through this feature. A reset emails the member a link; the team lead never sees or sets the password. Every reset is logged with who did it and when.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "view"
+                ]
+              },
+              {
+                "keywords": [
+                  "see"
+                ]
+              },
+              {
+                "keywords": [
+                  "visible"
+                ]
+              },
+              {
+                "keywords": [
+                  "which fields"
+                ]
+              },
+              {
+                "keywords": [
+                  "member detail"
+                ]
+              },
+              {
+                "keywords": [
+                  "member information"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "password",
+              "reset",
+              "display name"
+            ]
+          },
+          "verbatim": "Team leads see the name, email, job title and account status of the members of their own team only.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "display name"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "password",
+              "reset"
+            ]
+          },
+          "verbatim": "Users can change their own display name at any time; it must be 2 to 50 characters and need not be unique.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "team lead"
+                ]
+              },
+              {
+                "keywords": [
+                  "lead"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "password",
+              "reset",
+              "display name",
+              "view",
+              "see",
+              "visible"
+            ]
+          },
+          "verbatim": "A team lead is the person recorded as the team's lead in HR. Each team has one lead and each member belongs to one team.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        },
+        {
+          "match": {
+            "any_of": [
+              {
+                "keywords": [
+                  "audit"
+                ]
+              },
+              {
+                "keywords": [
+                  "log"
+                ]
+              }
+            ],
+            "exclude_keywords": [
+              "password",
+              "reset",
+              "display name"
+            ]
+          },
+          "verbatim": "Password resets and display name changes are recorded in the audit log.",
+          "actions": [
+            {
+              "type": "approve_affected"
+            },
+            {
+              "type": "clear_unknown_on_affected"
+            }
+          ]
+        }
+      ],
+      "remaining_requirements": {
+        "decision": "approve",
+        "verbatim": "Approve the remaining requirements as written."
+      }
+    },
+    "2": {
+      "gap_rules": [],
+      "max_research_gaps": 2,
+      "unmatched_gaps": {
+        "decision": "approve",
+        "verbatim": "Approve this gap; research is limited to the first two research gaps."
+      }
+    },
+    "3": {
+      "answers": []
+    }
+  }
+}

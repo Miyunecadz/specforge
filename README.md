@@ -10,14 +10,13 @@ requirements or silently making product decisions. You run it inside Claude Code
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)
 
-> **Build status: Phase 6.** The full pipeline works, Stages 1–16: intake, capture (HTML,
-> images, Figma), inventory, requirements, Checkpoint 1, gaps, Checkpoint 2, research within
-> budget, citation check, semantic verification, feasibility, customer questions,
-> Checkpoint 3, re-confirmation (13R), specification writing, mechanical and independent
-> review with up to two revision rounds, and the final report with an honest publication
-> status. Phase 6 adds change-impact analysis for changed requirements, the offline
-> evaluation runner (`run_evals.py`), the `eval-citation-grader` and the ten required eval
-> cases. This README describes only what exists now.
+> The pipeline runs Stages 1–16: intake, capture (HTML, images, Figma), inventory,
+> requirements, Checkpoint 1, gaps, Checkpoint 2, research within budget, citation check,
+> semantic verification, feasibility, customer questions, Checkpoint 3, re-confirmation
+> (13R), specification writing, mechanical and independent review with up to two revision
+> rounds, and a final report with an honest publication status. It includes change-impact
+> analysis for changed requirements and an offline evaluation suite (`run_evals.py`, the
+> `eval-citation-grader`, and ten eval cases).
 
 ## How it works
 
@@ -101,8 +100,7 @@ Dependencies are pinned in `uv.lock` (`requirements.txt` is exported from it): `
   (`.claude/skills/feature-research-subagent-rules/SKILL.md`) verbatim in each agent.
   Preloading is not used: on this Claude Code version a skill marked
   `disable-model-invocation: true` is not delivered through `skills:` preloading.
-- Installs exactly one researcher variant (`web-researcher` in identified mode, the default;
-  its source arrives in Phase 3).
+- Installs exactly one researcher variant (`web-researcher` in identified mode, the default).
 - Picks the interpreter: the project `.venv/bin/python` if present, otherwise `python3` or
   `python` from `PATH`, as an absolute path. It records that path, the hook mode and the
   installed agents in `.claude/feature-research.local.json` (gitignored, machine-specific).
@@ -326,7 +324,7 @@ because separately registered hooks run in parallel.
 
 | Hook | What it does during a run (owning session only) |
 |---|---|
-| **H1** Bash guard | Every Bash call must be exactly `<python> <skill>/scripts/<name>.py <args>`, using the recorded interpreter. It blocks env-variable prefixes, chaining, pipes, redirection, subshells, `$(...)`, backticks, globs and `~`. Arguments may be single-quoted (any characters except `'`) or double-quoted (no `$`, `` ` ``, `\`, `!`). Subagents get no Bash, except `web-researcher`, which may run only the exact `fetch_source.py` form (Phase 3). `status_rules.py decide` runs only after the decision-provenance check passes. |
+| **H1** Bash guard | Every Bash call must be exactly `<python> <skill>/scripts/<name>.py <args>`, using the recorded interpreter. It blocks env-variable prefixes, chaining, pipes, redirection, subshells, `$(...)`, backticks, globs and `~`. Arguments may be single-quoted (any characters except `'`) or double-quoted (no `$`, `` ` ``, `\`, `!`). Subagents get no Bash, except `web-researcher`, which may run only the exact `fetch_source.py` form. `status_rules.py decide` runs only after the decision-provenance check passes. |
 | **H2** Write guard | Blocks Write/Edit everywhere outside the active run directory. Blocks script- and hook-owned files for everyone, and blocks all orchestrator writes in the run directory. Each subagent may write only the files it owns. Symlinks and relative paths are resolved first. |
 | **H5** Tool guard | Blocks Skill, WebFetch and every `mcp__*` tool. WebSearch is allowed only for the installed researcher. The Agent tool is allowed only for the nine workflow agents. Any other tool not on the run allow-list (for example Monitor, Workflow, CronCreate, AskUserQuestion) is also blocked. |
 | Recorder | SubagentStart: records each subagent invocation in `.hook_events.jsonl`. |
@@ -392,7 +390,7 @@ the eval budget caps ($20 per case, $150 per run).
 Safe to change: capture limits (`max_pages`, `max_depth`, `figma_max_frames`, timeouts,
 byte limits, `image_content_types`), `network.blocked_hostnames` (extra blocks only),
 `network.allowed_schemes` (narrowing only), timeouts, `sources.allow_domains`/`deny_domains`,
-research budgets (Phase 3), `review.max_customer_questions`,
+research budgets, `review.max_customer_questions`,
 `run.active_run_timeout_minutes`, `evals.case_order`, `logging.detail`.
 
 ## Eval fixture mode
@@ -410,7 +408,7 @@ browser from the reserved origin `http://fixture.invalid/`. Every other request 
 so nothing reaches the network. Fixture-mode output is always publication status
 `eval_only`.
 
-Fixtures so far: `evals/fixtures/case-01-award-packages` (straightforward HTML mockup and a
+Fixtures: `evals/fixtures/case-01-award-packages` (straightforward HTML mockup and a
 static image), `evals/fixtures/case-09-partial-capture` (missing pages, external and
 metadata requests) and `evals/fixtures/case-figma-01-award-packages` (recorded Figma REST
 responses, `award.figma.json`, replayed offline; regenerate with
@@ -502,9 +500,9 @@ Expect roughly US$5–15 and 20–45 minutes per case with Opus, so US$50–150 
 The cap is checked between turns, so one turn can overshoot it; the margin covers that.
 
 **Grader calibration:** `evals/grader-calibration/` holds claim/snippet examples with a
-reference grade. The reference grades were drafted by the build agent and are **pending
-human review** (`human_reviewed: false`); until reviewed, `--calibrate` shows consistency
-with drafted labels only.
+human-reviewed reference grade. `--calibrate` grades them with `eval-citation-grader` and
+reports exact agreement against those labels (last run: 8/8). The grader is a second-opinion
+signal on research quality; it does not gate case pass/fail.
 
 ## Tests
 

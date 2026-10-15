@@ -1,8 +1,9 @@
-# Feature Research Agent
+# specforge
 
-A Claude Code workflow that turns a product mockup URL and a customer's requirements into a
-traceable, evidence-backed feature specification, without inventing requirements or
-silently making product decisions.
+**specforge** is a Claude Code workflow that turns a product mockup URL and a customer's
+requirements into a traceable, evidence-backed feature specification, without inventing
+requirements or silently making product decisions. You run it inside Claude Code by typing
+`/feature-research` (the command keeps that name).
 
 - Specification: [`docs/feature-research-agent/BUILD_SPEC.md`](docs/feature-research-agent/BUILD_SPEC.md)
 - Plan and recorded decisions: [`docs/feature-research-agent/PLAN.md`](docs/feature-research-agent/PLAN.md)

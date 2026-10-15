@@ -1,4 +1,6 @@
-# specforge
+<p align="center">
+  <img src="docs/assets/banner.png" alt="specforge" width="860">
+</p>
 
 **specforge** is a Claude Code workflow that turns a product mockup URL and a customer's
 requirements into a traceable, evidence-backed feature specification, without inventing

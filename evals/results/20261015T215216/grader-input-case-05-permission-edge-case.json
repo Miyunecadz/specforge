@@ -1,0 +1,40 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-001-01",
+   "claim": "Hiding or disabling a button in the interface is not access control; permissions must be checked on the server for every action.",
+   "snippet": "Check permissions on the server for every action; hiding a button in the interface is not access control.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-f3486c95.txt"
+  },
+  {
+   "id": "F-GAP-001-02",
+   "claim": "Password reset for other users should be limited to authorised roles and each reset logged.",
+   "snippet": "Limit who can reset passwords to roles authorised for it, and log each reset.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-7a9ab6a3.txt"
+  },
+  {
+   "id": "F-GAP-001-03",
+   "claim": "A user should not be able to raise their own privileges, and destructive actions on other accounts should be restricted to explicitly authorised roles.",
+   "snippet": "Restrict destructive actions, such as deleting accounts or changing another user's role, to roles that are explicitly authorised for them, and record who performed them.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-f3486c95.txt"
+  },
+  {
+   "id": "F-GAP-003-01",
+   "claim": "The fetched guidance says that when someone resets another user's password, the account owner should be notified and required to choose a new password at next sign-in.",
+   "snippet": "When someone resets another user's password, send the account owner a notification and require them to choose a new password at next sign-in.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-7a9ab6a3.txt"
+  },
+  {
+   "id": "F-GAP-003-02",
+   "claim": "The fetched guidance says a plain-text password should never be displayed or emailed, and that resets should be limited to authorised roles and logged.",
+   "snippet": "Never display or email a plain-text password.\nLimit who can reset passwords to roles authorised for it, and log each reset.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-7a9ab6a3.txt"
+  },
+  {
+   "id": "F-GAP-003-03",
+   "claim": "The fetched guidance says the person affected by a decision should be told what was decided, when, and what they can do next, and that email suits information the recipient may need to keep.",
+   "snippet": "Tell the person affected by a decision what was decided, when, and what they can do next.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-033524-9f0985/sources/SRC-900a0021.txt"
+  }
+ ]
+}

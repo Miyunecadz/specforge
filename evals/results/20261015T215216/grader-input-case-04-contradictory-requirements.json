@@ -1,0 +1,16 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-001-01",
+   "claim": "Guidance says an export should state which fields it contains and in which format.",
+   "snippet": "State which fields an export contains and in which format.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-031950-5a40ac/sources/SRC-1d82420c.txt"
+  },
+  {
+   "id": "F-GAP-001-02",
+   "claim": "Guidance says exports of personal or financial data should respect the same permissions as viewing the data.",
+   "snippet": "Exports of personal or financial data should respect the same permissions as viewing the data.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-031950-5a40ac/sources/SRC-1d82420c.txt"
+  }
+ ]
+}

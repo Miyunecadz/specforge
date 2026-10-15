@@ -1,0 +1,10 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-002-01",
+   "claim": "When form validation fails, the guidance says to keep everything the user entered and to show each validation message next to the field it relates to.",
+   "snippet": "Show each validation message next to the field it relates to, and keep everything the user entered when validation fails.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-154937-f3f269/sources/SRC-2c9eb1bc.txt"
+  }
+ ]
+}

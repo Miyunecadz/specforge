@@ -1,0 +1,46 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-002-01",
+   "claim": "The fetched guidance says to ask for confirmation before an irreversible action and to state the consequence in the dialog text, for example which package will be awarded and to whom.",
+   "snippet": "Ask for confirmation before an action that cannot be undone, and state the consequence in the dialog text, for example which package will be awarded and to whom.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-c52222b5.txt"
+  },
+  {
+   "id": "F-GAP-002-02",
+   "claim": "The fetched guidance says the confirm button should be labelled with the action itself, such as Award package, rather than a generic OK.",
+   "snippet": "Label the confirm button with the action itself, such as Award package, rather than a generic OK.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-c52222b5.txt"
+  },
+  {
+   "id": "F-GAP-002-03",
+   "claim": "The fetched guidance says confirmation should not be requested for actions that can be undone easily, and undo should be offered instead.",
+   "snippet": "Do not ask for confirmation of actions that can be undone easily; offer undo instead.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-c52222b5.txt"
+  },
+  {
+   "id": "F-GAP-002-04",
+   "claim": "If the confirmation is a modal dialog, the fetched guidance says focus should move into the dialog, with the heading focused first when the first control is destructive, stay inside it, and return to the opening control on close.",
+   "snippet": "When a modal dialog opens, move keyboard focus to the first focusable element inside the dialog, or to the dialog heading when the first control is destructive.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-254f3248.txt"
+  },
+  {
+   "id": "F-GAP-003-01",
+   "claim": "A double click on a submit control can be prevented on the client by disabling the control after the first click and showing progress.",
+   "snippet": "Disable the submit control after the first click and show progress, so a double click does not send the action twice.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-2d026f77.txt"
+  },
+  {
+   "id": "F-GAP-003-02",
+   "claim": "On the server, repeated requests carrying the same idempotency key should be treated as one operation.",
+   "snippet": "On the server, treat repeated requests carrying the same idempotency key as one operation.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-2d026f77.txt"
+  },
+  {
+   "id": "F-GAP-003-03",
+   "claim": "If a second attempt follows a successful first one, the existing result should be reported rather than performing the action again.",
+   "snippet": "If a second attempt is made after the first succeeded, report the existing result instead of performing the action again.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-153211-60981c/sources/SRC-2d026f77.txt"
+  }
+ ]
+}

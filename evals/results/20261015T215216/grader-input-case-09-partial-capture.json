@@ -1,0 +1,10 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-002-01",
+   "claim": "Permissions for an action such as approve or reject should be enforced on the server for every action; hiding the button in the interface does not count as access control.",
+   "snippet": "Check permissions on the server for every action; hiding a button in the interface is not access control.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-112757-565166/sources/SRC-f3486c95.txt"
+  }
+ ]
+}

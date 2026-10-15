@@ -231,7 +231,10 @@ e2e 19/19 at US$12.08 per case; re-audit APPROVED).
 
 ## Phase 6 implementation notes (2026-10-12)
 
-**Phase 6 gate: pending.**
+**Phase 6 gate: 10/10 cases pass** (full completed scored runs, zero safety/traceability failures),
+unit suite green, citation grader calibrated 8/8 against human-reviewed labels and backfilled across
+all ten runs (2026-10-15, `evals/results/20261015T215216.json`). Pending user approval to commit.
+See `docs/feature-research-agent/PHASE6-GATE.md`.
 
 1. **Change impact** (§15): `run_state.py change-inputs` saves `input/requirements-v<n>.md`, compares
    each requirement's source quote with the new text and writes `input/change-<n>.json` (changed REQs,
@@ -255,8 +258,9 @@ e2e 19/19 at US$12.08 per case; re-audit APPROVED).
 5. **run_evals.py** and `_lib/metrics.py` as §16; headless flags as in Phase 0 findings; case-specific
    pass checks; results in `evals/results/<ts>.json`; `--dry-run`, `--calibrate`.
 6. **eval-citation-grader** (Opus, Read only): agent-creator iteration 1 failed T5 (graded, then said
-   out of scope); rule fixed; iteration 2 8/8. Calibration set drafted by the build agent, **pending
-   human review**.
+   out of scope); rule fixed; iteration 2 8/8. Calibration set drafted by the build agent, then
+   **human-reviewed 2026-10-15** (all 8 labels confirmed, none changed); `--calibrate` reached 8/8
+   exact agreement and the grader was backfilled across all ten runs (total US$0.52).
 7. **Answer matching revised after the first live runs** (cases 07 and 08 stopped at Checkpoint 1:
    broad keywords matched two questions, so blocking questions stayed open, and the questions are
    worded differently on every run). An answer now covers every question it matches; a question

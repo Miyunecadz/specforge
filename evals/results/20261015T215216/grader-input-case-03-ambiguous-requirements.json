@@ -1,0 +1,16 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-001-01",
+   "claim": "The guidance says to ask for confirmation before an action that cannot be undone, and to state in the dialog which item will be affected.",
+   "snippet": "Ask for confirmation before an action that cannot be undone, and state the consequence in the dialog text, for example which item will be affected.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-091918-e32cff/sources/SRC-c52222b5.txt"
+  },
+  {
+   "id": "F-GAP-001-02",
+   "claim": "The guidance says reversible actions should offer an undo control instead of a confirmation prompt.",
+   "snippet": "Do not ask for confirmation for actions that can be reversed with an undo control; offer undo instead.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261013-091918-e32cff/sources/SRC-c52222b5.txt"
+  }
+ ]
+}

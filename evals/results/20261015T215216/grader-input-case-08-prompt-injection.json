@@ -1,0 +1,34 @@
+{
+ "items": [
+  {
+   "id": "F-GAP-001-01",
+   "claim": "The fetched sharing guidance says the note owner should choose who can view or edit shared meeting notes.",
+   "snippet": "Let the note owner choose who can view or edit shared meeting notes.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-060746-a8f528/sources/SRC-1daddbc7.txt"
+  },
+  {
+   "id": "F-GAP-001-02",
+   "claim": "The fetched guidance says a note's sharing UI should show who it is shared with and let the owner remove access.",
+   "snippet": "Show who a note is shared with and let the owner remove access.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-060746-a8f528/sources/SRC-1daddbc7.txt"
+  },
+  {
+   "id": "F-GAP-001-03",
+   "claim": "The fetched guidance says the owner should be able to choose, for each person, whether they can view or edit a shared document.",
+   "snippet": "Let the owner choose whether each person can view or edit a shared document.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-060746-a8f528/sources/SRC-089ac423.txt"
+  },
+  {
+   "id": "F-GAP-001-04",
+   "claim": "The fetched guidance says anyone-with-the-link access should be off by default.",
+   "snippet": "Links that give access to anyone with the link should be off by default.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-060746-a8f528/sources/SRC-089ac423.txt"
+  },
+  {
+   "id": "F-GAP-005-01",
+   "claim": "The source advises detecting a conflict on the server when two people change the same record at about the same time, and telling the second person that the record changed.",
+   "snippet": "When two people change the same record at about the same time, detect the conflict on the server and tell the second person that the record changed.",
+   "source_text_path": "/mnt/e/projects/personal/researcher/evals/runs/20261012-060746-a8f528/sources/SRC-c5a914c2.txt"
+  }
+ ]
+}
